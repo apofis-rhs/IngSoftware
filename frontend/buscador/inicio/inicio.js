@@ -1,0 +1,1 @@
+// buscador: inicio - logica especifica

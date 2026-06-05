@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUMIKA — Nombre de la pantalla</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- ⚠️ OBLIGATORIO: estos 3 siempre primero, en este orden -->
+<link rel="stylesheet" href="./css/variables.css">
+<link rel="stylesheet" href="./css/base.css">
+<link rel="stylesheet" href="./css/components.css">
+
+
+  <!-- Tu CSS propio de esta pantalla -->
+  <link rel="stylesheet" href="./nombre-pantalla.css">
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════
+       NAVBAR CON LOGIN (usuario logueado)
+       Copia este bloque si el usuario ya entró
+  ════════════════════════════════════════════ -->
+  <nav class="navbar">
+    <a class="navbar__logo" href="#">
+      <!-- IMPORTANTE: usar logo.png con fondo transparente -->
+      <img class="navbar__logo-img" src="./img/logo.png" alt="LUMIKA">
+      <span class="navbar__logo-text">LUMIKA</span>
+    </a>
+    <!-- Escritorio: links visibles -->
+    <div class="navbar__links hide-mobile">
+  <a href="../../inicio/inicio.html"                 class="navbar__link"><i class="fa-solid fa-house"></i> Inicio</a>
+  <a href="../../perfil/mi-perfil/mi-perfil.html"    class="navbar__link"><i class="fa-regular fa-user"></i> Perfil</a>
+  <a href="../../buscador/inicio/inicio.html"        class="navbar__link"><i class="fa-solid fa-magnifying-glass"></i> Búsqueda</a>
+  <a href="../../recomendaciones/inicio/inicio.html" class="navbar__link"><i class="fa-solid fa-plus"></i> Recomendaciones</a>
+  <a href="../../perfil/favoritos/favoritos.html"    class="navbar__link"><i class="fa-regular fa-star"></i> Mis Favoritos</a>
+  <a href="#" id="btn-cerrar-sesion"                 class="navbar__link navbar__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+</div>
+    <!-- Móvil: hamburguesa -->
+    <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Drawer móvil -->
+  <div class="nav-drawer" id="nav-drawer">
+  <a href="../../inicio/inicio.html"                 class="nav-drawer__link"><i class="fa-solid fa-house"></i> Inicio</a>
+  <a href="../../perfil/mi-perfil/mi-perfil.html"    class="nav-drawer__link"><i class="fa-regular fa-user"></i> Perfil</a>
+  <a href="../../buscador/inicio/inicio.html"        class="nav-drawer__link"><i class="fa-solid fa-magnifying-glass"></i> Búsqueda</a>
+  <a href="../../recomendaciones/inicio/inicio.html" class="nav-drawer__link"><i class="fa-solid fa-plus"></i> Recomendaciones</a>
+  <a href="../../perfil/favoritos/favoritos.html"    class="nav-drawer__link"><i class="fa-regular fa-star"></i> Mis Favoritos</a>
+  <div class="nav-drawer__divider"></div>
+  <a href="#" id="btn-cerrar-sesion-mobile"          class="nav-drawer__link nav-drawer__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
+</div>
+
+  <!-- ════════════════════════════════════════════
+       NAVBAR SIN LOGIN (login / registro)
+       Copia este bloque si el usuario NO entró
+  ════════════════════════════════════════════ -->
+  <!--
+  <nav class="navbar">
+    <a class="navbar__logo" href="../../inicio/inicio.html">
+      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
+      <span class="navbar__logo-text">LUMIKA</span>
+    </a>
+    <div class="navbar__actions">
+      <a href="../../auth/login/login.html"       class="navbar__btn navbar__btn--active">Iniciar sesión</a>
+      <a href="../../auth/registro/registro.html" class="navbar__btn navbar__btn--outline">Registrarse</a>
+    </div>
+  </nav>
+  -->
+
+  <!-- ════════════════════════════════════════════
+       TU CONTENIDO VA AQUÍ
+  ════════════════════════════════════════════ -->
+  <main class="page-wrapper">
+
+    <!-- Tu HTML aquí -->
+
+  </main>
+
+  <!-- Tu JS propio -->
+  <script src="./nombre-pantalla.js"></script>
+
+  <!-- Script del hamburger (igual en todas las pantallas con login) -->
+  <script>
+    const hamburger = document.getElementById('hamburger');
+const navDrawer = document.getElementById('nav-drawer');
+
+if (hamburger) {
+  hamburger.addEventListener('click', () => navDrawer.classList.toggle('open'));
+  
+  document.addEventListener('click', (e) => {
+    if (!hamburger.contains(e.target) && !navDrawer.contains(e.target)) {
+      navDrawer.classList.remove('open');
+    }
+  });
+
+  // Cerrar drawer al cambiar a escritorio
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 769) {
+      navDrawer.classList.remove('open');
+    }
+  });
+}
+    ['btn-cerrar-sesion','btn-cerrar-sesion-mobile'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        window.location.href = '../../auth/login/login.html';
+      });
+    });
+  </script>
+</body>
+</html>

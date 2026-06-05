@@ -1,0 +1,1 @@
+// buscador: alternativas - logica especifica

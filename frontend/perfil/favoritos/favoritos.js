@@ -1,0 +1,1 @@
+// favoritos - logica especifica

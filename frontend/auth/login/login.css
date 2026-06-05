@@ -1,0 +1,55 @@
+/* ============================================================
+   login.css — Estilos ÚNICOS de esta pantalla
+   Los estilos generales (botones, inputs, navbar) ya están
+   en components.css. Aquí solo va lo específico del login.
+   ============================================================ */
+
+.main-centered {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10) var(--space-4);
+}
+
+/* Card del login — escritorio: pequeña y centrada */
+.login-card {
+  background-color: var(--color-bg-white);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.login-card__title {
+  font-size: var(--text-md);
+  font-weight: var(--font-bold);
+  text-align: center;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.login-card__link {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+  transition: color var(--transition-fast);
+}
+.login-card__link:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
+/* Móvil: card ocupa casi todo el ancho */
+@media (max-width: 600px) {
+  .main-centered {
+    align-items: flex-start;
+    padding: var(--space-6) var(--space-4);
+  }
+  .login-card {
+    max-width: 100%;
+  }
+}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUMIKA — Iniciar sesión</title>
+  <link rel="stylesheet" href="../../assets/css/variables.css">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/components.css">
+  <link rel="stylesheet" href="./login.css">
+</head>
+<body>
+
+  <!-- NAVBAR (sin login: botones Iniciar sesión / Registrarse) -->
+  <nav class="navbar">
+    <a class="navbar__logo" href="../../inicio/inicio.html">
+      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
+      <span class="navbar__logo-text">LUMIKA</span>
+    </a>
+    <div class="navbar__actions">
+      <a href="./login.html"                    class="navbar__btn navbar__btn--active">Iniciar sesión</a>
+      <a href="../registro/registro.html"        class="navbar__btn navbar__btn--outline">Registrarse</a>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO CENTRADO -->
+  <main class="main-centered">
+    <div class="login-card">
+
+      <h2 class="login-card__title">Iniciar sesión</h2>
+
+      <!-- Alerta de error global -->
+      <div id="alerta-error" class="alerta alerta--error hidden">
+        <span id="alerta-texto"></span>
+      </div>
+
+      <!-- Campo Usuario -->
+      <div class="form-group">
+        <input id="usuario" class="input" type="text"
+               placeholder="Usuario" autocomplete="username">
+        <span id="error-usuario" class="form-error hidden">Ingresa tu usuario</span>
+      </div>
+
+      <!-- Campo Contraseña -->
+      <div class="form-group">
+        <input id="contrasena" class="input" type="password"
+               placeholder="Contraseña" autocomplete="current-password">
+        <span id="error-contrasena" class="form-error hidden">Ingresa tu contraseña</span>
+      </div>
+
+      <!-- Botón Ingresar -->
+      <button id="btn-login" class="btn btn-primary btn-full" type="button">
+        <span id="btn-texto">Ingresar</span>
+        <span id="btn-loading" class="hidden">Cargando...</span>
+      </button>
+
+      <!-- Link recuperar -->
+      <a href="../recuperar-contrasena/recuperar-contrasena.html" class="login-card__link">
+        ¿Olvidaste tu contraseña?
+      </a>
+
+    </div>
+  </main>
+
+  <script src="./login.js"></script>
+</body>
+</html>

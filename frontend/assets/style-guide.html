@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUMIKA — Guía de Estilos</title>
+  <link rel="stylesheet" href="./css/variables.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <style>
+    .guide-section { margin-bottom: 48px; }
+    .guide-section h2 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--color-text-muted); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--color-primary); }
+    .guide-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+    .color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+    .color-chip { border-radius: 8px; overflow: hidden; border: 1px solid var(--color-border); }
+    .color-chip__swatch { height: 52px; }
+    .color-chip__info { padding: 8px; background: white; }
+    .color-chip__name { font-size: 11px; font-weight: 600; color: var(--color-text-primary); }
+    .color-chip__var  { font-size: 10px; color: var(--color-text-muted); font-family: monospace; }
+    .color-chip__hex  { font-size: 10px; color: var(--color-text-muted); font-family: monospace; }
+    .type-row { margin-bottom: 8px; display: flex; align-items: baseline; gap: 16px; }
+    .type-label { font-size: 11px; color: var(--color-text-muted); font-family: monospace; width: 140px; flex-shrink: 0; }
+    .code { background: #F0F0F0; border-radius: 4px; padding: 2px 6px; font-family: monospace; font-size: 11px; color: #333; }
+    .rule { background: var(--color-primary-light); border-left: 3px solid var(--color-primary-dark); padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 13px; margin-bottom: 8px; color: var(--color-text-primary); }
+    .rule strong { color: var(--color-secondary-dark); }
+    .component-demo { display: flex; flex-direction: column; gap: 4px; }
+    .component-label { font-size: 10px; color: var(--color-text-muted); font-family: monospace; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a class="navbar__logo" href="#">
+      <img class="navbar__logo-img" src="./img/logo.png" alt="LUMIKA">
+      <span class="navbar__logo-text">LUMIKA</span>
+    </a>
+    <div class="navbar__links hide-mobile">
+      <span class="navbar__link navbar__link--active">Guía de Estilos</span>
+    </div>
+  </nav>
+
+  <div class="page-wrapper">
+
+    <div style="margin-bottom:40px">
+      <h1 style="font-size:22px;margin-bottom:8px">Guía de Estilos — LUMIKA</h1>
+      <p>Referencia visual del equipo. Antes de escribir CSS nuevo, revisa si ya existe el componente aquí.</p>
+    </div>
+
+    <!-- REGLAS -->
+    <div class="guide-section">
+      <h2>📏 Reglas obligatorias</h2>
+      <div class="rule">✅ Importa siempre los 3 CSS en este orden: <span class="code">variables.css</span> → <span class="code">base.css</span> → <span class="code">components.css</span></div>
+      <div class="rule"><strong>❌ Nunca</strong> escribas colores, fuentes o tamaños directos. Siempre <span class="code">var(--nombre)</span></div>
+      <div class="rule"><strong>❌ Nunca</strong> escribas <span class="code">fetch()</span> en tu pantalla. Importa de <span class="code">api.js</span></div>
+      <div class="rule">✅ Copia <span class="code">TEMPLATE-PANTALLA.html</span> para empezar cada pantalla nueva</div>
+      <div class="rule">✅ Tu CSS solo tiene estilos únicos de tu pantalla. Lo demás ya está en los 3 base</div>
+    </div>
+
+    <!-- COLORES -->
+    <div class="guide-section">
+      <h2>🎨 Paleta de colores</h2>
+      <div class="color-grid">
+        <div class="color-chip"><div class="color-chip__swatch" style="background:#FFD460"></div><div class="color-chip__info"><div class="color-chip__name">Primary</div><div class="color-chip__var">--color-primary</div><div class="color-chip__hex">#FFD460</div></div></div>
+        <div class="color-chip"><div class="color-chip__swatch" style="background:#FFAC00"></div><div class="color-chip__info"><div class="color-chip__name">Primary Dark</div><div class="color-chip__var">--color-primary-dark</div><div class="color-chip__hex">#FFAC00</div></div></div>
+        <div class="color-chip"><div class="color-chip__swatch" style="background:#FF8C99"></div><div class="color-chip__info"><div class="color-chip__name">Secondary</div><div class="color-chip__var">--color-secondary</div><div class="color-chip__hex">#FF8C99</div></div></div>
+        <div class="color-chip"><div class="color-chip__swatch" style="background:#FF4A58"></div><div class="color-chip__info"><div class="color-chip__name">Danger</div><div class="color-chip__var">--color-secondary-dark</div><div class="color-chip__hex">#FF4A58</div></div></div>
+        <div class="color-chip"><div class="color-chip__swatch" style="background:#BAC423"></div><div class="color-chip__info"><div class="color-chip__name">Verde / Éxito</div><div class="color-chip__var">--color-success</div><div class="color-chip__hex">#BAC423</div></div></div>
+        <div class="color-chip"><div class="color-chip__swatch" style="background:#F5F5F5;border:1px solid #eee"></div><div class="color-chip__info"><div class="color-chip__name">Fondo página</div><div class="color-chip__var">--color-bg-page</div><div class="color-chip__hex">#F5F5F5</div></div></div>
+        <div class="color-chip"><div class="color-chip__swatch" style="background:#1A1A1A"></div><div class="color-chip__info"><div class="color-chip__name">Texto principal</div><div class="color-chip__var">--color-text-primary</div><div class="color-chip__hex">#1A1A1A</div></div></div>
+        <div class="color-chip"><div class="color-chip__swatch" style="background:#9E9E9E"></div><div class="color-chip__info"><div class="color-chip__name">Texto muted</div><div class="color-chip__var">--color-text-muted</div><div class="color-chip__hex">#9E9E9E</div></div></div>
+      </div>
+    </div>
+
+    <!-- TIPOGRAFÍA -->
+    <div class="guide-section">
+      <h2>🔤 Tipografía — Poppins</h2>
+      <div class="type-row"><span class="type-label">--text-3xl bold</span><h1 style="margin:0">Cuídate tú, cuida al planeta</h1></div>
+      <div class="type-row"><span class="type-label">--text-2xl bold</span><h2 style="margin:0">Título de sección</h2></div>
+      <div class="type-row"><span class="type-label">--text-xl semibold</span><h3 style="margin:0">Subtítulo de pantalla</h3></div>
+      <div class="type-row"><span class="type-label">--text-lg semibold</span><h4 style="margin:0">Título de card</h4></div>
+      <div class="type-row"><span class="type-label">--text-base regular</span><p style="margin:0">Texto normal del cuerpo (14px)</p></div>
+      <div class="type-row"><span class="type-label">--text-sm regular</span><small>Texto secundario, labels (12px)</small></div>
+    </div>
+
+    <!-- BOTONES -->
+    <div class="guide-section">
+      <h2>🔘 Botones</h2>
+      <div class="guide-row">
+        <div class="component-demo"><button class="btn btn-primary">Ingresar</button><div class="component-label">.btn.btn-primary</div></div>
+        <div class="component-demo"><button class="btn btn-secondary">Registrarse</button><div class="component-label">.btn.btn-secondary</div></div>
+        <div class="component-demo"><button class="btn btn-danger">Eliminar</button><div class="component-label">.btn.btn-danger</div></div>
+        <div class="component-demo"><button class="btn btn-success">Confirmar</button><div class="component-label">.btn.btn-success</div></div>
+        <div class="component-demo"><button class="btn btn-outline">Cancelar</button><div class="component-label">.btn.btn-outline</div></div>
+        <div class="component-demo"><button class="btn btn-primary btn-sm">Pequeño</button><div class="component-label">.btn.btn-sm</div></div>
+        <div class="component-demo"><button class="btn btn-primary" disabled>Deshabilitado</button><div class="component-label">disabled</div></div>
+      </div>
+    </div>
+
+    <!-- INPUTS -->
+    <div class="guide-section">
+      <h2>📝 Inputs y formularios</h2>
+      <div style="max-width:380px;display:flex;flex-direction:column;gap:16px;">
+        <div class="component-demo">
+          <div class="form-group"><label class="form-label">Usuario</label><input class="input" type="text" placeholder="usuario123"></div>
+          <div class="component-label">.form-group → .form-label + .input</div>
+        </div>
+        <div class="component-demo">
+          <div class="form-group"><label class="form-label">Campo con error</label><input class="input input--error" type="text" value="incorrecto"><span class="form-error">Campo obligatorio</span></div>
+          <div class="component-label">.input.input--error + .form-error</div>
+        </div>
+        <div class="component-demo">
+          <div class="search-bar"><span>🔍</span><input type="text" placeholder="Buscar producto o marca..."></div>
+          <div class="component-label">.search-bar</div>
+        </div>
+        <div class="component-demo">
+          <label class="checkbox-item"><input type="checkbox" checked> Acepto términos y condiciones</label>
+          <div class="component-label">.checkbox-item</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEMÁFORO -->
+    <div class="guide-section">
+      <h2>🚦 Semáforo</h2>
+      <div class="guide-row" style="margin-bottom:20px">
+        <div class="component-demo"><span class="badge badge-verde">● Verde</span><div class="component-label">.badge.badge-verde</div></div>
+        <div class="component-demo"><span class="badge badge-amarillo">● Amarillo</span><div class="component-label">.badge.badge-amarillo</div></div>
+        <div class="component-demo"><span class="badge badge-rojo">● Rojo</span><div class="component-label">.badge.badge-rojo</div></div>
+        <div class="component-demo"><span class="badge badge-gris">● Insuficiente</span><div class="component-label">.badge.badge-gris</div></div>
+      </div>
+      <div class="guide-row">
+        <div class="component-demo"><div class="semaforo-dot semaforo-dot--verde"></div><div class="component-label">.semaforo-dot--verde</div></div>
+        <div class="component-demo"><div class="semaforo-dot semaforo-dot--amarillo"></div><div class="component-label">.semaforo-dot--amarillo</div></div>
+        <div class="component-demo"><div class="semaforo-dot semaforo-dot--rojo"></div><div class="component-label">.semaforo-dot--rojo</div></div>
+        <div class="component-demo"><div class="semaforo-dot semaforo-dot--gris"></div><div class="component-label">.semaforo-dot--gris</div></div>
+      </div>
+    </div>
+
+    <!-- CARDS -->
+    <div class="guide-section">
+      <h2>🃏 Cards de producto</h2>
+      <div style="max-width:400px;display:flex;flex-direction:column;gap:10px;">
+        <div class="component-demo">
+          <div class="product-card">
+            <div class="product-card__img" style="display:flex;align-items:center;justify-content:center;font-size:22px;">🧴</div>
+            <div class="product-card__info"><div class="product-card__name">Head & Shoulders</div><div class="product-card__price">$80 – $120</div></div>
+            <span class="badge badge-rojo">● Rojo</span>
+          </div>
+          <div class="component-label">.product-card</div>
+        </div>
+        <div class="product-card">
+          <div class="product-card__img" style="display:flex;align-items:center;justify-content:center;font-size:22px;">🌿</div>
+          <div class="product-card__info"><div class="product-card__name">Love Beauty Planet</div><div class="product-card__price">$110 – $160</div></div>
+          <span class="badge badge-verde">● Verde</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALERTAS -->
+    <div class="guide-section">
+      <h2>⚠️ Alertas</h2>
+      <div style="max-width:400px;display:flex;flex-direction:column;gap:10px;">
+        <div class="component-demo"><div class="alerta alerta--error">Usuario o contraseña incorrectos</div><div class="component-label">.alerta.alerta--error</div></div>
+        <div class="component-demo"><div class="alerta alerta--warning">Completa todos los campos</div><div class="component-label">.alerta.alerta--warning</div></div>
+        <div class="component-demo"><div class="alerta alerta--success">Cambios guardados correctamente</div><div class="component-label">.alerta.alerta--success</div></div>
+      </div>
+    </div>
+
+    <!-- ESTADO -->
+    <div class="guide-section">
+      <h2>✅ Pantallas de estado</h2>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;">
+        <div class="component-demo">
+          <div class="card" style="width:160px;">
+            <div class="state-screen" style="padding:20px 12px;">
+              <div class="state-icon state-icon--success">✓</div>
+              <div class="state-title" style="font-size:15px;">Registro Exitoso</div>
+            </div>
+          </div>
+          <div class="component-label">.state-icon--success</div>
+        </div>
+        <div class="component-demo">
+          <div class="card" style="width:160px;">
+            <div class="state-screen" style="padding:20px 12px;">
+              <div class="state-icon state-icon--error">✕</div>
+              <div class="state-title" style="font-size:15px;">Eliminado Correctamente</div>
+            </div>
+          </div>
+          <div class="component-label">.state-icon--error</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="guide-section">
+      <h2>💬 Modal de confirmación</h2>
+      <div style="max-width:280px;">
+        <div class="component-demo">
+          <div class="modal" style="position:relative;box-shadow:var(--shadow-md);">
+            <div class="modal__title">¿Estás seguro?</div>
+            <div class="modal__text">Esta acción no se puede deshacer.</div>
+            <div class="modal__actions">
+              <button class="btn btn-danger btn-sm">Sí</button>
+              <button class="btn btn-outline btn-sm">No</button>
+            </div>
+          </div>
+          <div class="component-label">.modal</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE HEADER -->
+    <div class="guide-section">
+      <h2>📌 Page header</h2>
+      <div class="component-demo">
+        <div class="page-header">
+          <a href="#" class="btn-back"></a>
+          <span class="page-header__title">Detalle del Producto</span>
+        </div>
+        <div class="component-label">.page-header → .btn-back + .page-header__title</div>
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="guide-section">
+      <h2>📊 Stat cards (admin)</h2>
+      <div class="guide-row">
+        <div class="component-demo"><div class="stat-card"><div class="stat-card__number">124</div><div class="stat-card__label">Productos</div></div><div class="component-label">.stat-card</div></div>
+        <div class="component-demo"><div class="stat-card stat-card--red"><div class="stat-card__number">21</div><div class="stat-card__label">En rojo</div></div><div class="component-label">.stat-card--red</div></div>
+        <div class="component-demo"><div class="stat-card stat-card--pink"><div class="stat-card__number">14</div><div class="stat-card__label">Sin info</div></div><div class="component-label">.stat-card--pink</div></div>
+      </div>
+    </div>
+
+    <!-- AVATAR -->
+    <div class="guide-section">
+      <h2>👤 Avatar</h2>
+      <div class="guide-row">
+        <div class="component-demo"><div class="avatar">A</div><div class="component-label">.avatar</div></div>
+        <div class="component-demo"><div class="avatar avatar-lg">R</div><div class="component-label">.avatar.avatar-lg</div></div>
+      </div>
+    </div>
+
+    <!-- ITEMS LISTA -->
+    <div class="guide-section">
+      <h2>📋 Items de lista (historial / favoritos)</h2>
+      <div style="max-width:400px;display:flex;flex-direction:column;gap:8px;">
+        <div class="component-demo">
+          <div class="list-item">
+            <div class="list-item__dot" style="background:var(--color-semaforo-rojo)"></div>
+            <span class="list-item__text">Head & Shoulders</span>
+            <button class="list-item__delete">✕</button>
+          </div>
+          <div class="component-label">.list-item</div>
+        </div>
+        <div class="list-item">
+          <div class="list-item__dot" style="background:var(--color-semaforo-verde)"></div>
+          <span class="list-item__text">Love Beauty Planet</span>
+          <button class="list-item__delete">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTRELLAS -->
+    <div class="guide-section">
+      <h2>⭐ Estrellas de evaluación</h2>
+      <div class="component-demo">
+        <div class="stars">
+          <span class="star star--filled">★</span>
+          <span class="star star--filled">★</span>
+          <span class="star star--filled">★</span>
+          <span class="star star--filled">★</span>
+          <span class="star">★</span>
+        </div>
+        <div class="component-label">.stars → .star / .star.star--filled</div>
+      </div>
+    </div>
+
+    <!-- TABS DE NAVEGACIÓN -->
+    <div class="guide-section">
+      <h2>🗂 Tabs de navegación (login / registro)</h2>
+      <div style="max-width:400px;">
+        <div class="component-demo">
+          <div class="nav-tabs">
+            <button class="nav-tab nav-tab--active">Iniciar sesión</button>
+            <button class="nav-tab nav-tab--inactive">Registrarse</button>
+          </div>
+          <div class="component-label">.nav-tabs → .nav-tab--active + .nav-tab--inactive</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PILLS DE FILTRO -->
+    <div class="guide-section">
+      <h2>💊 Pills / chips de filtro</h2>
+      <div class="component-demo">
+        <div class="pills">
+          <button class="pill pill--active">Capilar</button>
+          <button class="pill">Corporal</button>
+          <button class="pill">Facial</button>
+        </div>
+        <div class="component-label">.pills → .pill / .pill--active</div>
+      </div>
+      <div class="component-demo" style="margin-top:12px">
+        <div class="pills">
+          <button class="pill pill--rojo">Rojo</button>
+          <button class="pill pill--amarillo">Amarillo</button>
+          <button class="pill pill--verde">Verde</button>
+        </div>
+        <div class="component-label">.pill--rojo / .pill--amarillo / .pill--verde</div>
+      </div>
+    </div>
+
+    <!-- CARD GRID -->
+    <div class="guide-section">
+      <h2>🟫 Cards en grid (módulo búsqueda / recomendaciones)</h2>
+      <div class="product-grid" style="max-width:500px;">
+        <div class="component-demo">
+          <div class="product-card-grid">
+            <div class="product-card-grid__img">
+              🧴
+              <div class="product-card-grid__dot" style="background:var(--color-semaforo-verde)"></div>
+            </div>
+            <div class="product-card-grid__info">
+              <div class="product-card-grid__name">Shampoo X</div>
+              <div class="product-card-grid__price">$80 - $120</div>
+            </div>
+          </div>
+          <div class="component-label">.product-card-grid</div>
+        </div>
+        <div class="product-card-grid">
+          <div class="product-card-grid__img">
+            🌿
+            <div class="product-card-grid__dot" style="background:var(--color-semaforo-amarillo)"></div>
+          </div>
+          <div class="product-card-grid__info">
+            <div class="product-card-grid__name">Crema Y</div>
+            <div class="product-card-grid__price">$150 - $200</div>
+          </div>
+        </div>
+        <div class="product-card-grid">
+          <div class="product-card-grid__img">
+            🧼
+            <div class="product-card-grid__dot" style="background:var(--color-semaforo-rojo)"></div>
+          </div>
+          <div class="product-card-grid__info">
+            <div class="product-card-grid__name">Jabón Z</div>
+            <div class="product-card-grid__price">$40 - $60</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDER DE PRECIO -->
+    <div class="guide-section">
+      <h2>🎚 Slider de precio (filtros)</h2>
+      <div style="max-width:400px;">
+        <div class="component-demo">
+          <div class="price-slider-wrapper">
+            <input type="range" class="price-slider" min="10" max="800" value="400">
+            <div class="price-slider-labels">
+              <span>$10</span>
+              <span>$800</span>
+            </div>
+          </div>
+          <div class="component-label">.price-slider-wrapper → .price-slider + .price-slider-labels</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTÓN REGRESAR -->
+    <div class="guide-section">
+      <h2>↩ Botón Regresar</h2>
+      <div class="component-demo">
+        <a href="#" class="btn-regresar">Regresar</a>
+        <div class="component-label">.btn-regresar</div>
+      </div>
+    </div>
+
+    <!-- PAGE HEADER VERDE -->
+    <div class="guide-section">
+      <h2>🟢 Page header verde (Alternativas sustentables)</h2>
+      <div class="component-demo">
+        <div class="page-header page-header--verde">
+          <a href="#" class="btn-back"></a>
+          <span class="page-header__title">Alternativas sustentables</span>
+        </div>
+        <div class="component-label">.page-header.page-header--verde</div>
+      </div>
+    </div>
+
+    <!-- ITEMS DE LISTA CON PRECIO -->
+    <div class="guide-section">
+      <h2>📋 Items de lista con precio (historial / favoritos)</h2>
+      <div style="max-width:420px; display:flex; flex-direction:column; gap:8px;">
+        <div class="component-demo">
+          <div class="list-item-full">
+            <div class="list-item-full__dot" style="background:var(--color-semaforo-rojo)"></div>
+            <div class="list-item-full__info">
+              <div class="list-item-full__name">Head & Shoulders</div>
+              <div class="list-item-full__sub">08 May 2026</div>
+            </div>
+          </div>
+          <div class="component-label">.list-item-full (historial — sin botón eliminar)</div>
+        </div>
+        <div class="component-demo">
+          <div class="list-item-full">
+            <div class="list-item-full__dot" style="background:var(--color-semaforo-verde)"></div>
+            <div class="list-item-full__info">
+              <div class="list-item-full__name">Love Beauty Planet</div>
+              <div class="list-item-full__sub">$120 - $180</div>
+            </div>
+            <button class="list-item-full__action">✕</button>
+          </div>
+          <div class="component-label">.list-item-full + .list-item-full__action (favoritos — con botón eliminar)</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

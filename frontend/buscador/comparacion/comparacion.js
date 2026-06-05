@@ -1,0 +1,1 @@
+// comparacion - logica especifica

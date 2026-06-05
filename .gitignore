@@ -1,0 +1,30 @@
+# Entornos virtuales
+venv/
+env/
+.venv/
+
+# Variables de entorno — NUNCA subir
+.env
+backend/.env
+clasificador/.env
+**/.env
+
+# Base de datos local
+db.sqlite3
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# VS Code
+.vscode/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
