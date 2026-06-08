@@ -1,1 +1,172 @@
 /* recomendaciones: inicio - estilos especificos */
+/* ============================================================
+   LUMIKA — Recomendaciones
+   Archivo propio de la pantalla:
+   recomendaciones/inicio/inicio.css
+   ============================================================ */
+
+.recomendaciones-page {
+  max-width: 760px;
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-12);
+}
+
+/* Encabezado */
+.recomendaciones-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.recomendaciones-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  text-align: center;
+}
+
+/* Buscador */
+.recomendaciones-search {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.recomendaciones-search__bar {
+  width: min(100%, 620px);
+  background-color: var(--color-bg-page);
+  border-radius: var(--radius-full);
+  padding-left: var(--space-5);
+  padding-right: var(--space-5);
+}
+
+.recomendaciones-search__bar i {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.recomendaciones-search__bar input {
+  text-align: left;
+  font-size: var(--text-sm);
+}
+
+/* Secciones */
+.recomendaciones-section {
+  margin-bottom: var(--space-3);
+}
+
+.recomendaciones-section__title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+/* Grid */
+.recomendaciones-grid {
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+/* Card */
+.recomendacion-card {
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+}
+
+.recomendacion-card:hover {
+  box-shadow: none;
+  transform: translateY(-2px);
+}
+
+.recomendacion-card .product-card-grid__img {
+  background-color: #EFEFEF;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.recomendacion-card .product-card-grid__info {
+  padding: var(--space-2) var(--space-2) 0;
+}
+
+.recomendacion-card .product-card-grid__name {
+  font-size: var(--text-sm);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+}
+
+.recomendacion-card .product-card-grid__price {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-top: 0;
+}
+
+.recomendacion-card__image {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  opacity: 0;
+}
+
+/* Semáforo */
+.semaforo-verde {
+  background-color: var(--color-semaforo-verde);
+}
+
+.semaforo-amarillo {
+  background-color: var(--color-semaforo-amarillo);
+}
+
+.semaforo-rojo {
+  background-color: var(--color-semaforo-rojo);
+}
+
+.semaforo-gris {
+  background-color: var(--color-semaforo-gris);
+}
+
+/* Responsive tablet */
+@media (max-width: 768px) {
+  .recomendaciones-page {
+    max-width: 100%;
+    padding-left: var(--space-5);
+    padding-right: var(--space-5);
+  }
+
+  .recomendaciones-title {
+    font-size: var(--text-xl);
+  }
+
+  .recomendaciones-grid {
+    gap: var(--space-4);
+  }
+}
+
+/* Responsive móvil */
+@media (max-width: 600px) {
+  .recomendaciones-page {
+    padding-top: var(--space-4);
+  }
+
+  .recomendaciones-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .recomendaciones-search__bar {
+    width: 100%;
+  }
+}
+
+/* Móvil pequeño */
+@media (max-width: 420px) {
+  .recomendaciones-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recomendacion-card .product-card-grid__img {
+    aspect-ratio: 1.4;
+  }
+}
