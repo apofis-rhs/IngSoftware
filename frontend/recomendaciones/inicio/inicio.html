@@ -7,56 +7,55 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-  <!-- CSS base obligatorio -->
-  <link rel="stylesheet" href="../../css/variables.css">
-  <link rel="stylesheet" href="../../css/base.css">
-  <link rel="stylesheet" href="../../css/components.css">
+  <!-- CSS globales del proyecto -->
+  <link rel="stylesheet" href="../../assets/css/variables.css">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/components.css">
 
   <!-- CSS propio de esta pantalla -->
   <link rel="stylesheet" href="./inicio.css">
 </head>
 
+
 <body>
 
   <!-- NAVBAR CON LOGIN -->
-  <nav class="navbar">
-    <a class="navbar__logo" href="../../inicio/inicio.html">
-      <img class="navbar__logo-img" src="../../img/logo.png" alt="LUMIKA">
-      <span class="navbar__logo-text">LUMIKA</span>
+<nav class="navbar">
+  <!-- Logo -->
+  <a href="../../inicio/inicio.html" class="navbar__logo">
+    <img class="navbar__logo-img" src="frontend/assets/img/logo.png" alt="LUMIKA">
+    <span class="navbar__logo-text">LUMIKA</span>
+  </a>
+
+  <!-- Links desktop -->
+  <div class="navbar__links hide-mobile">
+    <a href="../../inicio/inicio.html" class="navbar__link">
+      <i class="fa-solid fa-house"></i> Inicio
     </a>
+    <a href="../../perfil/mi-perfil/mi-perfil.html" class="navbar__link">
+      <i class="fa-regular fa-user"></i> Perfil
+    </a>
+    <a href="../../buscador/inicio/inicio.html" class="navbar__link">
+      <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
+    </a>
+    <a href="../../recomendaciones/inicio/inicio.html" class="navbar__link navbar__link--active">
+      <i class="fa-solid fa-plus"></i> Recomendaciones
+    </a>
+    <a href="../../perfil/favoritos/favoritos.html" class="navbar__link">
+      <i class="fa-regular fa-star"></i> Mis Favoritos
+    </a>
+    <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger">
+      <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+    </a>
+  </div>
 
-    <div class="navbar__links hide-mobile">
-      <a href="../../inicio/inicio.html" class="navbar__link">
-        <i class="fa-solid fa-house"></i> Inicio
-      </a>
-
-      <a href="../../perfil/mi-perfil/mi-perfil.html" class="navbar__link">
-        <i class="fa-regular fa-user"></i> Perfil
-      </a>
-
-      <a href="../../buscador/inicio/inicio.html" class="navbar__link">
-        <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
-      </a>
-
-      <a href="../../recomendaciones/inicio/inicio.html" class="navbar__link navbar__link--active">
-        <i class="fa-solid fa-plus"></i> Recomendaciones
-      </a>
-
-      <a href="../../perfil/favoritos/favoritos.html" class="navbar__link">
-        <i class="fa-regular fa-star"></i> Mis Favoritos
-      </a>
-
-      <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger">
-        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
-      </a>
-    </div>
-
-    <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </nav>
+  <!-- Hamburguesa móvil -->
+  <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</nav>
 
   <!-- DRAWER MÓVIL -->
   <div class="nav-drawer" id="nav-drawer">
