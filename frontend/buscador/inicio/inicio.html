@@ -3,13 +3,112 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA</title>
+  <title>LUMIKA - Inicio</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
   <link rel="stylesheet" href="./inicio.css">
 </head>
 <body>
+  <nav class="navbar">
+    <a class="navbar__logo" href="#">
+      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
+      <span class="navbar__logo-text">LUMIKA</span>
+    </a>
+    <div class="navbar__links hide-mobile">
+      <a href="../../inicio/inicio.html" class="navbar__link">
+        <i class="fa-solid fa-house"></i> Inicio
+      </a>
+      <a href="../../perfil/mi-perfil/mi-perfil.html" class="navbar__link">
+        <i class="fa-regular fa-user"></i> Perfil
+      </a>
+      <a href="../../buscador/inicio/inicio.html" class="navbar__link navbar__link--active">
+        <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
+      </a>
+      <a href="../../recomendaciones/inicio/inicio.html" class="navbar__link">
+        <i class="fa-solid fa-plus"></i> Recomendaciones
+      </a>
+      <a href="../../perfil/favoritos/favoritos.html" class="navbar__link">
+        <i class="fa-regular fa-star"></i> Mis Favoritos
+      </a>
+      <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger">
+        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+      </a>
+    </div>
+    <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="nav-drawer" id="nav-drawer">
+    <a href="../../inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-house"></i> Inicio
+    </a>
+    <a href="../../perfil/mi-perfil/mi-perfil.html" class="nav-drawer__link">
+      <i class="fa-regular fa-user"></i> Perfil
+    </a>
+    <a href="../../buscador/inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
+    </a>
+    <a href="../../recomendaciones/inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-plus"></i> Recomendaciones
+    </a>
+    <a href="../../perfil/favoritos/favoritos.html" class="nav-drawer__link">
+      <i class="fa-regular fa-star"></i> Mis Favoritos
+    </a>
+    <div class="nav-drawer__divider"></div>
+    <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger">
+      <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+    </a>
+  </div>
+
+  <main class="page-wrapper">
+    <div class="search-bar">
+      <span>🔍</span>
+      <input type="text" id="input-busqueda" placeholder="Buscar producto o marca...">
+    </div>
+
+    <div id="loader" class="text-muted text-center" style="display: none; margin-top: var(--space-4);">Cargando...</div>
+
+    <h2>Recomendados</h2>
+    <div id="recomendados" class="product-grid"></div>
+
+    <h2>Más populares</h2>
+    <div id="populares" class="product-grid"></div>
+  </main>
+
   <script type="module" src="./inicio.js"></script>
+
+  <script>
+    const hamburger = document.getElementById('hamburger');
+    const navDrawer = document.getElementById('nav-drawer');
+
+    if(hamburger){
+      hamburger.addEventListener('click', () => navDrawer.classList.toggle('open'));
+
+      document.addEventListener('click', (e) => {
+        if(!hamburger.contains(e.target) && !navDrawer.contains(e.target)) {
+          navDrawer.classList.remove('open');
+        }
+      });
+
+      window.addEventListener('resize', () => {
+        if(window.innerWidth >= 769) {
+          navDrawer.classList.remove('open');
+        }
+      });
+    }
+
+    ['btn-cerrar-sesion', 'btn-cerrar-sesion-mobile'].forEach(id => {
+      const btn = document.getElementById(id);
+      if(btn) btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          localStorage.removeItem('token');
+          localStorage.removeItem('usuario');
+          window.location.href = '../../auth/login/login.html';
+      });        
+    });
+  </script>
 </body>
 </html>
