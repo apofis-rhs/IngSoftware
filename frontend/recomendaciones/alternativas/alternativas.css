@@ -1,1 +1,143 @@
 /* recomendaciones: alternativas - estilos especificos */
+/* ============================================================
+   LUMIKA — Recomendaciones / Alternativas sustentables
+   Solo estilos propios de esta pantalla
+   ============================================================ */
+
+.alternativas-page {
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto;
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-10);
+}
+
+/* Encabezado */
+.alternativas-header {
+  margin-bottom: var(--space-4);
+}
+
+.alternativas-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.alternativas-subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Lista de alternativas */
+.alternativas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+/* Card alternativa: pastilla horizontal */
+.alternativa-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background-color: #f4f4f4;
+  border-radius: 999px;
+}
+
+/* Icono de imagen */
+.alternativa-card__icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+}
+
+.alternativa-card__icon i {
+  font-size: 18px;
+  color: var(--color-text-muted);
+}
+
+/* Contenido card */
+.alternativa-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.alternativa-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.alternativa-card__title {
+  font-size: var(--text-md);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+}
+
+/* Parte inferior: semáforo + precio */
+.alternativa-card__bottom {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.alternativa-card__semaforo {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.alternativa-card__price {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+/* Semáforos usando variables globales */
+.semaforo-verde    { background-color: var(--color-semaforo-verde); }
+.semaforo-amarillo { background-color: var(--color-semaforo-amarillo); }
+.semaforo-rojo     { background-color: var(--color-semaforo-rojo); }
+.semaforo-gris     { background-color: var(--color-semaforo-gris); }
+
+/* Botones inferiores */
+.alternativas-acciones {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.alternativas-btn-primario {
+  min-width: 260px;
+  padding: var(--space-2) var(--space-6);
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  background-color: var(--color-success);
+  color: #ffffff;
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .alternativas-page {
+    max-width: 100%;
+    padding-left: var(--space-5);
+    padding-right: var(--space-5);
+  }
+
+  .alternativa-card {
+    grid-template-columns: auto 1fr;
+    padding: var(--space-3);
+  }
+}
