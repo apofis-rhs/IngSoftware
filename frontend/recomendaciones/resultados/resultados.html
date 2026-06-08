@@ -3,13 +3,153 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA</title>
+  <title>LUMIKA — Resultados</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- CSS globales -->
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
+
+  <!-- CSS propio de esta pantalla -->
   <link rel="stylesheet" href="./resultados.css">
 </head>
+
 <body>
-  <script type="module" src="./resultados.js"></script>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <!-- Logo -->
+    <a href="../../inicio/inicio.html" class="navbar__logo">
+      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
+      <span class="navbar__logo-text">LUMIKA</span>
+    </a>
+
+    <!-- Links desktop -->
+    <div class="navbar__links hide-mobile">
+      <a href="../../inicio/inicio.html" class="navbar__link">
+        <i class="fa-solid fa-house"></i> Inicio
+      </a>
+      <a href="../../perfil/mi-perfil/mi-perfil.html" class="navbar__link">
+        <i class="fa-regular fa-user"></i> Perfil
+      </a>
+      <a href="../../buscador/inicio/inicio.html" class="navbar__link">
+        <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
+      </a>
+      <a href="../inicio/inicio.html" class="navbar__link navbar__link--active">
+        <i class="fa-solid fa-plus"></i> Recomendaciones
+      </a>
+      <a href="../../perfil/favoritos/favoritos.html" class="navbar__link">
+        <i class="fa-regular fa-star"></i> Mis Favoritos
+      </a>
+      <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger">
+        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+      </a>
+    </div>
+
+    <!-- Hamburguesa móvil -->
+    <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- DRAWER MÓVIL -->
+  <div class="nav-drawer" id="nav-drawer">
+    <a href="../../inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-house"></i> Inicio
+    </a>
+    <a href="../../perfil/mi-perfil/mi-perfil.html" class="nav-drawer__link">
+      <i class="fa-regular fa-user"></i> Perfil
+    </a>
+    <a href="../../buscador/inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
+    </a>
+    <a href="../inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-plus"></i> Recomendaciones
+    </a>
+    <a href="../../perfil/favoritos/favoritos.html" class="nav-drawer__link">
+      <i class="fa-regular fa-star"></i> Mis Favoritos
+    </a>
+
+    <div class="nav-drawer__divider"></div>
+
+    <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger">
+      <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+    </a>
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="page-wrapper recomendaciones-page">
+
+    <!-- Título + buscador -->
+    <section class="recomendaciones-hero">
+      <h1 class="recomendaciones-title">Recomendaciones</h1>
+
+      <form class="recomendaciones-search" id="form-resultados">
+        <div class="search-bar recomendaciones-search__bar">
+          <input 
+            type="text" 
+            id="input-recomendacion"
+            value="Rastrillo" 
+            placeholder="Recomendar productos..."
+            autocomplete="off"
+          >
+        </div>
+      </form>
+    </section>
+
+    <!-- Chips de filtro -->
+    <section class="resultados-filtros">
+      <button class="chip chip--active" data-filtro="plastico">Plástico</button>
+      <button class="chip" data-filtro="metal">Metal</button>
+    </section>
+
+    <!-- Layout: recientes + lista -->
+    <section class="resultados-layout">
+      <!-- Búsquedas recientes -->
+      <div class="resultados-recientes">
+        <h2 class="resultados-subtitle">Búsquedas recientes</h2>
+        <ul class="resultados-recientes__lista">
+          <li>Contenotes</li>
+          <li>Papel de Baño</li>
+        </ul>
+      </div>
+
+      <!-- Lista de resultados -->
+      <div class="resultados-lista">
+        <h2 class="resultados-subtitle">
+          Resultados (<span id="resultado-count">2</span>)
+        </h2>
+
+        <article class="resultado-card" data-tipo="metal">
+          <div class="resultado-card__dot semaforo-verde"></div>
+          <div class="resultado-card__content">
+            <h3 class="resultado-card__title">Rastrillo Metal</h3>
+            <p class="resultado-card__price">$30 - $50</p>
+          </div>
+        </article>
+
+        <article class="resultado-card" data-tipo="plastico">
+          <div class="resultado-card__dot semaforo-rojo"></div>
+          <div class="resultado-card__content">
+            <h3 class="resultado-card__title">Rastrillo Plástico</h3>
+            <p class="resultado-card__price">$10 - $30</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Botón regresar -->
+    <div class="resultados-back">
+      <a href="../inicio/inicio.html" class="btn-back">Regresar</a>
+    </div>
+
+  </main>
+
+  <!-- JS propio -->
+  <script src="./resultados.js"></script>
 </body>
 </html>
