@@ -3,13 +3,121 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA</title>
+  <title>LUMIKA — Agregar Producto</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
   <link rel="stylesheet" href="./agregar-producto.css">
 </head>
 <body>
-  <script type="module" src="./agregar-producto.js"></script>
+
+  <header class="navbar-admin">
+    <div class="navbar-admin__brand">
+      <img src="../../assets/img/logo.png" alt="LUMIKA" class="navbar-admin__logo">
+      <span class="navbar-admin__title">LUMIKA</span>
+      <span class="navbar-admin__badge">Admin</span>
+    </div>
+    
+    <nav class="navbar-admin__links hide-mobile">
+      <a href="../dashboard/dashboard.html" class="nav-item">
+        <i class="fa-solid fa-house"></i>
+        <span>Panel Administrador</span>
+      </a>
+      <a href="./agregar-producto.html" class="nav-item">
+        <i class="fa-solid fa-plus"></i>
+        <span>Agregar Producto</span>
+      </a>
+      <a href="../gestionar-productos/gestionar-productos.html" class="nav-item">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <span>Editar Producto</span>
+      </a>
+      <a href="../gestionar-productos/gestionar-productos.html" class="nav-item">
+        <i class="fa-solid fa-eye"></i>
+        <span>Visualizar Producto</span>
+      </a>
+      <a href="../gestionar-productos/gestionar-productos.html" class="nav-item">
+        <i class="fa-solid fa-trash"></i>
+        <span>Eliminar Producto</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Cerrar Sesión</span>
+      </a>
+    </nav>
+  </header>
+
+  <main class="form-container">
+    <div class="form-header">Agregar producto</div>
+
+    <form class="product-form">
+      
+      <div class="form-group">
+        <label class="form-label">Nombre del producto</label>
+        <input type="text" class="form-control" required>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Categoría</label>
+          <input type="text" class="form-control">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subcategoría</label>
+          <input type="text" class="form-control">
+        </div>
+      </div>
+
+      <div class="criteria-section">
+        <h3 class="criteria-title">Criterios ambientales</h3>
+        
+        <label class="checkbox-container">
+          <input type="checkbox"> Usa microplásticos
+        </label>
+        <label class="checkbox-container">
+          <input type="checkbox"> Realiza pruebas en animales
+        </label>
+        <label class="checkbox-container">
+          <input type="checkbox"> Tiene certificación ambiental
+        </label>
+        <label class="checkbox-container">
+          <input type="checkbox"> Usa envases sustentables
+        </label>
+        <label class="checkbox-container">
+          <input type="checkbox"> Usa plásticos de un solo uso
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Ventajas ecológicas</label>
+        <input type="text" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Desventajas ecológicas</label>
+        <input type="text" class="form-control">
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-submit">Guardar producto</button>
+        
+        <a href="../dashboard/dashboard.html" class="btn-back-form">
+          <i class="fa-solid fa-arrow-left"></i> Regresar
+        </a>
+      </div>
+
+    </form>
+  </main>
+
+  <div class="feedback-modal" id="successModal">
+    <div class="feedback-box">
+      <div class="circle-icon">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <h2>Agregado Correctamente</h2>
+    </div>
+  </div>
+
 </body>
 </html>
