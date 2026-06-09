@@ -1,11 +1,11 @@
 // comparacion - logica especifica
-import { obtenerProducto } from '../../assets/js/api.js';
+import { compararProductos } from '../../assets/js/api.js';
 
 // === MOCK PARA PRUEBAS SIN BACKEND ===
 // Descomenta este objeto si el backend no responde
-/*
-const MOCK_COMPARACION = {
-  '1': {
+
+const MOCK_COMPARACION = [
+  {
     id_producto: 1,
     nombre_producto: "Shampoo Neutro Esi",
     color_semaforo: "verde",
@@ -14,7 +14,7 @@ const MOCK_COMPARACION = {
     ingredientes_riesgo: ["Parfum"],
     score: 95
   },
-  '2': {
+  {
     id_producto: 2,
     nombre_producto: "Crema Hidratante Nivea", 
     color_semaforo: "amarillo",
@@ -22,96 +22,106 @@ const MOCK_COMPARACION = {
     precio_min: 90,
     ingredientes_riesgo: ["Methylparaben"],
     score: 72
+  },
+  {
+    id_producto: 3,
+    nombre_producto: "Jabón Dove", 
+    color_semaforo: "rojo",
+    estado_evaluacion: "no_recomendado",
+    precio_min: 50,
+    ingredientes_riesgo: ["SLS", "Parfum"],
+    score: 40
   }
-};
-*/
+];
+
+
+
 
 const loader = document.querySelector('#loader');
 const contenido = document.querySelector('#contenido-comparacion');
+const gridProductos = document.querySelector('#grid-productos');
 
 document.addEventListener('DOMContentLoaded', async () => {
   const params = new URLSearchParams(window.location.search);
-  const id1 = params.get('id1');
-  const id2 = params.get('id2');
+  const ids = params.getAll('id').map(Number);
   
-  if (!id1 ||!id2) {
-    mostrarError('Faltan IDs para comparar. Usa?id1=1&id2=2');
+  if (ids.length < 2) {
+    mostrarError('Necesitas al menos 2 productos. Usa?id=1&id=2');
+    return;
+  }
+  if (ids.length > 3) {
+    mostrarError('Máximo 3 productos para comparar');
     return;
   }
 
-  await cargarComparacion(id1, id2);
+  await cargarComparacion(ids);
   
   document.querySelector('#btn-regresar').addEventListener('click', () => window.history.back());
 });
 
-async function cargarComparacion(id1, id2) {
+async function cargarComparacion(ids) {
   try {
-    // === CÓDIGO PARA BACKEND REAL ===
-    const [res1, res2] = await Promise.all([
-      obtenerProducto(id1),
-      obtenerProducto(id2)
-    ]);
+    const res = await compararProductos(ids);
     
-    if (!res1.ok ||!res2.ok) {
-      throw new Error('Uno de los productos no se encontró en el backend');
+    if (!res.ok) {
+      throw new Error(res.error || 'No se pudieron comparar los productos');
     }
     
-    pintarComparacion(res1.data, res2.data);
+    pintarComparacion(res.data);
 
     // Descomenta este objeto si el backend no responde
-    /*
+    
     console.warn('Backend falló, usando MOCK');
-    const p1 = MOCK_COMPARACION[id1];
-    const p2 = MOCK_COMPARACION[id2];
+    pintarComparacion(MOCK_COMPARACION.slice(0, ids.length));
     
-    if (!p1 ||!p2) {
-      throw new Error('Producto no existe en el mock');
-    }
-    
-    pintarComparacion(p1, p2);
-    */
+
 
 
   } catch (error) {
     mostrarError(`Error de conexión: ${error.message}`);
     
     // Descomenta este objeto si el backend no responde
-    /*
-    const p1 = MOCK_COMPARACION[id1];
-    const p2 = MOCK_COMPARACION[id2];
-    if (p1 && p2) {
-      console.warn('Fetch falló, usando MOCK');
-      pintarComparacion(p1, p2);
-    } else {
-      mostrarError(`Error: ${error.message}`);
-    }
-    */
+    
+    console.warn('Fetch falló, usando MOCK');
+    pintarComparacion(MOCK_COMPARACION.slice(0, ids.length));
+    
 
+    
   }
 }
 
-function pintarComparacion(p1, p2) {
-  document.querySelector('#nombre-1').textContent = p1.nombre_producto;
-  document.querySelector('#semaforo-1').style.background = `var(--color-semaforo-${p1.color_semaforo})`;
-  document.querySelector('#estado-1').textContent = formatearEstado(p1.estado_evaluacion);
+function pintarComparacion(productos) {
+  if (productos.length < 2) {
+    mostrarError('Se requieren al menos 2 productos válidos');
+    return;
+  }
 
-  document.querySelector('#nombre-2').textContent = p2.nombre_producto;
-  document.querySelector('#semaforo-2').style.background = `var(--color-semaforo-${p2.color_semaforo})`;
-  document.querySelector('#estado-2').textContent = formatearEstado(p2.estado_evaluacion);
-
-  const tabla = document.querySelector('#tabla-comparacion');
-  tabla.innerHTML = `
-    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:var(--space-3); font-weight:bold; margin-bottom:var(--space-2)">
-      <div>Atributo</div>
-      <div class="text-center">${p1.nombre_producto}</div>
-      <div class="text-center">${p2.nombre_producto}</div>
+  // 1. Pintar cards de productos dinámicamente
+  gridProductos.style.gridTemplateColumns = `repeat(${productos.length}, 1fr)`;
+  gridProductos.innerHTML = productos.map(p => `
+    <div class="card text-center">
+      <div class="semaforo-dot" style="margin:0 auto var(--space-3); width:50px; height:50px; border-radius:50%; background:var(--color-semaforo-${p.color_semaforo})"></div>
+      <h3 class="text-h3">${p.nombre_producto}</h3>
+      <p class="text-bold">${formatearEstado(p.estado_evaluacion)}</p>
     </div>
-    ${filaComparacion('Precio', `$${p1.precio_min}`, `$${p2.precio_min}`, p1.precio_min < p2.precio_min)}
-    ${filaComparacion('Score LUMIKA', p1.score, p2.score, p1.score > p2.score)}
-    ${filaComparacion('Ingredientes de riesgo', p1.ingredientes_riesgo.length, p2.ingredientes_riesgo.length, p1.ingredientes_riesgo.length < p2.ingredientes_riesgo.length)}
+  `).join('');
+
+  // 2. Tabla de comparación dinámica
+  const tabla = document.querySelector('#tabla-comparacion');
+  const headers = productos.map(p => `<div class="text-center text-bold">${p.nombre_producto}</div>`).join('');
+  
+  tabla.innerHTML = `
+    <div style="display:grid; grid-template-columns:150px repeat(${productos.length}, 1fr); gap:var(--space-3); font-weight:bold; margin-bottom:var(--space-2)">
+      <div>Atributo</div>
+      ${headers}
+    </div>
+    ${filaComparacion('Precio', productos.map(p => `$${p.precio_min}`), 'precio_min')}
+    ${filaComparacion('Score LUMIKA', productos.map(p => p.score), 'score', true)}
+    ${filaComparacion('Ingredientes de riesgo', productos.map(p => p.ingredientes_riesgo.length), 'ingredientes_riesgo')}
   `;
 
-  const ganador = p1.score > p2.score? p1 : p2;
+  // 3. Recomendación: el de mayor score
+  const ganador = productos.reduce((max, p) => p.score > max.score? p : max, productos[0]);
   document.querySelector('#texto-recomendacion').textContent = 
     `${ganador.nombre_producto} tiene mejor evaluación general con score de ${ganador.score}.`;
 
@@ -119,12 +129,19 @@ function pintarComparacion(p1, p2) {
   contenido.classList.remove('hidden');
 }
 
-function filaComparacion(label, val1, val2, gano1) {
+function filaComparacion(label, valores, key, mayorEsMejor = false) {
+  const numericos = valores.map(v => typeof v === 'string'? parseFloat(v.replace('$', '')) : v);
+  const mejorValor = mayorEsMejor? Math.max(...numericos) : Math.min(...numericos);
+  
+  const celdas = valores.map((val, i) => {
+    const esMejor = numericos[i] === mejorValor;
+    return `<div class="text-center ${esMejor? 'text-bold' : ''}" style="color:${esMejor? 'var(--color-semaforo-verde)' : ''}">${val}</div>`;
+  }).join('');
+
   return `
-    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:var(--space-3); padding:var(--space-2) 0; border-bottom:1px solid var(--color-border)">
+    <div style="display:grid; grid-template-columns:150px repeat(${valores.length}, 1fr); gap:var(--space-3); padding:var(--space-2) 0; border-bottom:1px solid var(--color-border)">
       <div class="text-muted">${label}</div>
-      <div class="text-center ${gano1? 'text-bold' : ''}" style="color:${gano1? 'var(--color-semaforo-verde)' : ''}">${val1}</div>
-      <div class="text-center ${!gano1? 'text-bold' : ''}" style="color:${!gano1? 'var(--color-semaforo-verde)' : ''}">${val2}</div>
+      ${celdas}
     </div>
   `;
 }
