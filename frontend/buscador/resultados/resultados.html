@@ -3,13 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA</title>
+  <title>LUMIKA — Resultados</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
   <link rel="stylesheet" href="./resultados.css">
 </head>
 <body>
+  <!-- Navbar con login -->
+  <nav class="navbar">
+    <a class="navbar__logo" href="../../inicio/inicio.html">
+      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
+      <span class="navbar__logo-text">LUMIKA</span>
+    </a>
+    <div class="navbar__links hide-mobile">
+      <a href="../../inicio/inicio.html" class="navbar__link"><i class="fa-solid fa-house"></i> Inicio</a>
+      <a href="../../perfil/mi-perfil/mi-perfil.html" class="navbar__link"><i class="fa-regular fa-user"></i> Perfil</a>
+      <a href="../../buscador/inicio/inicio.html" class="navbar__link navbar__link--active"><i class="fa-solid fa-magnifying-glass"></i> Búsqueda</a>
+      <a href="../../recomendaciones/inicio/inicio.html" class="navbar__link"><i class="fa-solid fa-plus"></i> Recomendaciones</a>
+      <a href="../../perfil/favoritos/favoritos.html" class="navbar__link"><i class="fa-regular fa-star"></i> Mis Favoritos</a>
+      <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+    </div>
+    <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="nav-drawer" id="nav-drawer">
+    <a href="../../inicio/inicio.html" class="nav-drawer__link"><i class="fa-solid fa-house"></i> Inicio</a>
+    <a href="../../perfil/mi-perfil/mi-perfil.html" class="nav-drawer__link"><i class="fa-regular fa-user"></i> Perfil</a>
+    <a href="../../buscador/inicio/inicio.html" class="nav-drawer__link"><i class="fa-solid fa-magnifying-glass"></i> Búsqueda</a>
+    <a href="../../recomendaciones/inicio/inicio.html" class="nav-drawer__link"><i class="fa-solid fa-plus"></i> Recomendaciones</a>
+    <a href="../../perfil/favoritos/favoritos.html" class="nav-drawer__link"><i class="fa-regular fa-star"></i> Mis Favoritos</a>
+    <div class="nav-drawer__divider"></div>
+    <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
+  </div>
+
+  <main class="page-wrapper">
+    <!-- Search bar -->
+    <div class="search-bar" style="margin-bottom:var(--space-6)">
+      <i class="fa-solid fa-magnifying-glass" style="color:var(--color-text-muted)"></i>
+      <input type="text" id="input-busqueda" placeholder="Buscar producto...">
+      <button id="btn-filtro" style="background:none;border:none;cursor:pointer;color:var(--color-text-muted)">
+        <i class="fa-solid fa-filter"></i>
+      </button>
+    </div>
+
+    <!-- Pills de categoría -->
+    <div class="pills" id="pills-categoria" style="margin-bottom:var(--space-6)">
+      <button class="pill pill--active" data-categoria="capilar">Capilar</button>
+      <button class="pill" data-categoria="facial">Facial</button>
+      <button class="pill" data-categoria="corporal">Corporal</button>
+    </div>
+
+    <!-- Búsquedas recientes -->
+    <div id="seccion-recientes" class="hidden" style="margin-bottom:var(--space-6)">
+      <p class="text-muted text-bold" style="margin-bottom:var(--space-2)">Búsquedas recientes</p>
+      <div id="lista-recientes" style="display:flex;flex-direction:column;gap:var(--space-2)"></div>
+    </div>
+
+    <!-- Resultados -->
+    <div>
+      <p class="text-muted text-bold" id="titulo-resultados" style="margin-bottom:var(--space-3)">Resultados</p>
+      <div id="lista-resultados" style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <!-- JS llena aquí -->
+      </div>
+    </div>
+
+    <button class="btn-regresar" id="btn-regresar" style="margin-top:var(--space-8)">
+      Regresar
+    </button>
+  </main>
+
   <script type="module" src="./resultados.js"></script>
+  
+  <!-- Script hamburger -->
+  <script>
+    const hamburger = document.getElementById('hamburger');
+    const navDrawer = document.getElementById('nav-drawer');
+    if (hamburger) {
+      hamburger.addEventListener('click', () => navDrawer.classList.toggle('open'));
+      document.addEventListener('click', (e) => {
+        if (!hamburger.contains(e.target) && !navDrawer.contains(e.target)) {
+          navDrawer.classList.remove('open');
+        }
+      });
+      window.addEventListener('resize', () => {
+        if (window.innerWidth >= 769) navDrawer.classList.remove('open');
+      });
+    }
+    ['btn-cerrar-sesion','btn-cerrar-sesion-mobile'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        window.location.href = '../../auth/login/login.html';
+      });
+    });
+  </script>
 </body>
 </html>
