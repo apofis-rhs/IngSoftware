@@ -1,1 +1,4 @@
 /* buscador: resultados - estilos especificos */
+.list-item-full:hover {
+  box-shadow: var(--shadow-sm);
+}

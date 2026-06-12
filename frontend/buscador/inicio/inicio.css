@@ -1,1 +1,6 @@
 /* buscador: inicio - estilos especificos */
+@media (max-width: 600px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

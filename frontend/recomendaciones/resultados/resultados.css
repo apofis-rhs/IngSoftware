@@ -1,1 +1,180 @@
 /* recomendaciones: resultados - estilos especificos */
+/* ============================================================
+   LUMIKA — Recomendaciones / Resultados
+   Solo estilos propios de esta pantalla
+   ============================================================ */
+
+.recomendaciones-page {
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto;
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-10);
+}
+
+/* Encabezado (ya consistente con inicio) */
+.recomendaciones-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.recomendaciones-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-tight);
+  color: var(--color-text-primary);
+  text-align: center;
+}
+
+/* Buscador */
+.recomendaciones-search {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.recomendaciones-search__bar {
+  width: 100%;
+  max-width: 640px;
+  min-height: 42px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-bg-page);
+  border: 1.5px solid var(--color-border);
+  padding: 0 var(--space-6);
+  display: flex;
+  align-items: center;
+}
+
+.recomendaciones-search__bar:focus-within {
+  border-color: var(--color-border-focus);
+  background-color: var(--color-bg-white);
+}
+
+.search-bar input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+}
+
+.search-bar input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Filtros (chips) */
+.resultados-filtros {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.chip {
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-border);
+  background-color: var(--color-bg-white);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: background-color var(--transition-fast),
+              border-color var(--transition-fast),
+              color var(--transition-fast);
+}
+
+.chip--active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+}
+
+/* Layout principal: recientes + resultados */
+.resultados-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1.9fr;
+  column-gap: var(--space-6);
+  row-gap: var(--space-4);
+}
+
+.resultados-subtitle {
+  font-size: var(--text-md);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+/* Recientes */
+.resultados-recientes__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Lista de resultados */
+.resultados-lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Cards de resultados (horizontales tipo pastilla) */
+.resultado-card {
+  display: flex;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background-color: #f4f4f4;
+  border-radius: 999px;
+}
+
+.resultado-card__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  margin-right: var(--space-3);
+}
+
+.resultado-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.resultado-card__title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+}
+
+.resultado-card__price {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+/* Semáforos: usan variables globales */
+.semaforo-verde    { background-color: var(--color-semaforo-verde); }
+.semaforo-amarillo { background-color: var(--color-semaforo-amarillo); }
+.semaforo-rojo     { background-color: var(--color-semaforo-rojo); }
+.semaforo-gris     { background-color: var(--color-semaforo-gris); }
+
+/* Botón regresar */
+.resultados-back {
+  margin-top: var(--space-6);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .recomendaciones-page {
+    max-width: 100%;
+    padding-left: var(--space-5);
+    padding-right: var(--space-5);
+  }
+
+  .resultados-layout {
+    grid-template-columns: 1fr;
+  }
+}

@@ -3,13 +3,168 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA</title>
+  <title>LUMIKA — Alternativas sustentables</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- CSS globales -->
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
+
+  <!-- CSS propio de esta pantalla -->
   <link rel="stylesheet" href="./alternativas.css">
 </head>
+
 <body>
-  <script type="module" src="./alternativas.js"></script>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <!-- Logo -->
+    <a href="../../inicio/inicio.html" class="navbar__logo">
+      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
+      <span class="navbar__logo-text">LUMIKA</span>
+    </a>
+
+    <!-- Links desktop -->
+    <div class="navbar__links hide-mobile">
+      <a href="../../inicio/inicio.html" class="navbar__link">
+        <i class="fa-solid fa-house"></i> Inicio
+      </a>
+      <a href="../../perfil/mi-perfil/mi-perfil.html" class="navbar__link">
+        <i class="fa-regular fa-user"></i> Perfil
+      </a>
+      <a href="../../buscador/inicio/inicio.html" class="navbar__link">
+        <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
+      </a>
+      <a href="../inicio/inicio.html" class="navbar__link navbar__link--active">
+        <i class="fa-solid fa-plus"></i> Recomendaciones
+      </a>
+      <a href="../../perfil/favoritos/favoritos.html" class="navbar__link">
+        <i class="fa-regular fa-star"></i> Mis Favoritos
+      </a>
+      <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger">
+        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+      </a>
+    </div>
+
+    <!-- Hamburguesa móvil -->
+    <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- DRAWER MÓVIL -->
+  <div class="nav-drawer" id="nav-drawer">
+    <a href="../../inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-house"></i> Inicio
+    </a>
+    <a href="../../perfil/mi-perfil/mi-perfil.html" class="nav-drawer__link">
+      <i class="fa-regular fa-user"></i> Perfil
+    </a>
+    <a href="../../buscador/inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
+    </a>
+    <a href="../inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-plus"></i> Recomendaciones
+    </a>
+    <a href="../../perfil/favoritos/favoritos.html" class="nav-drawer__link">
+      <i class="fa-regular fa-star"></i> Mis Favoritos
+    </a>
+
+    <div class="nav-drawer__divider"></div>
+
+    <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger">
+      <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+    </a>
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="page-wrapper alternativas-page">
+
+    <!-- Encabezado -->
+    <header class="alternativas-header">
+      <h1 class="alternativas-title">Alternativas sustentables</h1>
+      <p class="alternativas-subtitle">
+        3 alternativas para rastrillo, ordenadas de menor a mayor precio.
+      </p>
+    </header>
+
+    <!-- Lista de alternativas -->
+    <section class="alternativas-lista">
+
+      <!-- Card 1 -->
+      <article class="alternativa-card">
+        <div class="alternativa-card__icon">
+          <i class="fa-regular fa-image"></i>
+        </div>
+
+        <div class="alternativa-card__content">
+          <div class="alternativa-card__top">
+            <h2 class="alternativa-card__title">Rastrillo Metal</h2>
+          </div>
+
+          <div class="alternativa-card__bottom">
+            <div class="alternativa-card__semaforo semaforo-verde"></div>
+            <p class="alternativa-card__price">$40 - $50</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="alternativa-card">
+        <div class="alternativa-card__icon">
+          <i class="fa-regular fa-image"></i>
+        </div>
+
+        <div class="alternativa-card__content">
+          <div class="alternativa-card__top">
+            <h2 class="alternativa-card__title">Rastrillo Reutilizable</h2>
+          </div>
+
+          <div class="alternativa-card__bottom">
+            <div class="alternativa-card__semaforo semaforo-verde"></div>
+            <p class="alternativa-card__price">$60 - $80</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="alternativa-card">
+        <div class="alternativa-card__icon">
+          <i class="fa-regular fa-image"></i>
+        </div>
+
+        <div class="alternativa-card__content">
+          <div class="alternativa-card__top">
+            <h2 class="alternativa-card__title">Afeitadora</h2>
+          </div>
+
+          <div class="alternativa-card__bottom">
+            <div class="alternativa-card__semaforo semaforo-verde"></div>
+            <p class="alternativa-card__price">$200 - $280</p>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- Botones inferiores -->
+    <section class="alternativas-acciones">
+      <button class="alternativas-btn-primario" id="btn-ver-comparaciones">
+        Ver Comparaciones
+      </button>
+
+      <a href="../detalle-articulo/detalle-articulo.html" class="btn-back">
+        Regresar
+      </a>
+    </section>
+
+  </main>
+
+  <!-- JS propio -->
+  <script src="./alternativas.js"></script>
 </body>
 </html>

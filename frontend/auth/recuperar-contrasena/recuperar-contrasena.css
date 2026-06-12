@@ -1,1 +1,225 @@
-/* recuperar contrasena - estilos especificos */
+
+/* recuperar-contrasena.css */
+
+.recuperar-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 60px);
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-bg-page);
+}
+
+/* PARTÍCULAS */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: floatParticle linear infinite;
+}
+@keyframes floatParticle {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+  50%  { opacity: 1; }
+  100% { transform: translateY(-80px) rotate(180deg); opacity: 0; }
+}
+
+/* CARD — entrada spring */
+.recuperar-card {
+  background: var(--color-bg-white);
+  border-radius: 16px;
+  padding: 44px 36px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  opacity: 0;
+  transform: translateY(32px) scale(0.97);
+  animation: cardEntrada 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.15s;
+}
+@keyframes cardEntrada {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* FLIP al éxito */
+.recuperar-card.flip-out {
+  animation: flipOut 0.35s ease forwards;
+}
+.recuperar-card.flip-in {
+  animation: flipIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+@keyframes flipOut {
+  to { opacity: 0; transform: scale(0.85) rotateY(15deg); }
+}
+@keyframes flipIn {
+  from { opacity: 0; transform: scale(0.85) rotateY(-15deg); }
+  to   { opacity: 1; transform: scale(1) rotateY(0); }
+}
+
+/* ICONO sobre */
+.recuperar-icon-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #FFF8E1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  opacity: 0;
+  transform: scale(0.5) translateY(10px);
+  animation: iconPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.6s;
+  transition: transform 0.2s ease;
+}
+.recuperar-icon-wrap:hover {
+  transform: translateY(-4px) scale(1.05);
+}
+.recuperar-icon-wrap svg {
+  width: 30px;
+  height: 30px;
+  stroke: var(--color-primary-dark);
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@keyframes iconPop {
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* TEXTOS */
+.recuperar-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards 0.75s;
+}
+.recuperar-subtitle {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards 0.88s;
+}
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* FORM GROUP */
+.recuperar-form-group {
+  text-align: left;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeUp 0.5s ease forwards 0.98s;
+}
+
+/* INPUT focus animado */
+.input {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+}
+.input:focus {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(255, 212, 96, 0.25) !important;
+  outline: none;
+}
+
+/* BOTÓN con barra de progreso */
+.recuperar-btn-wrap {
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards 1.08s;
+  position: relative;
+}
+.btn {
+  position: relative;
+  overflow: hidden;
+}
+.recuperar-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 0 0 50px 50px;
+  width: 0;
+}
+.recuperar-progress.running {
+  width: 100%;
+  transition: width 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* RIPPLE */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(0);
+  animation: ripple-anim 0.5s ease-out;
+  pointer-events: none;
+}
+@keyframes ripple-anim {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* LINK REGRESAR */
+.recuperar-link-back {
+  display: block;
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--color-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards 1.15s;
+  transition: color 0.2s ease;
+}
+.recuperar-link-back:hover {
+  color: var(--color-secondary-dark);
+}
+
+/* ÉXITO */
+.recuperar-success {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.recuperar-success-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #EAF3DE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  animation: iconPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+.recuperar-success-icon svg {
+  width: 32px;
+  height: 32px;
+  stroke: var(--color-success);
+  stroke-width: 2.5;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.checkmark {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: drawCheck 0.5s ease forwards 0.3s;
+}
+@keyframes drawCheck {
+  to { stroke-dashoffset: 0; }
+}
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+  .recuperar-card {
+    padding: 36px 24px;
+  }
+  .recuperar-title { font-size: 20px; }
+}

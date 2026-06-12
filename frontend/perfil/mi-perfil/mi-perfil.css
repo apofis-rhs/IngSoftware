@@ -1,1 +1,33 @@
-/* mi perfil - estilos especificos */
+.perfil-card{
+    display:flex;
+    gap:2rem;
+    align-items:flex-start;
+}
+
+.perfil-info{
+    flex:1;
+}
+
+.perfil-info p{
+    margin-bottom:0.5rem;
+}
+
+.perfil-actions{
+    margin-top:1.5rem;
+    display:flex;
+    gap:1rem;
+    flex-wrap:wrap;
+}
+
+@media (max-width:768px){
+
+    .perfil-card{
+        flex-direction:column;
+        align-items:center;
+        text-align:center;
+    }
+
+    .perfil-actions{
+        justify-content:center;
+    }
+}

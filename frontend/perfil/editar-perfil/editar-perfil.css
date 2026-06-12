@@ -1,1 +1,24 @@
-/* editar perfil - estilos especificos */
+/* EDITAR PERFIL */
+
+.card {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#btnGuardar {
+    margin-top: 1rem;
+}
+
+#mensaje {
+    margin-top: 1rem;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+
+    .card {
+        max-width: 100%;
+    }
+
+}

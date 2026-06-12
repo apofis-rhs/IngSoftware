@@ -3,13 +3,83 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA</title>
+  <title>LUMIKA — Recuperar contraseña</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
   <link rel="stylesheet" href="./recuperar-contrasena.css">
 </head>
 <body>
-  <script type="module" src="./recuperar-contrasena.js"></script>
+
+  <nav class="navbar">
+    <a class="navbar__logo" href="../../inicio/inicio.html">
+      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
+      <span class="navbar__logo-text">LUMIKA</span>
+    </a>
+  </nav>
+
+  <main class="page-wrapper recuperar-wrapper" id="wrapper">
+
+    <!-- Partículas — generadas por JS -->
+
+    <div class="recuperar-card" id="card">
+
+      <!-- FORMULARIO -->
+      <div id="form-view">
+        <div class="recuperar-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="M2 7l10 7 10-7"/>
+          </svg>
+        </div>
+
+        <h2 class="recuperar-title">Recuperar contraseña</h2>
+        <p class="recuperar-subtitle">Ingresa tu correo y te enviaremos instrucciones para restablecer tu contraseña.</p>
+
+        <div id="alerta-error" class="alerta alerta--error hidden" style="margin-bottom:16px;text-align:left">
+          <span id="alerta-texto"></span>
+        </div>
+
+        <div class="form-group recuperar-form-group">
+          <label class="form-label" for="input-correo">Correo electrónico</label>
+          <input id="input-correo" class="input" type="email" placeholder="correo@ejemplo.com" autocomplete="email">
+          <span id="error-correo" class="form-error hidden">Ingresa tu correo electrónico</span>
+        </div>
+
+        <div class="recuperar-btn-wrap">
+          <button class="btn btn-success" id="btn-enviar" type="button" style="width:100%">
+            <span id="btn-texto">Enviar instrucciones</span>
+            <span id="btn-loading" class="hidden">Enviando...</span>
+            <div class="recuperar-progress" id="progress"></div>
+          </button>
+        </div>
+
+        <a href="../login/login.html" class="recuperar-link-back">
+          ← Volver al inicio de sesión
+        </a>
+      </div>
+
+      <!-- PANTALLA DE ÉXITO -->
+      <div class="recuperar-success" id="success-view">
+        <div class="recuperar-success-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline class="checkmark" points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <h2 class="recuperar-title" style="opacity:1;animation:none">¡Revisa tu correo!</h2>
+        <p class="recuperar-subtitle" style="opacity:1;animation:none">
+          Te enviamos las instrucciones para restablecer tu contraseña. Revisa también tu carpeta de spam.
+        </p>
+        <a href="../login/login.html" class="recuperar-link-back" style="opacity:1;animation:none">
+          ← Volver al inicio de sesión
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="./recuperar-contrasena.js"></script>
 </body>
 </html>

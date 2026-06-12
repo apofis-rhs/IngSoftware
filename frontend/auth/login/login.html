@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA — Iniciar sesión</title>
+  <title>LUMIKA — Iniciar Sesión / Registro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
@@ -11,54 +13,104 @@
 </head>
 <body>
 
-  <!-- NAVBAR (sin login: botones Iniciar sesión / Registrarse) -->
   <nav class="navbar">
     <a class="navbar__logo" href="../../inicio/inicio.html">
       <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
       <span class="navbar__logo-text">LUMIKA</span>
     </a>
-    <div class="navbar__actions">
-      <a href="./login.html"                    class="navbar__btn navbar__btn--active">Iniciar sesión</a>
-      <a href="../registro/registro.html"        class="navbar__btn navbar__btn--outline">Registrarse</a>
-    </div>
   </nav>
 
-  <!-- CONTENIDO CENTRADO -->
-  <main class="main-centered">
-    <div class="login-card">
+  <main class="page-wrapper auth-wrapper">
 
-      <h2 class="login-card__title">Iniciar sesión</h2>
+    <!-- Puntos flotantes -->
+    <span class="dot-auth dot-auth-1" aria-hidden="true"></span>
+    <span class="dot-auth dot-auth-2" aria-hidden="true"></span>
 
-      <!-- Alerta de error global -->
-      <div id="alerta-error" class="alerta alerta--error hidden">
-        <span id="alerta-texto"></span>
+    <div class="contenedor__todo">
+
+      <div class="caja__trasera">
+        <div class="caja__trasera-login">
+          <h3>¿Ya tienes una cuenta?</h3>
+          <p>Inicia sesión para cuidar al planeta.</p>
+          <button class="btn btn-outline" id="btn-mostrar-login">Iniciar Sesión</button>
+        </div>
+        <div class="caja__trasera-register">
+          <h3>¿Aún no tienes una cuenta?</h3>
+          <p>Regístrate y descubre alternativas sustentables.</p>
+          <button class="btn btn-outline" id="btn-mostrar-registro">Registrarse</button>
+        </div>
       </div>
 
-      <!-- Campo Usuario -->
-      <div class="form-group">
-        <input id="usuario" class="input" type="text"
-               placeholder="Usuario" autocomplete="username">
-        <span id="error-usuario" class="form-error hidden">Ingresa tu usuario</span>
+      <div class="contenedor__login-register card" id="caja-blanca">
+
+        <!-- FORMULARIO LOGIN -->
+        <form action="" class="formulario__login" id="form-login">
+          <h2 class="card__title" style="margin-bottom:20px;font-size:24px">Iniciar Sesión</h2>
+
+          <div id="alerta-error" class="alerta alerta--error hidden" style="margin-bottom:16px">
+            <span id="alerta-texto"></span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="usuario">Usuario</label>
+            <input id="usuario" class="input" type="text" placeholder="usuario123" autocomplete="username">
+            <span id="error-usuario" class="form-error hidden">Ingresa tu usuario</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="contrasena">Contraseña</label>
+            <input id="contrasena" class="input" type="password" placeholder="••••••••" autocomplete="current-password">
+            <span id="error-contrasena" class="form-error hidden">Ingresa tu contraseña</span>
+          </div>
+
+          <button id="btn-login" class="btn btn-primary" type="button" style="width:100%;margin-top:8px">
+            <span id="btn-texto">Ingresar</span>
+            <span id="btn-loading" class="hidden">Cargando...</span>
+          </button>
+
+          <a href="../recuperar-contrasena/recuperar-contrasena.html" class="link-recuperar" style="display:block;margin-top:20px">
+            ¿Olvidaste tu contraseña?
+          </a>
+        </form>
+
+        <!-- FORMULARIO REGISTRO -->
+        <form action="" class="formulario__register" id="form-register">
+          <h2 class="card__title" style="margin-bottom:20px;font-size:24px">Registrarse</h2>
+
+          <div id="alerta-reg-error" class="alerta alerta--error hidden" style="margin-bottom:12px">
+            <span id="alerta-reg-texto"></span>
+          </div>
+          <div id="alerta-reg-success" class="alerta alerta--success hidden" style="margin-bottom:12px">
+            ¡Cuenta creada! Redirigiendo al login...
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nombre completo</label>
+            <input id="reg-nombre" class="input" type="text" placeholder="Ej. Ana García">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Correo electrónico</label>
+            <input id="reg-correo" class="input" type="email" placeholder="correo@ejemplo.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Usuario</label>
+            <input id="reg-usuario" class="input" type="text" placeholder="usuario123">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contraseña</label>
+            <input id="reg-contrasena" class="input" type="password" placeholder="••••••••">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirmar contraseña</label>
+            <input id="reg-contrasena2" class="input" type="password" placeholder="••••••••">
+          </div>
+
+          <button id="btn-registro" class="btn btn-primary" type="button" style="width:100%;margin-top:8px">
+            Crear cuenta
+          </button>
+        </form>
+
       </div>
-
-      <!-- Campo Contraseña -->
-      <div class="form-group">
-        <input id="contrasena" class="input" type="password"
-               placeholder="Contraseña" autocomplete="current-password">
-        <span id="error-contrasena" class="form-error hidden">Ingresa tu contraseña</span>
-      </div>
-
-      <!-- Botón Ingresar -->
-      <button id="btn-login" class="btn btn-primary btn-full" type="button">
-        <span id="btn-texto">Ingresar</span>
-        <span id="btn-loading" class="hidden">Cargando...</span>
-      </button>
-
-      <!-- Link recuperar -->
-      <a href="../recuperar-contrasena/recuperar-contrasena.html" class="login-card__link">
-        ¿Olvidaste tu contraseña?
-      </a>
-
     </div>
   </main>
 
