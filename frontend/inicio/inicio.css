@@ -1,1 +1,190 @@
-/* inicio - estilos especificos */
+/* Agrega esto a tu inicio.css */
+.hero-right .btn {
+  transition: all 0.3s ease; /* Hace que el cambio no sea de golpe, sino suave */
+}
+
+.hero-right .btn:hover {
+  transform: translateY(-4px); /* El botón "sube" 4 píxeles */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Crea una sombra suave */
+}
+
+.hero-right .btn:active {
+  transform: translateY(1px); /* Al hacer clic, da la sensación de hundirse */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+
+/* inicio.css — estilos específicos de esta pantalla */
+
+.page-wrapper {
+  position: relative;
+  min-height: calc(100vh - 60px);
+  display: flex;
+  align-items: center;
+  padding: 48px 48px;
+}
+
+/* PUNTOS FLOTANTES */
+.dot {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  position: absolute;
+  animation: float 3s ease-in-out infinite;
+}
+.dot-1 {
+  background-color: var(--color-primary);
+  top: 32px;
+  left: 32px;
+  animation-delay: 0s;
+}
+.dot-2 {
+  background-color: var(--color-success);
+  top: 32px;
+  right: 32px;
+  animation-delay: 1s;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+/* LAYOUT DESKTOP */
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  max-width: 100%;
+  width: 100%;
+}
+
+/* IZQUIERDA */
+.hero-left {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.6s ease forwards 0.2s;
+}
+
+.hero-title {
+  font-size: 42px;
+  font-weight: 900;
+  color: var(--color-text-primary);
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+.hero-line-1 {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 0.5s ease forwards 0.3s;
+}
+.hero-line-2 {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 0.5s ease forwards 0.55s;
+}
+.hero-line-1, .hero-line-2 {
+  font-size: 3rem; /* Ajusta este valor a tu gusto */
+}
+
+.hero-desc {
+  font-size: 18px;
+  color: var(--color-text-muted);
+  line-height: 1.75;
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards 0.8s;
+}
+
+/* DERECHA — botones */
+.hero-right {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards 1s;
+}
+
+/* Hacer los botones más grandes en esta pantalla */
+.hero-right .btn {
+  width: 100%;
+  max-width: 260px;
+  padding: 16px 24px;
+  font-size: 15px;
+  border-radius: 50px;
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* RESPONSIVE — móvil */
+@media (max-width: 600px) {
+  .page-wrapper {
+    padding: 40px 24px; /* Aumentamos el padding top para que los puntos no tapen el texto */
+    align-items: center;
+  }
+  
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 24px; /* Reducimos un poco la separación entre texto y botones */
+    text-align: center;
+  }
+
+  /* Ajuste del título para móvil */
+  .hero-line-1, .hero-line-2 {
+    font-size: 2.5rem; /* Hacemos la letra más pequeña solo en móvil */
+  }
+
+  .hero-desc { 
+    font-size: 16px; /* Texto descriptivo ligeramente más pequeño para mejor lectura */
+    padding: 0 10px; /* Un pequeño margen lateral para que no toque las orillas */
+  }
+  
+  .hero-right { 
+    align-items: center; 
+    width: 100%;
+  }
+
+  /* Botones ocupando el ancho completo del contenedor (como en tu imagen) */
+  .hero-right .btn { 
+    width: 100%; 
+    max-width: 260px; 
+    padding: 18px 24px; /* Un poco más altos para que sean más fáciles de tocar */
+  }
+
+  /* Ajuste de los puntos flotantes para que no se vean gigantes en móvil */
+  .dot {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .dot-1 {
+    top: 24px;
+    left: 24px;
+  }
+  
+  .dot-2 {
+    top: 24px;
+    right: 24px;
+  }
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(175, 204, 54, 0.5); } /* Asumiendo que es tu color verde */
+  70% { box-shadow: 0 0 0 12px rgba(175, 204, 54, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(175, 204, 54, 0); }
+}
+
+#btn-login {
+  animation: pulseGlow 2.5s infinite;
+}
+
+#btn-login:hover {
+  animation: none; /* Detenemos el pulso si le pasan el cursor */
+  transform: scale(1.05); /* Lo hacemos un poquito más grande */
+}
+

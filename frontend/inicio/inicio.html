@@ -4,12 +4,55 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LUMIKA</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="../assets/css/variables.css">
   <link rel="stylesheet" href="../assets/css/base.css">
   <link rel="stylesheet" href="../assets/css/components.css">
   <link rel="stylesheet" href="./inicio.css">
 </head>
 <body>
-  <script type="module" src="./inicio.js"></script>
+
+  <!-- NAVBAR sin login -->
+  <nav class="navbar">
+    <a class="navbar__logo" href="#">
+      <img class="navbar__logo-img" src="../assets/img/logo.png" alt="LUMIKA">
+      <span class="navbar__logo-text">LUMIKA</span>
+    </a>
+  </nav>
+
+
+
+
+  <div class="page-wrapper">
+
+    <span class="dot dot-1" aria-hidden="true"></span>
+    <span class="dot dot-2" aria-hidden="true"></span>
+
+    
+    <div class="hero-inner">
+
+      <div class="hero-left">
+        <h1 class="hero-title">
+          
+          <span class="hero-line-1">Cuídate tú,</span><br>
+          <span class="hero-line-2">cuida al planeta.</span>
+        </h1>
+        <p class="hero-desc">
+          LUMIKA es una plataforma digital que te ayuda a tomar decisiones
+          de compra más conscientes en el mundo del cuidado personal.
+          Porque cuidar tu piel no debería costarle nada al planeta.
+        </p>
+      </div>
+
+      <div class="hero-right">
+        <button class="btn btn-success" id="btn-login">Iniciar sesión</button>
+        <button class="btn btn-danger" id="btn-registro">Registrarse</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="./inicio.js"></script>
 </body>
 </html>
