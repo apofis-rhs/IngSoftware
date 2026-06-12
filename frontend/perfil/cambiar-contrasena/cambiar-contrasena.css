@@ -1,1 +1,20 @@
-/* cambiar contrasena - estilos especificos */
+.card {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#btnCambiar {
+    margin-top: 1rem;
+}
+
+#mensaje {
+    margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+
+    .card {
+        max-width: 100%;
+    }
+
+}

@@ -1,15 +1,120 @@
 <!DOCTYPE html>
+
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA</title>
+
+  <title>LUMIKA - Evaluación</title>
+
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
   <link rel="stylesheet" href="./evaluacion.css">
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body>
-  <script type="module" src="./evaluacion.js"></script>
+
+  <!-- NAVBAR -->
+
+  <nav class="navbar">
+    <a class="navbar__logo" href="../../inicio/inicio.html">
+      <span class="navbar__logo-text">LUMIKA</span>
+    </a>
+
+```
+<div class="navbar__links hide-mobile">
+
+  <a href="../../inicio/inicio.html"
+     class="navbar__link">
+     Inicio
+  </a>
+
+  <a href="../mi-perfil/mi-perfil.html"
+     class="navbar__link">
+     Perfil
+  </a>
+
+  <a href="../favoritos/favoritos.html"
+     class="navbar__link">
+     Favoritos
+  </a>
+
+</div>
+```
+
+  </nav>
+
+  <!-- CONTENIDO -->
+
+  <main class="page-wrapper">
+
+```
+<div class="page-header">
+
+  <a href="javascript:history.back()"
+     class="btn-back"></a>
+
+  <span class="page-header__title">
+    Evaluar Producto
+  </span>
+
+</div>
+
+<div class="card">
+
+  <h3>¿Qué te pareció este producto?</h3>
+
+  <br>
+
+  <div class="stars" id="estrellas">
+
+    <span class="star" data-value="1">★</span>
+    <span class="star" data-value="2">★</span>
+    <span class="star" data-value="3">★</span>
+    <span class="star" data-value="4">★</span>
+    <span class="star" data-value="5">★</span>
+
+  </div>
+
+  <br>
+
+  <div class="form-group">
+
+    <label class="form-label">
+      Comentario
+    </label>
+
+    <textarea
+      id="comentario"
+      class="input"
+      rows="4"
+      placeholder="Comparte tu experiencia">
+    </textarea>
+
+  </div>
+
+  <button
+    id="btnEnviar"
+    class="btn btn-primary btn-full">
+
+    Enviar Evaluación
+
+  </button>
+
+  <div id="mensaje"></div>
+
+</div>
+```
+
+  </main>
+
+  <script type="module"
+          src="./evaluacion.js"></script>
+
 </body>
 </html>
