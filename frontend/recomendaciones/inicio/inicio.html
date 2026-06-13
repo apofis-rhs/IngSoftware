@@ -3,13 +3,233 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA</title>
+  <title>LUMIKA — Recomendaciones</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- CSS globales del proyecto -->
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
+
+  <!-- CSS propio de esta pantalla -->
   <link rel="stylesheet" href="./inicio.css">
 </head>
+
+
 <body>
-  <script type="module" src="./inicio.js"></script>
+
+  <!-- NAVBAR CON LOGIN -->
+<nav class="navbar">
+  <!-- Logo -->
+    <a href="../../inicio/inicio.html" class="navbar__logo">
+      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
+      <span class="navbar__logo-text">LUMIKA</span>
+    </a>
+
+  <!-- Links desktop -->
+  <div class="navbar__links hide-mobile">
+    <a href="../../inicio/inicio.html" class="navbar__link">
+      <i class="fa-solid fa-house"></i> Inicio
+    </a>
+    <a href="../../perfil/mi-perfil/mi-perfil.html" class="navbar__link">
+      <i class="fa-regular fa-user"></i> Perfil
+    </a>
+    <a href="../../buscador/inicio/inicio.html" class="navbar__link">
+      <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
+    </a>
+    <a href="../../recomendaciones/inicio/inicio.html" class="navbar__link navbar__link--active">
+      <i class="fa-solid fa-plus"></i> Recomendaciones
+    </a>
+    <a href="../../perfil/favoritos/favoritos.html" class="navbar__link">
+      <i class="fa-regular fa-star"></i> Mis Favoritos
+    </a>
+    <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger">
+      <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+    </a>
+  </div>
+
+  <!-- Hamburguesa móvil -->
+  <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</nav>
+
+  <!-- DRAWER MÓVIL -->
+  <div class="nav-drawer" id="nav-drawer">
+    <a href="../../inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-house"></i> Inicio
+    </a>
+
+    <a href="../../perfil/mi-perfil/mi-perfil.html" class="nav-drawer__link">
+      <i class="fa-regular fa-user"></i> Perfil
+    </a>
+
+    <a href="../../buscador/inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
+    </a>
+
+    <a href="../../recomendaciones/inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-plus"></i> Recomendaciones
+    </a>
+
+    <a href="../../perfil/favoritos/favoritos.html" class="nav-drawer__link">
+      <i class="fa-regular fa-star"></i> Mis Favoritos
+    </a>
+
+    <div class="nav-drawer__divider"></div>
+
+    <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger">
+      <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+    </a>
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="page-wrapper recomendaciones-page">
+
+    <section class="recomendaciones-hero">
+  <h1 class="recomendaciones-title">Recomendaciones</h1>
+
+  <form class="recomendaciones-search" id="form-recomendaciones">
+    <div class="search-bar recomendaciones-search__bar">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input 
+        type="text" 
+        id="input-recomendacion" 
+        placeholder="Recomendar productos..."
+        autocomplete="off"
+      >
+    </div>
+  </form>
+</section>
+
+    <section class="recomendaciones-section">
+      <h2 class="recomendaciones-section__title">Recomendados</h2>
+
+      <div class="product-grid recomendaciones-grid">
+
+        <article class="product-card-grid recomendacion-card" data-producto="Shampoo X">
+          <div class="product-card-grid__img">
+            <img src="../../img/product-placeholder.png" alt="Shampoo X" class="recomendacion-card__image">
+            <span class="product-card-grid__dot semaforo-verde"></span>
+          </div>
+
+          <div class="product-card-grid__info">
+            <h3 class="product-card-grid__name">Shampoo X</h3>
+            <p class="product-card-grid__price">$80 - $120</p>
+          </div>
+        </article>
+
+        <article class="product-card-grid recomendacion-card" data-producto="Crema Y">
+          <div class="product-card-grid__img">
+            <img src="../../img/product-placeholder.png" alt="Crema Y" class="recomendacion-card__image">
+            <span class="product-card-grid__dot semaforo-verde"></span>
+          </div>
+
+          <div class="product-card-grid__info">
+            <h3 class="product-card-grid__name">Crema Y</h3>
+            <p class="product-card-grid__price">$150 - $200</p>
+          </div>
+        </article>
+
+        <article class="product-card-grid recomendacion-card" data-producto="Jabón Z">
+          <div class="product-card-grid__img">
+            <img src="../../img/product-placeholder.png" alt="Jabón Z" class="recomendacion-card__image">
+            <span class="product-card-grid__dot semaforo-verde"></span>
+          </div>
+
+          <div class="product-card-grid__info">
+            <h3 class="product-card-grid__name">Jabón Z</h3>
+            <p class="product-card-grid__price">$40 - $60</p>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <section class="recomendaciones-section">
+      <h2 class="recomendaciones-section__title">Más populares</h2>
+
+      <div class="product-grid recomendaciones-grid">
+
+        <article class="product-card-grid recomendacion-card" data-producto="Jabón Z">
+          <div class="product-card-grid__img">
+            <img src="../../img/product-placeholder.png" alt="Jabón Z" class="recomendacion-card__image">
+            <span class="product-card-grid__dot semaforo-verde"></span>
+          </div>
+
+          <div class="product-card-grid__info">
+            <h3 class="product-card-grid__name">Jabón Z</h3>
+            <p class="product-card-grid__price">$40 - $60</p>
+          </div>
+        </article>
+
+        <article class="product-card-grid recomendacion-card" data-producto="Tónico W">
+          <div class="product-card-grid__img">
+            <img src="../../img/product-placeholder.png" alt="Tónico W" class="recomendacion-card__image">
+            <span class="product-card-grid__dot semaforo-verde"></span>
+          </div>
+
+          <div class="product-card-grid__info">
+            <h3 class="product-card-grid__name">Tónico W</h3>
+            <p class="product-card-grid__price">$200 - $300</p>
+          </div>
+        </article>
+
+        <article class="product-card-grid recomendacion-card" data-producto="Shampoo W">
+          <div class="product-card-grid__img">
+            <img src="../../img/product-placeholder.png" alt="Shampoo W" class="recomendacion-card__image">
+            <span class="product-card-grid__dot semaforo-amarillo"></span>
+          </div>
+
+          <div class="product-card-grid__info">
+            <h3 class="product-card-grid__name">Shampoo W</h3>
+            <p class="product-card-grid__price">$40 - $60</p>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script src="./inicio.js"></script>
+
+  <script>
+    const hamburger = document.getElementById('hamburger');
+    const navDrawer = document.getElementById('nav-drawer');
+
+    if (hamburger) {
+      hamburger.addEventListener('click', () => navDrawer.classList.toggle('open'));
+
+      document.addEventListener('click', (e) => {
+        if (!hamburger.contains(e.target) && !navDrawer.contains(e.target)) {
+          navDrawer.classList.remove('open');
+        }
+      });
+
+      window.addEventListener('resize', () => {
+        if (window.innerWidth >= 769) {
+          navDrawer.classList.remove('open');
+        }
+      });
+    }
+
+    ['btn-cerrar-sesion', 'btn-cerrar-sesion-mobile'].forEach(id => {
+      const btn = document.getElementById(id);
+
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          localStorage.removeItem('token');
+          localStorage.removeItem('usuario');
+          window.location.href = '../../auth/login/login.html';
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>

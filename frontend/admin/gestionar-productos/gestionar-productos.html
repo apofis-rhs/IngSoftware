@@ -3,13 +3,137 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA</title>
+  <title>LUMIKA — Gestionar Productos</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
   <link rel="stylesheet" href="./gestionar-productos.css">
 </head>
 <body>
-  <script type="module" src="./gestionar-productos.js"></script>
+
+  <nav class="navbar-admin">
+    <div class="navbar-admin__brand">
+      <img src="../../assets/img/logo.png" alt="LUMIKA" class="navbar-admin__logo">
+      <span class="navbar-admin__title">LUMIKA</span>
+      <span class="navbar-admin__badge">Admin</span>
+    </div>
+
+    <div class="navbar-admin__links hide-mobile">
+      <a href="../dashboard/dashboard.html" class="nav-item active">
+        <i class="fa-solid fa-house"></i>
+        <span>Panel Administrador</span>
+      </a>
+      <a href="../agregar-producto/agregar-producto.html" class="nav-item">
+        <i class="fa-solid fa-plus"></i>
+        <span>Agregar Producto</span>
+      </a>
+      <a href="./gestionar-productos.html" class="nav-item">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <span>Editar Producto</span>
+      </a>
+      <a href="./gestionar-productos.html" class="nav-item">
+        <i class="fa-solid fa-eye"></i>
+        <span>Visualizar Producto</span>
+      </a>
+      <a href="./gestionar-productos.html" class="nav-item">
+        <i class="fa-solid fa-trash"></i>
+        <span>Eliminar Producto</span>
+      </a>
+      <a href="#" id="btn-cerrar-sesion" class="nav-item logout">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Cerrar Sesión</span>
+      </a>
+    </div>
+
+    <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <main class="page-wrapper">
+    <div class="management-container">
+      
+      <div class="search-bar-container">
+        <input type="text" class="search-input" id="product-search" placeholder="Buscar producto...">
+      </div>
+
+      <div class="products-list" id="products-list-container">
+        
+        <div class="product-item" data-id="1">
+          <div class="product-info">
+            <span class="status-indicator status--red"></span>
+            <span class="product-name">Head & Shoulders</span>
+          </div>
+          <div class="product-actions">
+            <button class="btn-action btn-action--edit" onclick="redirigirEditar(1)">E</button>
+            <button class="btn-action btn-action--delete" onclick="abrirModalEliminar(1)">✕</button>
+          </div>
+        </div>
+
+        <div class="product-item" data-id="2">
+          <div class="product-info">
+            <span class="status-indicator status--green"></span>
+            <span class="product-name">Love Beauty Planet</span>
+          </div>
+          <div class="product-actions">
+            <button class="btn-action btn-action--edit" onclick="redirigirEditar(2)">E</button>
+            <button class="btn-action btn-action--delete" onclick="abrirModalEliminar(2)">✕</button>
+          </div>
+        </div>
+
+        <div class="product-item" data-id="3">
+          <div class="product-info">
+            <span class="status-indicator status--orange"></span>
+            <span class="product-name">Dove shampoo</span>
+          </div>
+          <div class="product-actions">
+            <button class="btn-action btn-action--edit" onclick="redirigirEditar(3)">E</button>
+            <button class="btn-action btn-action--delete" onclick="abrirModalEliminar(3)">✕</button>
+          </div>
+        </div>
+
+        <div class="product-item" data-id="4">
+          <div class="product-info">
+            <span class="status-indicator status--green"></span>
+            <span class="product-name">Rahua</span>
+          </div>
+          <div class="product-actions">
+            <button class="btn-action btn-action--edit" onclick="redirigirEditar(4)">E</button>
+            <button class="btn-action btn-action--delete" onclick="abrirModalEliminar(4)">✕</button>
+          </div>
+        </div>
+
+        <div class="product-item" data-id="5">
+          <div class="product-info">
+            <span class="status-indicator status--orange"></span>
+            <span class="product-name">Pantene</span>
+          </div>
+          <div class="product-actions">
+            <button class="btn-action btn-action--edit" onclick="redirigirEditar(5)">E</button>
+            <button class="btn-action btn-action--delete" onclick="abrirModalEliminar(5)">✕</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="back-container">
+        <a href="../dashboard/dashboard.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Regresar</a>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="delete-modal">
+      <div class="modal-box">
+        <h3>¿Estás seguro de eliminar el producto permanentemente?</h3>
+        <div class="modal-buttons">
+          <button class="btn-modal btn-modal--yes" id="confirm-delete-btn">SÍ</button>
+          <button class="btn-modal btn-modal--no" id="cancel-delete-btn">NO</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="./gestionar-productos.js"></script>
 </body>
 </html>

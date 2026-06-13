@@ -3,13 +3,152 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA</title>
+  <title>LUMIKA — Detalle del Producto</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- CSS globales -->
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
+
+  <!-- CSS propio de esta pantalla -->
   <link rel="stylesheet" href="./detalle-articulo.css">
 </head>
+
 <body>
-  <script type="module" src="./detalle-articulo.js"></script>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <!-- Logo -->
+    <a href="../../inicio/inicio.html" class="navbar__logo">
+      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
+      <span class="navbar__logo-text">LUMIKA</span>
+    </a>
+
+    <!-- Links desktop -->
+    <div class="navbar__links hide-mobile">
+      <a href="../../inicio/inicio.html" class="navbar__link">
+        <i class="fa-solid fa-house"></i> Inicio
+      </a>
+      <a href="../../perfil/mi-perfil/mi-perfil.html" class="navbar__link">
+        <i class="fa-regular fa-user"></i> Perfil
+      </a>
+      <a href="../../buscador/inicio/inicio.html" class="navbar__link">
+        <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
+      </a>
+      <a href="../inicio/inicio.html" class="navbar__link navbar__link--active">
+        <i class="fa-solid fa-plus"></i> Recomendaciones
+      </a>
+      <a href="../../perfil/favoritos/favoritos.html" class="navbar__link">
+        <i class="fa-regular fa-star"></i> Mis Favoritos
+      </a>
+      <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger">
+        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+      </a>
+    </div>
+
+    <!-- Hamburguesa móvil -->
+    <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- DRAWER MÓVIL -->
+  <div class="nav-drawer" id="nav-drawer">
+    <a href="../../inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-house"></i> Inicio
+    </a>
+    <a href="../../perfil/mi-perfil/mi-perfil.html" class="nav-drawer__link">
+      <i class="fa-regular fa-user"></i> Perfil
+    </a>
+    <a href="../../buscador/inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
+    </a>
+    <a href="../inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-plus"></i> Recomendaciones
+    </a>
+    <a href="../../perfil/favoritos/favoritos.html" class="nav-drawer__link">
+      <i class="fa-regular fa-star"></i> Mis Favoritos
+    </a>
+
+    <div class="nav-drawer__divider"></div>
+
+    <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger">
+      <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+    </a>
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="page-wrapper detalle-page">
+
+    <!-- Encabezado de detalle -->
+    <header class="detalle-header">
+      <button class="detalle-header__back" id="btn-volver-resultados" aria-label="Volver">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+
+      <h1 class="detalle-header__title">Detalle del Producto</h1>
+
+      <button class="detalle-header__fav" id="btn-favorito" aria-label="Marcar como favorito">
+        <i class="fa-regular fa-star"></i>
+      </button>
+    </header>
+
+    <!-- Contenido del producto -->
+    <section class="detalle-card">
+      <!-- Nombre + estrella -->
+      <div class="detalle-card__nombre">
+        <h2 class="detalle-card__title">Rastrillo Plástico</h2>
+        <i class="fa-regular fa-star detalle-card__title-star" id="icon-star"></i>
+      </div>
+
+      <!-- Alerta rosa -->
+      <div class="detalle-alerta">
+        Rastrillo: Contiene microplásticos y tarda en deteriorarse.
+      </div>
+
+      <!-- Precio -->
+      <div class="detalle-row">
+        <span class="detalle-row__label">Precio</span>
+        <span class="detalle-row__value">$10 - $30</span>
+      </div>
+
+      <!-- Características -->
+      <div class="detalle-section">
+        <h3 class="detalle-section__title">Características</h3>
+        <p class="detalle-section__text">
+          Además de dañar la piel del cuerpo, incorpora bandas con ingredientes como Aloe Vera,
+          vitamina E y aceites botánicos para mejorar la experiencia de uso.
+        </p>
+      </div>
+
+      <!-- Desventajas ecológicas -->
+      <div class="detalle-section">
+        <h3 class="detalle-section__title">Desventajas ecológicas</h3>
+        <p class="detalle-section__text">
+          Cerca del 80% de estos datos se desechan más de 2,000 millones de rastrillos al año.
+        </p>
+      </div>
+
+      <!-- Círculos (impactos / clasificación visual) -->
+      <div class="detalle-circulos">
+        <div class="detalle-circulo detalle-circulo--malo"></div>
+        <div class="detalle-circulo detalle-circulo--medio"></div>
+        <div class="detalle-circulo detalle-circulo--neutral"></div>
+      </div>
+
+        <a href="../resultados/resultados.html" class="btn-back">
+          Regresar
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- JS propio -->
+  <script src="./detalle-articulo.js"></script>
 </body>
 </html>

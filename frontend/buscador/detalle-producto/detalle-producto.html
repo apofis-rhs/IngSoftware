@@ -3,13 +3,103 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA</title>
+  <title>LUMIKA — Detalle Producto</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
   <link rel="stylesheet" href="./detalle-producto.css">
 </head>
 <body>
+  <nav class="navbar">
+    <a class="navbar__logo" href="../../inicio/inicio.html">
+      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
+      <span class="navbar__logo-text">LUMIKA</span>
+    </a>
+    <div class="navbar__links hide-mobile">
+      <a href="../../inicio/inicio.html" class="navbar__link"><i class="fa-solid fa-house"></i> Inicio</a>
+      <a href="../../perfil/mi-perfil/mi-perfil.html" class="navbar__link"><i class="fa-regular fa-user"></i> Perfil</a>
+      <a href="../../buscador/inicio/inicio.html" class="navbar__link navbar__link--active"><i class="fa-solid fa-magnifying-glass"></i> Búsqueda</a>
+      <a href="../../recomendaciones/inicio/inicio.html" class="navbar__link"><i class="fa-solid fa-plus"></i> Recomendaciones</a>
+      <a href="../../perfil/favoritos/favoritos.html" class="navbar__link"><i class="fa-regular fa-star"></i> Mis Favoritos</a>
+      <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+    </div>
+    <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
+      <span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="nav-drawer" id="nav-drawer">
+    <a href="../../inicio/inicio.html" class="nav-drawer__link"><i class="fa-solid fa-house"></i> Inicio</a>
+    <a href="../../perfil/mi-perfil/mi-perfil.html" class="nav-drawer__link"><i class="fa-regular fa-user"></i> Perfil</a>
+    <a href="../../buscador/inicio/inicio.html" class="nav-drawer__link"><i class="fa-solid fa-magnifying-glass"></i> Búsqueda</a>
+    <a href="../../recomendaciones/inicio/inicio.html" class="nav-drawer__link"><i class="fa-solid fa-plus"></i> Recomendaciones</a>
+    <a href="../../perfil/favoritos/favoritos.html" class="nav-drawer__link"><i class="fa-regular fa-star"></i> Mis Favoritos</a>
+    <div class="nav-drawer__divider"></div>
+    <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
+  </div>
+
+  <main class="page-wrapper">
+    <div id="loader" class="text-center" style="padding:var(--space-8)">
+      <p class="text-muted">Cargando producto...</p>
+    </div>
+
+    <div id="contenido-producto" class="hidden">
+      <div class="text-center" style="margin-bottom:var(--space-6)">
+        <h1 id="nombre-producto" class="text-h1" style="margin-bottom:var(--space-4)"></h1>
+        <div class="semaforo-dot" id="semaforo-dot" style="margin:0 auto var(--space-3); width:60px; height:60px; border-radius:50%"></div>
+        <p class="text-h3 text-bold" id="estado-evaluacion"></p>
+        <p class="text-muted" id="explicacion-semaforo" style="max-width:400px;margin:var(--space-2) auto 0"></p>
+      </div>
+
+      <div style="display:flex;gap:var(--space-3);margin-bottom:var(--space-6)">
+        <button class="btn btn--primary" id="btn-analisis" style="flex:1">
+          Ver Análisis
+        </button>
+        <button class="btn btn--secondary" id="btn-favorito" style="flex:1">
+          <i class="fa-regular fa-star"></i> Guardar
+        </button>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--space-6)">
+        <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-2)">
+          <span class="text-muted text-bold">Precio</span>
+          <span id="precio" class="text-bold"></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:var(--space-2)">
+          <span class="text-muted text-bold">Disponibilidad</span>
+          <span id="disponibilidad"></span>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span class="text-muted text-bold">Evaluado</span>
+          <span id="fecha-evaluacion"></span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:var(--space-8)">
+        <h3 class="text-h3" style="margin-bottom:var(--space-3)">Ingredientes</h3>
+        <div id="lista-ingredientes" style="display:flex;flex-direction:column;gap:var(--space-2)"></div>
+      </div>
+
+      <button class="btn-regresar" id="btn-regresar">
+        Regresar
+      </button>
+    </div>
+  </main>
+
   <script type="module" src="./detalle-producto.js"></script>
+  
+  <script>
+    const hamburger = document.getElementById('hamburger');
+    const navDrawer = document.getElementById('nav-drawer');
+    if (hamburger) {
+      hamburger.addEventListener('click', () => navDrawer.classList.toggle('open'));
+      document.addEventListener('click', (e) => {
+        if (!hamburger.contains(e.target) &&!navDrawer.contains(e.target)) {
+          navDrawer.classList.remove('open');
+        }
+      });
+    }
+  </script>
 </body>
 </html>

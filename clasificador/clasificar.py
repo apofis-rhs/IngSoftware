@@ -1,25 +1,22 @@
 # LUMIKA — clasificar.py
-# Script independiente para clasificar productos con Qwen (IA)
-# Cómo usar:
-#   1. Llena el .env con tus credenciales
-#   2. Instala dependencias: pip install openai psycopg2-binary python-dotenv
-#   3. Corre: python clasificar.py
-#   4. Ingresa el ID del producto a clasificar
+# Clasifica productos y artículos con Claude (Anthropic)
+# Uso: python clasificar.py
+# Requiere: pip install anthropic psycopg2-binary python-dotenv
 
 import os
 import json
 import psycopg2
-from openai import OpenAI
+import anthropic
 from dotenv import load_dotenv
 
 load_dotenv()
 
-QWEN_API_KEY = os.getenv("QWEN_API_KEY")
-DB_HOST      = os.getenv("DB_HOST")
-DB_PORT      = os.getenv("DB_PORT", "5432")
-DB_NAME      = os.getenv("DB_NAME")
-DB_USER      = os.getenv("DB_USER")
-DB_PASSWORD  = os.getenv("DB_PASSWORD")
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+DB_HOST           = os.getenv("DB_HOST")
+DB_PORT           = os.getenv("DB_PORT", "5432")
+DB_NAME           = os.getenv("DB_NAME")
+DB_USER           = os.getenv("DB_USER")
+DB_PASSWORD       = os.getenv("DB_PASSWORD")
 
 # ─────────────────────────────────────────
 # CONEXIÓN A RAILWAY
@@ -31,130 +28,83 @@ def conectar_bd():
     )
 
 # ─────────────────────────────────────────
-# OBTENER PRODUCTO
+# SYSTEM PROMPT
 # ─────────────────────────────────────────
-def obtener_producto(id_producto):
-    conn = conectar_bd()
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT p.id_producto, p.nombre_producto, s.nombre_subcategoria, c.nombre_categoria
-        FROM producto p
-        JOIN subcategoria s ON p.id_subcategoria = s.id_subcategoria
-        JOIN categoria c ON s.id_categoria = c.id_categoria
-        WHERE p.id_producto = %s
-    """, (id_producto,))
-    row = cur.fetchone()
-    cur.close()
-    conn.close()
-    if not row:
-        return None
-    return {"id_producto": row[0], "nombre": row[1], "subcategoria": row[2], "categoria": row[3]}
+SYSTEM_PROMPT = """Eres un auditor ambiental experto en productos de cuidado personal.
+Tu única función es evaluar productos basándote ESTRICTAMENTE en las siguientes normativas.
+Responde ÚNICAMENTE con un JSON válido, sin texto adicional, sin Markdown, sin prefijos.
+
+NORMATIVAS DE REFERENCIA OBLIGATORIAS:
+- Reglamento (CE) Nº 1223/2009 UE: lista de más de 1,600 sustancias prohibidas en cosméticos
+- Base de datos EWG Skin Deep: riesgo de ingredientes del 1 (bajo) al 10 (alto)
+- ECHA: detección de microplásticos añadidos (Polyethylene, Nylon-12, PMMA, Acrylates Copolymer)
+- Nomenclatura INCI: si la marca oculta ingredientes con nombres genéricos, es greenwashing
+- NOM-141-SSA1/SCFI-2012 México: etiquetado sanitario obligatorio
+- Directrices Ellen MacArthur: plástico reciclable SIN sistema refill NO es sustentable
+
+SISTEMA DE VETOS:
+- ROJO (veto automático si cualquiera se cumple):
+  * Ingredientes: parabenos, triclosán, ftalatos, SLS, SLES, Dimethicone, microplásticos
+  * Empaque: plástico virgen de un solo uso sin refill
+  * Greenwashing comprobado por organismos regulatorios
+- AMARILLO (ningún veto rojo pero alguna de estas):
+  * Fórmula sin riesgo alto PERO empaque plástico reciclable convencional
+  * Claims "natural" o "eco" sin certificación verificable
+  * Conservadores cuestionables (phenoxyethanol alto, BHT, BHA)
+- VERDE (debe cumplir TODOS):
+  * Fórmula limpia EWG score 1-3, sin derivados del petróleo
+  * Empaque zero-waste, vidrio, aluminio, compostable o refill
+  * Sin antecedentes de greenwashing verificados
+
+REGLAS DE SALIDA JSON:
+- Todos los precios en pesos mexicanos MXN como números sin símbolo
+- "color_semaforo": solo "verde", "amarillo" o "rojo"
+- "razon_clasificacion": máximo 3 líneas, técnico, en español
+- "caracteristicas": array máximo 4 strings
+- "ventajas": array de strings, vacío [] si es rojo
+- "desventajas": array de strings"""
 
 # ─────────────────────────────────────────
-# LLAMADA A QWEN
+# CLASIFICAR PRODUCTO
 # ─────────────────────────────────────────
-def clasificar_con_qwen(producto, ingredientes, empaque, certificaciones, info_ambiental):
-    client = OpenAI(
-        api_key=QWEN_API_KEY,
-        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
-    )
+def clasificar_producto(nombre, categoria, subcategoria, ingredientes):
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
-    system_prompt = """Eres un evaluador experto en sustentabilidad de productos de cuidado personal.
-Tu única función es analizar productos con base en una rúbrica fija y devolver un JSON estructurado.
-No das consejos, no opinas, no agregas texto fuera del JSON.
+    user_prompt = f"""Evalúa este producto de cuidado personal:
 
-TAREA:
-1. Evalúa cada uno de los 5 criterios como "cumple", "parcial" o "no cumple"
-2. Calcula el color del semáforo según las reglas
-3. Redacta una razón de clasificación breve (máx 2 oraciones, en español)
-4. Lista ventajas y desventajas ecológicas encontradas (en español)
-5. Responde ÚNICAMENTE con el JSON indicado, sin texto adicional
+Nombre/Marca: {nombre}
+Categoría: {categoria}
+Subcategoría: {subcategoria}
 
-REGLAS DEL SEMÁFORO:
-- verde:        cumple 4 o 5 criterios
-- amarillo:     cumple 2 o 3 criterios
-- rojo:         cumple 0 o 1 criterios
-- insuficiente: no hay información suficiente para evaluar 3 o más criterios
-Un criterio "parcial" cuenta como 0.5 puntos.
-REGLA ESPECIAL: si se detecta cualquiera de estos ingredientes — parabenos (methylparaben,
-propylparaben, butylparaben), SLS, SLES, triclosán, formaldehído, ftalatos, Dimethicone —
-el resultado máximo posible es "amarillo", nunca "verde".
-
-RÚBRICA DE LOS 5 CRITERIOS:
-
-CRITERIO 1 — Ingredientes de riesgo:
-  cumple:   Ninguno de estos ingredientes en la lista: parabenos, SLS, SLES, triclosán,
-            formaldehído, ftalatos, silicones no biodegradables (Dimethicone)
-  parcial:  Solo 1 ingrediente de la lista presente
-  no cumple: 2 o más ingredientes de la lista presentes
-
-CRITERIO 2 — Empaque sustentable:
-  cumple:   Empaque reciclable, biodegradable, recargable, sólido o sin empaque
-  parcial:  Plástico reciclable de un solo uso, o mezcla de materiales
-  no cumple: Plástico virgen no reciclable o sobreempacado
-
-CRITERIO 3 — Certificaciones verificables:
-  cumple:   Tiene al menos 1 certificación oficial: Leaping Bunny, PETA cruelty-free,
-            COSMOS, Ecocert, USDA Organic, Nordic Swan, EU Ecolabel, FSC
-  parcial:  Declara ser "cruelty-free", "natural" u "orgánico" sin certificación oficial
-  no cumple: No tiene ninguna certificación ni declaración
-
-CRITERIO 4 — Transparencia de marca:
-  cumple:   Publica lista completa de ingredientes online Y tiene sección de sustentabilidad
-            con datos concretos (no solo frases genéricas)
-  parcial:  Publica ingredientes pero sin info ambiental, o tiene frases genéricas sin datos
-  no cumple: No publica ingredientes online o no tiene información accesible
-
-CRITERIO 5 — Origen de ingredientes:
-  cumple:   Mayoría de ingredientes de origen natural o vegetal, origen declarado por la marca
-  parcial:  Mezcla de naturales y sintéticos sin declarar porcentajes
-  no cumple: Mayoría sintética o petroquímica, o no declara origen"""
-
-    user_prompt = f"""Evalúa el siguiente producto:
-
-Nombre: {producto['nombre']}
-Categoría: {producto['categoria']}
-Subcategoría: {producto['subcategoria']}
-
-INGREDIENTES:
+LISTA DE INGREDIENTES (INCI):
 {ingredientes}
 
-TIPO DE EMPAQUE:
-{empaque}
+INSTRUCCIONES:
+- Infiere el tipo de empaque típico de esta marca y subcategoría
+- Investiga si esta marca tiene antecedentes de greenwashing
+- Analiza ingredientes contra CE 1223/2009 y EWG
+- Detecta microplásticos según ECHA
+- Estima precio en MXN según posicionamiento de la marca en México
 
-CERTIFICACIONES DECLARADAS POR LA MARCA:
-{certificaciones}
-
-INFORMACIÓN AMBIENTAL DEL SITIO OFICIAL:
-{info_ambiental}
-
----
-Responde ÚNICAMENTE con este JSON, sin texto antes ni después:
+RESPONDE SOLO CON ESTE JSON EXACTO, sin texto adicional:
 {{
-  "color_semaforo": "verde|amarillo|rojo|insuficiente",
-  "razon_clasificacion": "...",
-  "estado_evaluacion": "completo|insuficiente",
-  "criterios": [
-    {{"nombre_criterio": "Ingredientes de riesgo", "resultado": "cumple|parcial|no cumple"}},
-    {{"nombre_criterio": "Empaque sustentable", "resultado": "cumple|parcial|no cumple"}},
-    {{"nombre_criterio": "Certificaciones verificables", "resultado": "cumple|parcial|no cumple"}},
-    {{"nombre_criterio": "Transparencia de marca", "resultado": "cumple|parcial|no cumple"}},
-    {{"nombre_criterio": "Origen de ingredientes", "resultado": "cumple|parcial|no cumple"}}
-  ],
-  "ventajas": ["...", "..."],
-  "desventajas": ["...", "..."]
+  "color_semaforo": "",
+  "razon_clasificacion": "",
+  "precio_min": 0.0,
+  "precio_max": 0.0,
+  "caracteristicas": [],
+  "ventajas": [],
+  "desventajas": []
 }}"""
 
-    response = client.chat.completions.create(
-        model="qwen-plus",
-        temperature=0.1,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user",   "content": user_prompt}
-        ]
+    message = client.messages.create(
+        model="claude-opus-4-6",
+        max_tokens=1024,
+        system=SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": user_prompt}]
     )
 
-    raw = response.choices[0].message.content.strip()
+    raw = message.content[0].text.strip()
     if raw.startswith("```"):
         raw = raw.split("```")[1]
         if raw.startswith("json"):
@@ -162,47 +112,85 @@ Responde ÚNICAMENTE con este JSON, sin texto antes ni después:
     return json.loads(raw.strip())
 
 # ─────────────────────────────────────────
-# GUARDAR EN RAILWAY
+# CLASIFICAR ARTÍCULO
 # ─────────────────────────────────────────
-def guardar_resultados(id_producto, resultado):
+def clasificar_articulo(nombre, categoria, subcategoria, descripcion):
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+
+    user_prompt = f"""Evalúa este artículo genérico de cuidado personal:
+
+Nombre: {nombre}
+Categoría: {categoria}
+Subcategoría: {subcategoria}
+
+DESCRIPCIÓN:
+{descripcion}
+
+INSTRUCCIONES:
+- Es un PRODUCTO GENÉRICO, evalúa la categoría en general
+- Analiza el tipo de envase típico de esta categoría según Ellen MacArthur
+- Detecta si esta categoría usa microplásticos frecuentemente (ECHA)
+- Investiga casos conocidos de greenwashing en esta categoría
+- Analiza el impacto ambiental general
+- Estima precio en MXN para este tipo de producto genérico en México
+- "ventajas": por qué la gente lo usa (funcionalidad)
+- "desventajas": impacto ambiental y problemas de esta categoría
+
+RESPONDE SOLO CON ESTE JSON EXACTO, sin texto adicional:
+{{
+  "color_semaforo": "",
+  "razon_clasificacion": "",
+  "precio_estimado": 0.0,
+  "caracteristicas": [],
+  "ventajas": [],
+  "desventajas": []
+}}"""
+
+    message = client.messages.create(
+        model="claude-opus-4-6",
+        max_tokens=1024,
+        system=SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": user_prompt}]
+    )
+
+    raw = message.content[0].text.strip()
+    if raw.startswith("```"):
+        raw = raw.split("```")[1]
+        if raw.startswith("json"):
+            raw = raw[4:]
+    return json.loads(raw.strip())
+
+# ─────────────────────────────────────────
+# GUARDAR PRODUCTO EN BD
+# ─────────────────────────────────────────
+def guardar_producto(id_producto, resultado):
     conn = conectar_bd()
-    cur = conn.cursor()
+    cur  = conn.cursor()
 
     cur.execute("""
-        UPDATE producto
-        SET color_semaforo      = %s,
+        UPDATE producto SET
+            color_semaforo      = %s,
             razon_clasificacion = %s,
-            estado_evaluacion   = %s
+            precio_min          = %s,
+            precio_max          = %s,
+            estado_evaluacion   = 'completo'
         WHERE id_producto = %s
     """, (resultado["color_semaforo"], resultado["razon_clasificacion"],
-          resultado["estado_evaluacion"], id_producto))
+          resultado["precio_min"], resultado["precio_max"], id_producto))
 
-    cur.execute("DELETE FROM producto_criterio WHERE id_producto = %s", (id_producto,))
-    for criterio in resultado["criterios"]:
-        cur.execute("SELECT id_criterio FROM criterio WHERE nombre_criterio = %s",
-                    (criterio["nombre_criterio"],))
-        row = cur.fetchone()
-        if row:
-            id_criterio = row[0]
-        else:
-            cur.execute(
-                "INSERT INTO criterio (nombre_criterio, descripcion) VALUES (%s, %s) RETURNING id_criterio",
-                (criterio["nombre_criterio"], criterio["nombre_criterio"])
-            )
-            id_criterio = cur.fetchone()[0]
-        cur.execute(
-            "INSERT INTO producto_criterio (id_producto, id_criterio, resultado) VALUES (%s, %s, %s)",
-            (id_producto, id_criterio, criterio["resultado"])
-        )
+    cur.execute("DELETE FROM caracteristica WHERE id_producto = %s", (id_producto,))
+    for c in resultado.get("caracteristicas", []):
+        if c:
+            cur.execute("INSERT INTO caracteristica (descripcion, id_producto) VALUES (%s, %s)", (c, id_producto))
 
     cur.execute("DELETE FROM ventaja WHERE id_producto = %s", (id_producto,))
-    for v in resultado["ventajas"]:
-        if v and v != "...":
+    for v in resultado.get("ventajas", []):
+        if v:
             cur.execute("INSERT INTO ventaja (descripcion, id_producto) VALUES (%s, %s)", (v, id_producto))
 
     cur.execute("DELETE FROM desventaja WHERE id_producto = %s", (id_producto,))
-    for d in resultado["desventajas"]:
-        if d and d != "...":
+    for d in resultado.get("desventajas", []):
+        if d:
             cur.execute("INSERT INTO desventaja (descripcion, id_producto) VALUES (%s, %s)", (d, id_producto))
 
     conn.commit()
@@ -210,71 +198,211 @@ def guardar_resultados(id_producto, resultado):
     conn.close()
 
 # ─────────────────────────────────────────
-# FLUJO PRINCIPAL
+# GUARDAR ARTÍCULO EN BD
+# ─────────────────────────────────────────
+def guardar_articulo(id_articulo, resultado):
+    conn = conectar_bd()
+    cur  = conn.cursor()
+
+    cur.execute("""
+        UPDATE articulo SET
+            color_semaforo      = %s,
+            razon_clasificacion = %s,
+            precio_estimado     = %s,
+            estado_evaluacion   = 'completo'
+        WHERE id_articulo = %s
+    """, (resultado["color_semaforo"], resultado["razon_clasificacion"],
+          resultado["precio_estimado"], id_articulo))
+
+    cur.execute("DELETE FROM caracteristica WHERE id_articulo = %s", (id_articulo,))
+    for c in resultado.get("caracteristicas", []):
+        if c:
+            cur.execute("INSERT INTO caracteristica (descripcion, id_articulo) VALUES (%s, %s)", (c, id_articulo))
+
+    cur.execute("DELETE FROM ventaja WHERE id_articulo = %s", (id_articulo,))
+    for v in resultado.get("ventajas", []):
+        if v:
+            cur.execute("INSERT INTO ventaja (descripcion, id_articulo) VALUES (%s, %s)", (v, id_articulo))
+
+    cur.execute("DELETE FROM desventaja WHERE id_articulo = %s", (id_articulo,))
+    for d in resultado.get("desventajas", []):
+        if d:
+            cur.execute("INSERT INTO desventaja (descripcion, id_articulo) VALUES (%s, %s)", (d, id_articulo))
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+# ─────────────────────────────────────────
+# OBTENER DATOS DE BD
+# ─────────────────────────────────────────
+def obtener_producto(id_producto):
+    conn = conectar_bd()
+    cur  = conn.cursor()
+    cur.execute("""
+        SELECT p.id_producto, p.nombre_producto, p.ingredientes,
+               s.nombre_subcategoria, c.nombre_categoria
+        FROM producto p
+        JOIN subcategoria s ON p.id_subcategoria = s.id_subcategoria
+        JOIN categoria c    ON s.id_categoria    = c.id_categoria
+        WHERE p.id_producto = %s
+    """, (id_producto,))
+    row = cur.fetchone()
+    cur.close(); conn.close()
+    if not row: return None
+    return {"id": row[0], "nombre": row[1], "ingredientes": row[2],
+            "subcategoria": row[3], "categoria": row[4]}
+
+def obtener_articulo(id_articulo):
+    conn = conectar_bd()
+    cur  = conn.cursor()
+    cur.execute("""
+        SELECT a.id_articulo, a.nombre_articulo, a.descripcion,
+               s.nombre_subcategoria, c.nombre_categoria
+        FROM articulo a
+        JOIN subcategoria s ON a.id_subcategoria = s.id_subcategoria
+        JOIN categoria c    ON s.id_categoria    = c.id_categoria
+        WHERE a.id_articulo = %s
+    """, (id_articulo,))
+    row = cur.fetchone()
+    cur.close(); conn.close()
+    if not row: return None
+    return {"id": row[0], "nombre": row[1], "descripcion": row[2],
+            "subcategoria": row[3], "categoria": row[4]}
+
+# ─────────────────────────────────────────
+# MOSTRAR Y CONFIRMAR
+# ─────────────────────────────────────────
+def mostrar_producto(id_producto, resultado):
+    print("\n═══════════════ RESULTADO ═══════════════")
+    print(f"  Semáforo:     {resultado['color_semaforo'].upper()}")
+    print(f"  Precio:       ${resultado['precio_min']} - ${resultado['precio_max']} MXN")
+    print(f"  Razón:        {resultado['razon_clasificacion']}")
+    print(f"  Características: {resultado.get('caracteristicas', [])}")
+    print(f"  Ventajas:     {resultado.get('ventajas', [])}")
+    print(f"  Desventajas:  {resultado.get('desventajas', [])}")
+    print("═════════════════════════════════════════\n")
+    if input("¿Guardar en Railway? (s/n): ").strip().lower() == "s":
+        guardar_producto(id_producto, resultado)
+        print("✅ Guardado.\n")
+    else:
+        print("⚠️  Cancelado.\n")
+
+def mostrar_articulo(id_articulo, resultado):
+    print("\n═══════════════ RESULTADO ═══════════════")
+    print(f"  Semáforo:       {resultado['color_semaforo'].upper()}")
+    print(f"  Precio est.:    ${resultado['precio_estimado']} MXN")
+    print(f"  Razón:          {resultado['razon_clasificacion']}")
+    print(f"  Características: {resultado.get('caracteristicas', [])}")
+    print(f"  Ventajas:       {resultado.get('ventajas', [])}")
+    print(f"  Desventajas:    {resultado.get('desventajas', [])}")
+    print("═════════════════════════════════════════\n")
+    if input("¿Guardar en Railway? (s/n): ").strip().lower() == "s":
+        guardar_articulo(id_articulo, resultado)
+        print("✅ Guardado.\n")
+    else:
+        print("⚠️  Cancelado.\n")
+
+# ─────────────────────────────────────────
+# CLASIFICACIÓN MASIVA
+# ─────────────────────────────────────────
+def clasificar_todos_productos():
+    conn = conectar_bd()
+    cur  = conn.cursor()
+    cur.execute("""
+        SELECT p.id_producto, p.nombre_producto, p.ingredientes,
+               s.nombre_subcategoria, c.nombre_categoria
+        FROM producto p
+        JOIN subcategoria s ON p.id_subcategoria = s.id_subcategoria
+        JOIN categoria c    ON s.id_categoria    = c.id_categoria
+        WHERE p.estado_evaluacion IS NULL OR p.estado_evaluacion = 'insuficiente'
+    """)
+    productos = cur.fetchall()
+    cur.close(); conn.close()
+
+    print(f"\n{len(productos)} productos pendientes.")
+    if input("¿Clasificar todos? (s/n): ").strip().lower() != "s": return
+
+    for row in productos:
+        id_p, nombre, ingredientes, subcat, cat = row
+        print(f"⏳ {nombre}...")
+        try:
+            resultado = clasificar_producto(nombre, cat, subcat, ingredientes)
+            guardar_producto(id_p, resultado)
+            print(f"  ✅ {resultado['color_semaforo'].upper()}")
+        except Exception as e:
+            print(f"  ❌ Error: {e}")
+    print("\n✅ Clasificación masiva completada.\n")
+
+def clasificar_todos_articulos():
+    conn = conectar_bd()
+    cur  = conn.cursor()
+    cur.execute("""
+        SELECT a.id_articulo, a.nombre_articulo, a.descripcion,
+               s.nombre_subcategoria, c.nombre_categoria
+        FROM articulo a
+        JOIN subcategoria s ON a.id_subcategoria = s.id_subcategoria
+        JOIN categoria c    ON s.id_categoria    = c.id_categoria
+        WHERE a.estado_evaluacion IS NULL OR a.estado_evaluacion = 'insuficiente'
+    """)
+    articulos = cur.fetchall()
+    cur.close(); conn.close()
+
+    print(f"\n{len(articulos)} artículos pendientes.")
+    if input("¿Clasificar todos? (s/n): ").strip().lower() != "s": return
+
+    for row in articulos:
+        id_a, nombre, descripcion, subcat, cat = row
+        print(f"⏳ {nombre}...")
+        try:
+            resultado = clasificar_articulo(nombre, cat, subcat, descripcion)
+            guardar_articulo(id_a, resultado)
+            print(f"  ✅ {resultado['color_semaforo'].upper()}")
+        except Exception as e:
+            print(f"  ❌ Error: {e}")
+    print("\n✅ Clasificación masiva completada.\n")
+
+# ─────────────────────────────────────────
+# MAIN
 # ─────────────────────────────────────────
 def main():
-    print("\n══════════════════════════════════")
-    print("   LUMIKA — Clasificador con Qwen  ")
-    print("══════════════════════════════════\n")
+    print("\n══════════════════════════════════════")
+    print("   LUMIKA — Clasificador con Claude    ")
+    print("══════════════════════════════════════\n")
+    print("  1. Clasificar un producto (buscador)")
+    print("  2. Clasificar un artículo (recomendaciones)")
+    print("  3. Clasificar TODOS los productos pendientes")
+    print("  4. Clasificar TODOS los artículos pendientes")
+    opcion = input("\nOpción (1/2/3/4): ").strip()
 
-    id_producto = input("ID del producto a clasificar: ").strip()
-    if not id_producto.isdigit():
-        print("❌ El ID debe ser un número.")
-        return
+    if opcion == "1":
+        id_item = input("ID del producto: ").strip()
+        if not id_item.isdigit(): print("❌ ID inválido"); return
+        item = obtener_producto(int(id_item))
+        if not item: print("❌ No encontrado"); return
+        print(f"\n✓ {item['nombre']} ({item['categoria']} › {item['subcategoria']})")
+        print("⏳ Analizando con Claude...")
+        resultado = clasificar_producto(item["nombre"], item["categoria"],
+                                        item["subcategoria"], item["ingredientes"])
+        mostrar_producto(int(id_item), resultado)
 
-    producto = obtener_producto(int(id_producto))
-    if not producto:
-        print(f"❌ No se encontró el producto con ID {id_producto}.")
-        return
+    elif opcion == "2":
+        id_item = input("ID del artículo: ").strip()
+        if not id_item.isdigit(): print("❌ ID inválido"); return
+        item = obtener_articulo(int(id_item))
+        if not item: print("❌ No encontrado"); return
+        print(f"\n✓ {item['nombre']} ({item['categoria']} › {item['subcategoria']})")
+        print("⏳ Analizando con Claude...")
+        resultado = clasificar_articulo(item["nombre"], item["categoria"],
+                                        item["subcategoria"], item["descripcion"])
+        mostrar_articulo(int(id_item), resultado)
 
-    print(f"\n✓ Producto: {producto['nombre']} ({producto['categoria']} › {producto['subcategoria']})")
-    print("\nIngresa la información (pega el texto y presiona Enter dos veces):\n")
-
-    def leer_multilinea(campo):
-        print(f"  {campo}:")
-        lineas = []
-        while True:
-            linea = input()
-            if linea == "" and lineas:
-                break
-            elif linea != "":
-                lineas.append(linea)
-        return "\n".join(lineas) if lineas else "No disponible"
-
-    ingredientes    = leer_multilinea("Lista de ingredientes")
-    empaque         = leer_multilinea("Tipo de empaque")
-    certificaciones = leer_multilinea("Certificaciones declaradas (o escribe 'Ninguna')")
-    info_ambiental  = leer_multilinea("Información ambiental del sitio oficial (o 'No disponible')")
-
-    print("\n⏳ Clasificando con Qwen...\n")
-
-    try:
-        resultado = clasificar_con_qwen(producto, ingredientes, empaque, certificaciones, info_ambiental)
-    except json.JSONDecodeError:
-        print("❌ Qwen no devolvió un JSON válido. Intenta de nuevo.")
-        return
-    except Exception as e:
-        print(f"❌ Error al llamar a Qwen: {e}")
-        return
-
-    print("═══════════════ RESULTADO ═══════════════")
-    print(f"  Semáforo:     {resultado['color_semaforo'].upper()}")
-    print(f"  Estado:       {resultado['estado_evaluacion']}")
-    print(f"  Razón:        {resultado['razon_clasificacion']}")
-    print("\n  Criterios:")
-    for c in resultado["criterios"]:
-        icono = "✓" if c["resultado"] == "cumple" else ("◐" if c["resultado"] == "parcial" else "✗")
-        print(f"    {icono} {c['nombre_criterio']}: {c['resultado']}")
-    print(f"\n  Ventajas:     {', '.join(resultado['ventajas'])}")
-    print(f"  Desventajas:  {', '.join(resultado['desventajas'])}")
-    print("═════════════════════════════════════════\n")
-
-    confirmar = input("¿Guardar en Railway? (s/n): ").strip().lower()
-    if confirmar == "s":
-        guardar_resultados(int(id_producto), resultado)
-        print("✅ Clasificación guardada correctamente.\n")
+    elif opcion == "3":
+        clasificar_todos_productos()
+    elif opcion == "4":
+        clasificar_todos_articulos()
     else:
-        print("⚠️  Cancelado. No se guardó nada.\n")
+        print("❌ Opción inválida")
 
 if __name__ == "__main__":
     main()

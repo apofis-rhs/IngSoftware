@@ -3,13 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA</title>
+  <title>LUMIKA — Panel de Administración</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
   <link rel="stylesheet" href="./dashboard.css">
 </head>
 <body>
-  <script type="module" src="./dashboard.js"></script>
+
+  <nav class="navbar-admin">
+    <div class="navbar-admin__brand">
+      <img src="../../assets/img/logo.png" alt="LUMIKA" class="navbar-admin__logo">
+      <span class="navbar-admin__title">LUMIKA</span>
+      <span class="navbar-admin__badge">Admin</span>
+    </div>
+    
+    <div class="navbar-admin__links hide-mobile">
+      <a href="./dashboard.html" class="nav-item active">
+        <i class="fa-solid fa-house"></i>
+        <span>Panel Administrador</span>
+      </a>
+      <a href="../agregar-producto/agregar-producto.html" class="nav-item">
+        <i class="fa-solid fa-plus"></i>
+        <span>Agregar Producto</span>
+      </a>
+      <a href="../gestionar-productos/gestionar-productos.html" class="nav-item">
+        <i class="fa-solid fa-pen-to-square"></i>
+        <span>Editar Producto</span>
+      </a>
+      <a href="../gestionar-productos/gestionar-productos.html" class="nav-item">
+        <i class="fa-solid fa-eye"></i>
+        <span>Visualizar Producto</span>
+      </a>
+      <a href="../gestionar-productos/gestionar-productos.html" class="nav-item">
+        <i class="fa-solid fa-trash"></i>
+        <span>Eliminar Producto</span>
+      </a>
+      <a href="#" id="btn-cerrar-sesion" class="nav-item logout">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Cerrar Sesión</span>
+      </a>
+    </div>
+
+    <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="nav-drawer" id="nav-drawer">
+    <a href="./dashboard.html" class="nav-drawer__link nav-drawer__link--active"><i class="fa-solid fa-house"></i> Panel Administrador</a>
+    <a href="../agregar-producto/agregar-producto.html" class="nav-drawer__link"><i class="fa-solid fa-plus"></i> Agregar Producto</a>
+    <a href="../gestionar-productos/gestionar-productos.html" class="nav-drawer__link"><i class="fa-solid fa-pen-to-square"></i> Editar Producto</a>
+    <div class="nav-drawer__divider"></div>
+    <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
+  </div>
+
+  <main class="page-wrapper">
+    <div class="dashboard-container">
+      <h2 class="section-title">Panel de administración</h2>
+      
+      <div class="metrics-grid">
+        <div class="card card--orange">
+          <span class="card__number">124</span>
+          <span class="card__label">Productos</span>
+        </div>
+        <div class="card card--green">
+          <span class="card__number">89</span>
+          <span class="card__label">En verde</span>
+        </div>
+        <div class="card card--red">
+          <span class="card__number">21</span>
+          <span class="card__label">En rojo</span>
+        </div>
+        <div class="card card--gray">
+          <span class="card__number">14</span>
+          <span class="card__label">Sin info</span>
+        </div>
+      </div>
+
+      <div class="action-container">
+        <a href="../gestionar-productos/gestionar-productos.html" class="btn-manage">Gestionar productos</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const hamburger = document.getElementById('hamburger');
+    const navDrawer = document.getElementById('nav-drawer');
+
+    if (hamburger) {
+      hamburger.addEventListener('click', () => navDrawer.classList.toggle('open'));
+    }
+  </script>
 </body>
 </html>

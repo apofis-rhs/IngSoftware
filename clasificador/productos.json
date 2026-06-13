@@ -1,0 +1,650 @@
+[
+  {
+    "nombre_producto": "Clean & Clear Morning Burst Facial Cleanser",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Limpiadores Faciales",
+    "nombre_imagen": "clean-and-clear-morning-burst.jpg"
+  },
+  {
+    "nombre_producto": "Cetaphil Daily Facial Cleanser (Fórmula Clásica)",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Limpiadores Faciales",
+    "nombre_imagen": "cetaphil-daily-cleanser.jpg"
+  },
+  {
+    "nombre_producto": "CeraVe Hydrating Facial Cleanser",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Limpiadores Faciales",
+    "nombre_imagen": "cerave-hydrating-cleanser.jpg"
+  },
+  {
+    "nombre_producto": "Ethique Deep Green Solid Facial Cleanser",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Limpiadores Faciales",
+    "nombre_imagen": "ethique-deep-green.jpg"
+  },
+  {
+    "nombre_producto": "Pond's Crema S Humectante",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Cremas y Sueros",
+    "nombre_imagen": "ponds-crema-s.jpg"
+  },
+  {
+    "nombre_producto": "L'Oréal Paris Revitalift Anti-Wrinkle Night Cream",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Cremas y Sueros",
+    "nombre_imagen": "loreal-revitalift-night.jpg"
+  },
+  {
+    "nombre_producto": "The Ordinary Niacinamide 10% + Zinc 1%",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Cremas y Sueros",
+    "nombre_imagen": "the-ordinary-niacinamide.jpg"
+  },
+  {
+    "nombre_producto": "Attitude Oceanly Phyto-Glow Solid Face Serum",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Cremas y Sueros",
+    "nombre_imagen": "attitude-oceanly-serum.jpg"
+  },
+  {
+    "nombre_producto": "Banana Boat Sport Ultra SPF 50 Lotion",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Protectores Solares",
+    "nombre_imagen": "banana-boat-sport.jpg"
+  },
+  {
+    "nombre_producto": "Neutrogena Ultra Sheer Dry-Touch Sunscreen SPF 55",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Protectores Solares",
+    "nombre_imagen": "neutrogena-ultra-sheer.jpg"
+  },
+  {
+    "nombre_producto": "ISDIN Fusion Water Magic SPF 50",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Protectores Solares",
+    "nombre_imagen": "isdin-fusion-water.jpg"
+  },
+  {
+    "nombre_producto": "Raw Elements Face + Body SPF 30 (Lata)",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Protectores Solares",
+    "nombre_imagen": "raw-elements-tin.jpg"
+  },
+  {
+    "nombre_producto": "Mary Kay Oil-Free Eye Makeup Remover",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Desmaquillantes",
+    "nombre_imagen": "mary-kay-remover.jpg"
+  },
+  {
+    "nombre_producto": "Clinique Take The Day Off Makeup Remover",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Desmaquillantes",
+    "nombre_imagen": "clinique-take-the-day-off.jpg"
+  },
+  {
+    "nombre_producto": "Garnier SkinActive Micellar Cleansing Water All-in-1",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Desmaquillantes",
+    "nombre_imagen": "garnier-micellar-water.jpg"
+  },
+  {
+    "nombre_producto": "Biossance Squalane + Antioxidant Cleansing Oil",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Desmaquillantes",
+    "nombre_imagen": "biossance-cleansing-oil.jpg"
+  },
+  {
+    "nombre_producto": "Neutrogena Makeup Remover Cleansing Towelettes",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Toallas Desmaquillantes",
+    "nombre_imagen": "neutrogena-towelettes.jpg"
+  },
+  {
+    "nombre_producto": "Nivea Gentle Cleansing Wipes",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Toallas Desmaquillantes",
+    "nombre_imagen": "nivea-gentle-wipes.jpg"
+  },
+  {
+    "nombre_producto": "Burt's Bees Facial Cleansing Towlettes",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Toallas Desmaquillantes",
+    "nombre_imagen": "burts-bees-towelettes.jpg"
+  },
+  {
+    "nombre_producto": "Natracare Cleansing Make-Up Removal Wipes",
+    "id_categoria": "CuidadoP",
+    "id_subcategoria": "Toallas Desmaquillantes",
+    "nombre_imagen": "natracare-cleansing-wipes.jpg"
+  },
+  {
+    "nombre_producto": "Head and Shoulders Classic Clean Shampoo",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Shampoo",
+    "nombre_imagen": "head-and-shoulders-classic-clean-shampoo.jpg"
+  },
+  {
+    "nombre_producto": "Herbal Essences Bio Renew Argan Oil of Morocco Shampoo",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Shampoo",
+    "nombre_imagen": "herbal-essences-bio-renew-argan-oil-of-morocco-shampoo.jpg"
+  },
+  {
+    "nombre_producto": "Shea Moisture Coconut and Hibiscus Curl and Shine Shampoo",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Shampoo",
+    "nombre_imagen": "shea-moisture-coconut-and-hibiscus-curl-and-shine-shampoo.jpg"
+  },
+  {
+    "nombre_producto": "Ethique Pinkalicious Solid Shampoo",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Shampoo",
+    "nombre_imagen": "ethique-pinkalicious-solid-shampoo.jpg"
+  },
+  {
+    "nombre_producto": "Pantene Pro V Daily Moisture Renewal Conditioner",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Acondicionadores",
+    "nombre_imagen": "pantene-pro-v-daily-moisture-renewal-conditioner.jpg"
+  },
+  {
+    "nombre_producto": "OGX Renewing Plus Argan Oil of Morocco Conditioner",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Acondicionadores",
+    "nombre_imagen": "ogx-renewing-plus-argan-oil-of-morocco-conditioner.jpg"
+  },
+  {
+    "nombre_producto": "Garnier Fructis Hair Food Banana Conditioner",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Acondicionadores",
+    "nombre_imagen": "garnier-fructis-hair-food-banana-conditioner.jpg"
+  },
+  {
+    "nombre_producto": "Lush American Cream Solid Conditioner",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Acondicionadores",
+    "nombre_imagen": "lush-american-cream-solid-conditioner.jpg"
+  },
+  {
+    "nombre_producto": "Kerastase Nutritive Masquintense Hair Mask",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Mascarillas Capilares",
+    "nombre_imagen": "kerastase-nutritive-masquintense-hair-mask.jpg"
+  },
+  {
+    "nombre_producto": "L Oreal Paris Elvive Color Vibrancy Repair Balm",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Mascarillas Capilares",
+    "nombre_imagen": "l-oreal-paris-elvive-color-vibrancy-repair-balm.jpg"
+  },
+  {
+    "nombre_producto": "Garnier Fructis One Minute Hair Mask Papaya",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Mascarillas Capilares",
+    "nombre_imagen": "garnier-fructis-one-minute-hair-mask-papaya.jpg"
+  },
+  {
+    "nombre_producto": "Attitude Super Leaves Moisture Rich Hair Mask",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Mascarillas Capilares",
+    "nombre_imagen": "attitude-super-leaves-moisture-rich-hair-mask.jpg"
+  },
+  {
+    "nombre_producto": "Moco De Gorila Punk Hair Gel",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Gel Capilar",
+    "nombre_imagen": "moco-de-gorila-punk-hair-gel.jpg"
+  },
+  {
+    "nombre_producto": "TRESemme TRES Two Extra Hold Hair Gel",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Gel Capilar",
+    "nombre_imagen": "tresemme-tres-two-extra-hold-hair-gel.jpg"
+  },
+  {
+    "nombre_producto": "Eco Style Black Castor and Flaxseed Oil Styling Gel",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Gel Capilar",
+    "nombre_imagen": "eco-style-black-castor-and-flaxseed-oil-styling-gel.jpg"
+  },
+  {
+    "nombre_producto": "Innersense I Create Hold Styling Gel",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Gel Capilar",
+    "nombre_imagen": "innersense-i-create-hold-styling-gel.jpg"
+  },
+  {
+    "nombre_producto": "Moroccanoil Treatment Original",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Aceites Capilares",
+    "nombre_imagen": "moroccanoil-treatment-original.jpg"
+  },
+  {
+    "nombre_producto": "L Oreal Paris Elvive Extraordinary Oil",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Aceites Capilares",
+    "nombre_imagen": "l-oreal-paris-elvive-extraordinary-oil.jpg"
+  },
+  {
+    "nombre_producto": "Olaplex No 7 Bonding Oil",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Aceites Capilares",
+    "nombre_imagen": "olaplex-no-7-bonding-oil.jpg"
+  },
+  {
+    "nombre_producto": "Cliganic One Hundred Percent Pure Organic Argan Oil",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Aceites Capilares",
+    "nombre_imagen": "cliganic-one-hundred-percent-pure-organic-argan-oil.jpg"
+  },
+  {
+    "nombre_producto": "Lush Seanik Solid Shampoo",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Jabon Capilar",
+    "nombre_imagen": "lush-seanik-solid-shampoo.jpg"
+  },
+  {
+    "nombre_producto": "Garnier Fructis Coco Hydrating Solid Shampoo",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Jabon Capilar",
+    "nombre_imagen": "garnier-fructis-coco-hydrating-solid-shampoo.jpg"
+  },
+  {
+    "nombre_producto": "Foamie Shampoo Bar Aloe You Vera Much",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Jabon Capilar",
+    "nombre_imagen": "foamie-shampoo-bar-aloe-you-vera-much.jpg"
+  },
+  {
+    "nombre_producto": "Attitude Leaves Bar Nourishing Solid Shampoo",
+    "id_categoria": "CuidadoC",
+    "id_subcategoria": "Jabon Capilar",
+    "nombre_imagen": "attitude-leaves-bar-nourishing-solid-shampoo.jpg"
+  },
+  {
+    "nombre_producto": "Dr. Bronner's Pure-Castile Liquid Soap Peppermint",
+    "id_categoria": "CuidadoCor",
+    "id_subcategoria": "Jabon Corporal",
+    "nombre_imagen": "dr-bronners-pure-castile-liquid-soap-peppermint.jpg"
+  },
+  {
+    "nombre_producto": "Cetaphil Ultra Gentle Body Wash Fragrance Free",
+    "id_categoria": "CuidadoCor",
+    "id_subcategoria": "Jabon Corporal",
+    "nombre_imagen": "cetaphil-ultra-gentle-body-wash-fragrance-free.jpg"
+  },
+  {
+    "nombre_producto": "Dove Deep Moisture Body Wash",
+    "id_categoria": "CuidadoCor",
+    "id_subcategoria": "Jabon Corporal",
+    "nombre_imagen": "dove-deep-moisture-body-wash.jpg"
+  },
+  {
+    "nombre_producto": "Dial Antibacterial Deodorant Soap Gold Bar",
+    "id_categoria": "CuidadoCor",
+    "id_subcategoria": "Jabon Corporal",
+    "nombre_imagen": "dial-antibacterial-deodorant-soap-gold-bar.jpg"
+  },
+  {
+    "nombre_producto": "Attitude Sensitive Skin Body Lotion Extra Gentle Unscented",
+    "id_categoria": "CuidadoCor",
+    "id_subcategoria": "Lociones Corporales",
+    "nombre_imagen": "attitude-sensitive-skin-body-lotion-extra-gentle-unscented.jpg"
+  },
+  {
+    "nombre_producto": "Aveeno Daily Moisturizing Body Lotion",
+    "id_categoria": "CuidadoCor",
+    "id_subcategoria": "Lociones Corporales",
+    "nombre_imagen": "aveeno-daily-moisturizing-body-lotion.jpg"
+  },
+  {
+    "nombre_producto": "CeraVe Daily Moisturizing Lotion",
+    "id_categoria": "CuidadoCor",
+    "id_subcategoria": "Lociones Corporales",
+    "nombre_imagen": "cerave-daily-moisturizing-lotion.jpg"
+  },
+  {
+    "nombre_producto": "Bath & Body Works Warm Vanilla Sugar Body Lotion",
+    "id_categoria": "CuidadoCor",
+    "id_subcategoria": "Lociones Corporales",
+    "nombre_imagen": "bath-body-works-warm-vanilla-sugar-body-lotion.jpg"
+  },
+  {
+    "nombre_producto": "Schmidt's Natural Deodorant Charcoal + Magnesium",
+    "id_categoria": "CuidadoCor",
+    "id_subcategoria": "Desodorantes",
+    "nombre_imagen": "schmidts-natural-deodorant-charcoal-magnesium.jpg"
+  },
+  {
+    "nombre_producto": "Tom's of Maine Long Lasting Deodorant",
+    "id_categoria": "CuidadoCor",
+    "id_subcategoria": "Desodorantes",
+    "nombre_imagen": "toms-of-maine-long-lasting-deodorant.jpg"
+  },
+  {
+    "nombre_producto": "Old Spice High Endurance Deodorant Pure Sport",
+    "id_categoria": "CuidadoCor",
+    "id_subcategoria": "Desodorantes",
+    "nombre_imagen": "old-spice-high-endurance-deodorant-pure-sport.jpg"
+  },
+  {
+    "nombre_producto": "Secret Clinical Strength Soft Solid Antiperspirant And Deodorant",
+    "id_categoria": "CuidadoCor",
+    "id_subcategoria": "Desodorantes",
+    "nombre_imagen": "secret-clinical-strength-soft-solid-antiperspirant-and-deodorant.jpg"
+  },
+  {
+    "nombre_producto": "Herbivore Coco Rose Exfoliating Body Scrub",
+    "id_categoria": "CuidadoCor",
+    "id_subcategoria": "Exfoliantes",
+    "nombre_imagen": "herbivore-coco-rose-exfoliating-body-scrub.jpg"
+  },
+  {
+    "nombre_producto": "Frank Body Original Coffee Scrub",
+    "id_categoria": "CuidadoCor",
+    "id_subcategoria": "Exfoliantes",
+    "nombre_imagen": "frank-body-original-coffee-scrub.jpg"
+  },
+  {
+    "nombre_producto": "Tree Hut Shea Sugar Scrub Moroccan Rose",
+    "id_categoria": "CuidadoCor",
+    "id_subcategoria": "Exfoliantes",
+    "nombre_imagen": "tree-hut-shea-sugar-scrub-moroccan-rose.jpg"
+  },
+  {
+    "nombre_producto": "Dove Exfoliating Body Polish Macadamia & Rice Milk",
+    "id_categoria": "CuidadoCor",
+    "id_subcategoria": "Exfoliantes",
+    "nombre_imagen": "dove-exfoliating-body-polish-macadamia-rice-milk.jpg"
+  },
+  {
+    "nombre_producto": "Dr. Bronner's Peppermint All-One Toothpaste",
+    "id_categoria": "HigieneBP",
+    "id_subcategoria": "Pastas Dentales",
+    "nombre_imagen": "dr-bronners-peppermint-all-one-toothpaste.jpg"
+  },
+  {
+    "nombre_producto": "Sensodyne Pronamel Gentle Whitening",
+    "id_categoria": "HigieneBP",
+    "id_subcategoria": "Pastas Dentales",
+    "nombre_imagen": "sensodyne-pronamel-gentle-whitening.jpg"
+  },
+  {
+    "nombre_producto": "Colgate Total 12 Encías Reforzadas",
+    "id_categoria": "HigieneBP",
+    "id_subcategoria": "Pastas Dentales",
+    "nombre_imagen": "colgate-total-12-encias-reforzadas.jpg"
+  },
+  {
+    "nombre_producto": "Tom's of Maine Luminous White Toothpaste",
+    "id_categoria": "HigieneBP",
+    "id_subcategoria": "Pastas Dentales",
+    "nombre_imagen": "toms-of-maine-luminous-white-toothpaste.jpg"
+  },
+  {
+    "nombre_producto": "TheraBreath Fresh Breath Oral Rinse",
+    "id_categoria": "HigieneBP",
+    "id_subcategoria": "Enjuagues Bucales",
+    "nombre_imagen": "therabreath-fresh-breath-oral-rinse.jpg"
+  },
+  {
+    "nombre_producto": "Listerine Cool Mint Zero Alcohol Mouthwash",
+    "id_categoria": "HigieneBP",
+    "id_subcategoria": "Enjuagues Bucales",
+    "nombre_imagen": "listerine-cool-mint-zero-alcohol-mouthwash.jpg"
+  },
+  {
+    "nombre_producto": "Crest Scope Classic Original Mouthwash",
+    "id_categoria": "HigieneBP",
+    "id_subcategoria": "Enjuagues Bucales",
+    "nombre_imagen": "crest-scope-classic-original-mouthwash.jpg"
+  },
+  {
+    "nombre_producto": "Tom's of Maine Wicked Fresh Mouthwash",
+    "id_categoria": "HigieneBP",
+    "id_subcategoria": "Enjuagues Bucales",
+    "nombre_imagen": "toms-of-maine-wicked-fresh-mouthwash.jpg"
+  },
+  {
+    "nombre_producto": "Oral B Indicator Color Collection",
+    "id_categoria": "HigieneBH",
+    "id_subcategoria": "Cepillos de Dientes",
+    "nombre_imagen": "oral-b-indicator-color-collection.jpg"
+  },
+  {
+    "nombre_producto": "Preserve Toothbrush",
+    "id_categoria": "HigieneBH",
+    "id_subcategoria": "Cepillos de Dientes",
+    "nombre_imagen": "preserve-toothbrush.jpg"
+  },
+  {
+    "nombre_producto": "Colgate Keep Replaceable Head Toothbrush",
+    "id_categoria": "HigieneBH",
+    "id_subcategoria": "Cepillos de Dientes",
+    "nombre_imagen": "colgate-keep-replaceable-head-toothbrush.jpg"
+  },
+  {
+    "nombre_producto": "The Humble Co Bamboo Toothbrush",
+    "id_categoria": "HigieneBH",
+    "id_subcategoria": "Cepillos de Dientes",
+    "nombre_imagen": "the-humble-co-bamboo-toothbrush.jpg"
+  },
+  {
+    "nombre_producto": "Oral B Glide Pro Health Dental Floss",
+    "id_categoria": "HigieneBH",
+    "id_subcategoria": "Hilo Dental",
+    "nombre_imagen": "oral-b-glide-pro-health-dental-floss.jpg"
+  },
+  {
+    "nombre_producto": "Listerine Cool Mint Floss",
+    "id_categoria": "HigieneBH",
+    "id_subcategoria": "Hilo Dental",
+    "nombre_imagen": "listerine-cool-mint-floss.jpg"
+  },
+  {
+    "nombre_producto": "The Humble Co Dental Floss",
+    "id_categoria": "HigieneBH",
+    "id_subcategoria": "Hilo Dental",
+    "nombre_imagen": "the-humble-co-dental-floss.jpg"
+  },
+  {
+    "nombre_producto": "Dental Lace Zero Waste Silk Floss",
+    "id_categoria": "HigieneBH",
+    "id_subcategoria": "Hilo Dental",
+    "nombre_imagen": "dental-lace-zero-waste-silk-floss.jpg"
+  },
+  {
+    "nombre_producto": "Orabrush Tongue Cleaner",
+    "id_categoria": "HigieneBH",
+    "id_subcategoria": "Limpiador de Lengua",
+    "nombre_imagen": "orabrush-tongue-cleaner.jpg"
+  },
+  {
+    "nombre_producto": "DenTek Dual Action Tongue Cleaner",
+    "id_categoria": "HigieneBH",
+    "id_subcategoria": "Limpiador de Lengua",
+    "nombre_imagen": "dentek-dual-action-tongue-cleaner.jpg"
+  },
+  {
+    "nombre_producto": "Dr Tungs Stainless Steel Tongue Cleaner",
+    "id_categoria": "HigieneBH",
+    "id_subcategoria": "Limpiador de Lengua",
+    "nombre_imagen": "dr-tungs-stainless-steel-tongue-cleaner.jpg"
+  },
+  {
+    "nombre_producto": "Kosmida Pure Copper Tongue Scraper",
+    "id_categoria": "HigieneBH",
+    "id_subcategoria": "Limpiador de Lengua",
+    "nombre_imagen": "kosmida-pure-copper-tongue-scraper.jpg"
+  },
+  {
+    "nombre_producto": "Weleda Shaving Cream (Verde)",
+    "id_categoria": "DepilacionAP",
+    "id_subcategoria": "Cremas para Afeitar",
+    "nombre_imagen": "weleda-shaving-cream.jpg"
+  },
+  {
+    "nombre_producto": "Cremo Astonishingly Superior Shave Cream (Amarillo)",
+    "id_categoria": "DepilacionAP",
+    "id_subcategoria": "Cremas para Afeitar",
+    "nombre_imagen": "cremo-astonishingly-superior-shave-cream.jpg"
+  },
+  {
+    "nombre_producto": "Palmolive Men Classic Shaving Cream (Rojo)",
+    "id_categoria": "DepilacionAP",
+    "id_subcategoria": "Cremas para Afeitar",
+    "nombre_imagen": "palmolive-men-classic-shaving-cream.jpg"
+  },
+  {
+    "nombre_producto": "Dr. Bronner's Organic Shaving Soap (Verde)",
+    "id_categoria": "DepilacionAP",
+    "id_subcategoria": "Cremas para Afeitar",
+    "nombre_imagen": "dr-bronners-organic-shaving-soap.jpg"
+  },
+  {
+    "nombre_producto": "Gillette Foamy Regular Shaving Foam (Rojo)",
+    "id_categoria": "DepilacionAP",
+    "id_subcategoria": "Espumas para Afeitar",
+    "nombre_imagen": "gillette-foamy-regular-shaving-foam.jpg"
+  },
+  {
+    "nombre_producto": "Nivea Men Sensitive Shaving Foam (Amarillo)",
+    "id_categoria": "DepilacionAP",
+    "id_subcategoria": "Espumas para Afeitar",
+    "nombre_imagen": "nivea-men-sensitive-shaving-foam.jpg"
+  },
+  {
+    "nombre_producto": "Barbasol Original Thick and Rich Shaving Cream (Rojo)",
+    "id_categoria": "DepilacionAP",
+    "id_subcategoria": "Espumas para Afeitar",
+    "nombre_imagen": "barbasol-original-thick-and-rich-shaving-cream.jpg"
+  },
+  {
+    "nombre_producto": "Andalou Naturals Men Smooth Glide Shaving Foam (Verde)",
+    "id_categoria": "DepilacionAP",
+    "id_subcategoria": "Espumas para Afeitar",
+    "nombre_imagen": "andalou-naturals-men-smooth-glide-shaving-foam.jpg"
+  },
+  {
+    "nombre_producto": "Veet Gel Hair Remover Cream (Rojo)",
+    "id_categoria": "DepilacionAP",
+    "id_subcategoria": "Geles Depilatorios",
+    "nombre_imagen": "veet-gel-hair-remover-cream.jpg"
+  },
+  {
+    "nombre_producto": "Sally Hansen Creme Hair Remover (Amarillo)",
+    "id_categoria": "DepilacionAP",
+    "id_subcategoria": "Geles Depilatorios",
+    "nombre_imagen": "sally-hansen-creme-hair-remover.jpg"
+  },
+  {
+    "nombre_producto": "Nair Hair Remover Aloe and Lanolin (Rojo)",
+    "id_categoria": "DepilacionAP",
+    "id_subcategoria": "Geles Depilatorios",
+    "nombre_imagen": "nair-hair-remover-aloe-and-lanolin.jpg"
+  },
+  {
+    "nombre_producto": "MOOM Organic Hair Removal (Verde)",
+    "id_categoria": "DepilacionAP",
+    "id_subcategoria": "Geles Depilatorios",
+    "nombre_imagen": "moom-organic-hair-removal.jpg"
+  },
+  {
+    "nombre_producto": "Always Ultra Thin Long Super Sanitary Pads with Wings",
+    "id_categoria": "HigieneIntima",
+    "id_subcategoria": "Toallas Sanitarias",
+    "nombre_imagen": "always-ultra-thin-long-super-sanitary-pads-with-wings.jpg"
+  },
+  {
+    "nombre_producto": "Kotex Naturals Toallas Sanitarias",
+    "id_categoria": "HigieneIntima",
+    "id_subcategoria": "Toallas Sanitarias",
+    "nombre_imagen": "kotex-naturals-toallas-sanitarias.jpg"
+  },
+  {
+    "nombre_producto": "Organyc Certified Organic Cotton Sanitary Pads",
+    "id_categoria": "HigieneIntima",
+    "id_subcategoria": "Toallas Sanitarias",
+    "nombre_imagen": "organyc-certified-organic-cotton-sanitary-pads.jpg"
+  },
+  {
+    "nombre_producto": "Saba Buenas Noches Toallas Sanitarias Reutilizables de Tela",
+    "id_categoria": "HigieneIntima",
+    "id_subcategoria": "Toallas Sanitarias",
+    "nombre_imagen": "saba-buenas-noches-toallas-sanitarias-reutilizables-de-tela.jpg"
+  },
+  {
+    "nombre_producto": "Tampax Pearl Regular Tampons",
+    "id_categoria": "HigieneIntima",
+    "id_subcategoria": "Tampones",
+    "nombre_imagen": "tampax-pearl-regular-tampons.jpg"
+  },
+  {
+    "nombre_producto": "Playtex Sport Tampons",
+    "id_categoria": "HigieneIntima",
+    "id_subcategoria": "Tampones",
+    "nombre_imagen": "playtex-sport-tampons.jpg"
+  },
+  {
+    "nombre_producto": "Natracare Organic Cotton Tampons with Cardboard Applicator",
+    "id_categoria": "HigieneIntima",
+    "id_subcategoria": "Tampones",
+    "nombre_imagen": "natracare-organic-cotton-tampons-with-cardboard-applicator.jpg"
+  },
+  {
+    "nombre_producto": "Rael Certified Organic Cotton Tampons Non Applicator",
+    "id_categoria": "HigieneIntima",
+    "id_subcategoria": "Tampones",
+    "nombre_imagen": "rael-certified-organic-cotton-tampons-non-applicator.jpg"
+  },
+  {
+    "nombre_producto": "Cup Menstrual Generica Economica",
+    "id_categoria": "HigieneIntima",
+    "id_subcategoria": "Copas Menstruales",
+    "nombre_imagen": "cup-menstrual-generica-economica.jpg"
+  },
+  {
+    "nombre_producto": "Me Luna Menstrual Cup",
+    "id_categoria": "HigieneIntima",
+    "id_subcategoria": "Copas Menstruales",
+    "nombre_imagen": "me-luna-menstrual-cup.jpg"
+  },
+  {
+    "nombre_producto": "Diva Cup Menstrual Cup",
+    "id_categoria": "HigieneIntima",
+    "id_subcategoria": "Copas Menstruales",
+    "nombre_imagen": "diva-cup-menstrual-cup.jpg"
+  },
+  {
+    "nombre_producto": "AllMatters OrganiCup Menstrual Cup",
+    "id_categoria": "HigieneIntima",
+    "id_subcategoria": "Copas Menstruales",
+    "nombre_imagen": "allmatters-organicup-menstrual-cup.jpg"
+  },
+  {
+    "nombre_producto": "Lactacyd Femina Jabón Íntimo Diario",
+    "id_categoria": "HigieneIntima",
+    "id_subcategoria": "Jabones Intimos",
+    "nombre_imagen": "lactacyd-femina-jabon-intimo-diario.jpg"
+  },
+  {
+    "nombre_producto": "Lomecan V Champú Íntimo",
+    "id_categoria": "HigieneIntima",
+    "id_subcategoria": "Jabones Intimos",
+    "nombre_imagen": "lomecan-v-champu-intimo.jpg"
+  },
+  {
+    "nombre_producto": "Saba Jabón Íntimo V-Nutritivo",
+    "id_categoria": "HigieneIntima",
+    "id_subcategoria": "Jabones Intimos",
+    "nombre_imagen": "saba-jabon-intimo-v-nutritivo.jpg"
+  },
+  {
+    "nombre_producto": "Lamazuna Solid Intimate Cleanser",
+    "id_categoria": "HigieneIntima",
+    "id_subcategoria": "Jabones Intimos",
+    "nombre_imagen": "lamazuna-solid-intimate-cleanser.jpg"
+  }
+]

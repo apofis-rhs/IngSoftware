@@ -3,13 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA</title>
+  <title>LUMIKA — Comparación</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
   <link rel="stylesheet" href="./comparacion.css">
 </head>
 <body>
+  <nav class="navbar">
+    <a class="navbar__logo" href="../../inicio/inicio.html">
+      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
+      <span class="navbar__logo-text">LUMIKA</span>
+    </a>
+    <div class="navbar__links hide-mobile">
+      <a href="../../inicio/inicio.html" class="navbar__link"><i class="fa-solid fa-house"></i> Inicio</a>
+      <a href="../../perfil/mi-perfil/mi-perfil.html" class="navbar__link"><i class="fa-regular fa-user"></i> Perfil</a>
+      <a href="../../buscador/inicio/inicio.html" class="navbar__link navbar__link--active"><i class="fa-solid fa-magnifying-glass"></i> Búsqueda</a>
+      <a href="../inicio/inicio.html" class="navbar__link navbar__link--active"><i class="fa-solid fa-plus"></i> Recomendaciones</a>
+      <a href="../../perfil/favoritos/favoritos.html" class="navbar__link"><i class="fa-regular fa-star"></i> Mis Favoritos</a>
+      <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+    </div>
+
+    <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="nav-drawer" id="nav-drawer">
+    <a href="../../inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-house"></i> Inicio
+    </a>
+    <a href="../../perfil/mi-perfil/mi-perfil.html" class="nav-drawer__link">
+      <i class="fa-regular fa-user"></i> Perfil
+    </a>
+    <a href="../../buscador/inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
+    </a>
+    <a href="../../recomendaciones/inicio/inicio.html" class="nav-drawer__link">
+      <i class="fa-solid fa-plus"></i> Recomendaciones
+    </a>
+    <a href="../../perfil/favoritos/favoritos.html" class="nav-drawer__link">
+      <i class="fa-regular fa-star"></i> Mis Favoritos
+    </a>
+    <div class="nav-drawer__divider"></div>
+    <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger">
+      <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+    </a>
+  </div>
+
+  <main class="page-wrapper">
+    <h1 class="text-h1 text-center" style="margin-bottom:var(--space-6)">Comparar productos</h1>
+    
+    <div id="loader" class="text-center" style="padding:var(--space-8)">
+      <p class="text-muted">Cargando comparación...</p>
+    </div>
+
+    <div id="contenido-comparacion" class="hidden">
+      <!-- Grid dinámico de productos -->
+      <div id="grid-productos" style="display:grid; gap:var(--space-4); margin-bottom:var(--space-6)"></div>
+
+      <div class="card" style="margin-bottom:var(--space-6)">
+        <h3 class="text-h3" style="margin-bottom:var(--space-4)">Diferencias clave</h3>
+        <div id="tabla-comparacion"></div>
+      </div>
+
+      <div class="alerta alerta--info" id="recomendacion">
+        <strong>Recomendación LUMIKA:</strong> <span id="texto-recomendacion"></span>
+      </div>
+
+      <button class="btn-regresar" id="btn-regresar">Regresar</button>
+    </div>
+  </main>
+
   <script type="module" src="./comparacion.js"></script>
 </body>
 </html>
