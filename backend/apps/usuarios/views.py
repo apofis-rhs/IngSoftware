@@ -1,4 +1,5 @@
 import base64
+from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -152,3 +153,49 @@ def favoritos(request):
         id_usuario_id=usuario.id_usuario, id_producto_id=id_producto
     ).delete()
     return Response({'mensaje': 'Favorito eliminado'})
+
+@api_view(['POST'])
+def login_admin(request):
+    """
+    Autentica contra el sistema de usuarios nativo de Django (auth_user).
+    Solo permite el acceso si el usuario tiene is_staff o is_superuser = True.
+    """
+    nombre_usuario = request.data.get('nombre_usuario', '').strip()
+    contrasena = request.data.get('contrasena', '')
+ 
+    if not nombre_usuario or not contrasena:
+        return Response(
+            {'error': 'nombre_usuario y contrasena son requeridos'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+ 
+    # django.contrib.auth.authenticate verifica contra auth_user
+    django_user = authenticate(username=nombre_usuario, password=contrasena)
+ 
+    if django_user is None:
+        return Response(
+            {'error': 'Credenciales incorrectas o usuario no encontrado en Django admin'},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+ 
+    if not (django_user.is_staff or django_user.is_superuser):
+        return Response(
+            {'error': 'El usuario no tiene permisos de administrador'},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+ 
+    # Generamos un token simple basado en el ID del usuario de Django
+    token = base64.b64encode(f'django-{django_user.id}'.encode()).decode()
+ 
+    usuario_data = {
+        'id_usuario':       django_user.id,
+        'nombre_usuario':   django_user.username,
+        'nombre_completo':  f'{django_user.first_name} {django_user.last_name}'.strip() or django_user.username,
+        'correo':           django_user.email,
+        'rol':              'admin',
+        'is_staff':         django_user.is_staff,
+        'is_superuser':     django_user.is_superuser,
+        'estatus_cuenta':   'activo',
+    }
+ 
+    return Response({'token': token, 'usuario': usuario_data})

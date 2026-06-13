@@ -1,132 +1,338 @@
-/* Estilos base de la barra amarilla de Lumika Admin */
-.navbar-admin {
-  background-color: #fcae04;
+/* ============================================================
+   ESTILOS GENERALES DE LA IDENTIDAD ADMIN - LUMIKA
+   ============================================================ */
+
+/* Navbar Color Amarillo Corporativo */
+.admin-navbar-bg {
+  background-color: #FFAE00 !important;
+}
+
+.navbar__badge-admin {
+  font-size: 10px;
+  background-color: #E20074;
+  color: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  margin-left: var(--space-2);
+  font-weight: var(--font-bold);
+}
+
+/* Tablas e Inputs de Gestión de Productos */
+.admin-view-header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  padding: 10px 40px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background-color: #FFAE00;
+  padding: var(--space-4);
+  margin: calc(var(--space-6) * -1) calc(var(--space-4) * -1) var(--space-4);
+  color: #000000;
 }
 
-.navbar-admin__brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.btn-back-icon {
+  margin-right: var(--space-2);
+  cursor: pointer;
 }
 
-.navbar-admin__logo {
-  height: 40px;
-  width: auto;
-}
-
-.navbar-admin__title {
-  font-size: 1.8rem;
-  font-weight: 900;
-  color: #000;
-  letter-spacing: -1px;
-}
-
-.navbar-admin__badge {
-  background-color: #ff3366;
+.btn-add-circle {
+  background-color: #B2CD3B;
   color: white;
-  font-size: 0.75rem;
-  font-weight: bold;
-  padding: 3px 10px;
-  border-radius: 12px;
-  margin-left: 4px;
-}
-
-.navbar-admin__links {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 25px;
+  justify-content: center;
+  text-decoration: none;
 }
 
-/* Estilo de Botón Vertical (Icono arriba, texto abajo) */
-.nav-item {
+.admin-search-input {
+  width: 100%;
+  padding: var(--space-3);
+  border-radius: var(--radius-full);
+  border: none;
+  background-color: #F2F2F2;
+  outline: none;
+}
+
+.product-item-card {
+  background-color: #F2F2F2;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.product-item-card__info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.status-indicator {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.status-indicator--red { background-color: #FF8795; }
+.status-indicator--green { background-color: #B2CD3B; }
+
+.btn-action-trigger {
+  border: none;
+  background: none;
+  font-size: var(--text-lg);
+  margin-left: var(--space-2);
+  cursor: pointer;
+}
+.btn-action-trigger--edit { color: #FFAE00; }
+.btn-action-trigger--delete { color: #FF8795; }
+
+/* Dashboard Cuadrículas (KPIs) */
+.admin-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.kpi-card {
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-decoration: none;
-  color: #000;
-  font-size: 0.85rem;
-  font-weight: 600;
-  gap: 4px;
-  transition: opacity 0.2s;
-}
-
-.nav-item i {
-  font-size: 1.2rem;
-}
-
-.nav-item:hover {
-  opacity: 0.7;
-}
-
-/* Evitar que convivan el menú móvil y de escritorio */
-@media (max-width: 768px) {
-  .hide-mobile { display: none !important; }
-  .navbar-admin { padding: 15px 20px; }
-}
-
-@media (min-width: 769px) {
-  .hide-desktop { display: none !important; }
-  .nav-drawer { display: none !important; }
-}
-
-/* Tarjetas de métricas del Dashboard */
-.dashboard-container {
-  max-width: 1000px;
-  margin: 50px auto;
-  padding: 0 20px;
-}
-
-.section-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 35px;
-}
-
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 25px;
-  margin-bottom: 40px;
-}
-
-.card {
-  border-radius: 16px;
-  padding: 30px 20px;
+  justify-content: center;
   text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+  box-shadow: var(--shadow-sm);
 }
 
-.card__number {
-  font-size: 3.5rem;
-  font-weight: 800;
+.kpi-card__number {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  color: #111111;
+}
+
+.kpi-card__label {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.kpi-card--yellow { background-color: #FCD469; }
+.kpi-card--green  { background-color: #B2CD3B; }
+.kpi-card--red    { background-color: #FF8795; }
+.kpi-card--gray   { background-color: #EFEFEF; }
+
+.btn-admin-action {
   display: block;
-  line-height: 1;
-  margin-bottom: 10px;
-}
-
-.card__label {
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-.card--orange { background-color: #fcae04; }
-.card--green { background-color: #b2c92c; }
-.card--red { background-color: #ff4d5a; }
-.card--gray { background-color: #f0f0f0; }
-
-/* Botón Gestionar Productos */
-.btn-manage {
-  display: inline-block;
-  background-color: #fcae04;
-  color: #000;
-  font-weight: bold;
-  padding: 14px 40px;
-  border-radius: 30px;
+  width: 100%;
+  background-color: #FFAE00;
+  color: #000000;
+  font-weight: var(--font-bold);
+  text-align: center;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
   text-decoration: none;
-  font-size: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-admin-back-footer {
+  display: block;
+  background-color: #B2CD3B;
+  color: white;
+  text-align: center;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  width: 120px;
+  margin: 0 auto;
+  text-decoration: none;
+  font-size: var(--text-sm);
+}
+
+/* ============================================================
+   ESTILOS DE FORMULARIO LIMPIO (NUEVA REFE INTERFAZ)
+   ============================================================ */
+.admin-top-banner {
+  background-color: #FFAE00;
+  width: 100%;
+  padding: var(--space-4) var(--space-2);
+  text-align: center;
+}
+
+.banner-title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: #000000;
+  margin: 0;
+}
+
+.form-wrapper-clean {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4);
+}
+
+.mode-selector {
+  display: flex;
+  background-color: #F2F2F2;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-5);
+}
+
+.mode-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 6px;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.mode-tab.active {
+  background-color: #FFFFFF;
+  color: #000000;
+  font-weight: var(--font-semibold);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-clean-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.form-clean-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-clean-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.form-clean-label {
+  font-size: var(--text-sm);
+  color: #8E8E8E;
+}
+
+.form-clean-input {
+  background-color: #F2F2F2;
+  border: 1px solid #E5E5E5;
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  font-size: var(--text-base);
+  outline: none;
+  width: 100%;
+}
+
+.form-clean-file {
+  background-color: #F2F2F2;
+  border: 1px solid #E5E5E5;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-4);
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  cursor: pointer;
+}
+
+/* Checkboxes Ambientales */
+.environmental-title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  margin-bottom: var(--space-3);
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: var(--space-2);
+  cursor: pointer;
+  font-size: var(--text-sm);
+}
+
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  position: absolute;
+  top: 1px;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: #FFFFFF;
+  border: 1.5px solid #A0A0A0;
+  border-radius: var(--radius-sm);
+}
+
+.checkbox-container input:checked ~ .checkmark {
+  background-color: #B2CD3B;
+  border-color: #B2CD3B;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkbox-container .checkmark:after {
+  left: 5px;
+  top: 2px;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Botones Grandes Ovalados de Acción */
+.action-container-clean {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.btn-olive-large {
+  width: 100%;
+  background-color: #B2CD3B;
+  color: #000000;
+  font-size: var(--text-base);
+  font-weight: var(--font-bold);
+  padding: var(--space-3);
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+}
+
+.btn-regresar-oval {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 55%;
+  background-color: #B2CD3B;
+  color: #000000;
+  font-size: var(--text-sm);
+  font-weight: var(--font-bold);
+  padding: 8px var(--space-4);
+  border-radius: 40px;
+  text-decoration: none;
 }

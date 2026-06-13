@@ -1,5 +1,5 @@
 // ============================================================
-// login.js — Autenticación LUMIKA con animaciones
+// login.js — Autenticación LUMIKA
 // ============================================================
 
 // ── 1. VARIABLES DEL DOM ───────────────────────────────────
@@ -49,14 +49,11 @@ function iniciarSesion() {
 if (btn_mostrar_registro) btn_mostrar_registro.addEventListener("click", register);
 if (btn_mostrar_login)    btn_mostrar_login.addEventListener("click", iniciarSesion);
 window.addEventListener("resize", anchoPagina);
-
 anchoPagina();
 
-// ── 3. DETECTAR ?modo=registro DESDE inicio.html ──────────
+// ── 3. DETECTAR ?modo=registro ─────────────────────────────
 const params = new URLSearchParams(window.location.search);
-if (params.get('modo') === 'registro') {
-  register();
-}
+if (params.get('modo') === 'registro') register();
 contenedor_login_register.classList.add('listo');
 
 // ── 4. RIPPLE en botones ───────────────────────────────────
@@ -77,7 +74,7 @@ function shakeError() {
   setTimeout(() => contenedor_login_register.classList.remove('shake'), 400);
 }
 
-// ── 6. LOGIN — backend real ────────────────────────────────
+// ── 6. LOGIN ───────────────────────────────────────────────
 const inputUsuario    = document.getElementById('usuario');
 const inputContrasena = document.getElementById('contrasena');
 const btnLogin        = document.getElementById('btn-login');
@@ -87,6 +84,8 @@ const alertaError     = document.getElementById('alerta-error');
 const alertaTexto     = document.getElementById('alerta-texto');
 const errorUsuario    = document.getElementById('error-usuario');
 const errorContrasena = document.getElementById('error-contrasena');
+
+const API_URL = 'http://localhost:8000/api';
 
 if (inputUsuario && inputContrasena && btnLogin) {
   inputUsuario.addEventListener('input', () => {
@@ -126,18 +125,28 @@ function setLoading(cargando) {
   btnLoading.classList.toggle('hidden', !cargando);
 }
 
+// ── Determina si un usuario es admin (cualquier tipo) ──────
+function esAdmin(usuario) {
+  return (
+    usuario.rol === 'admin' ||
+    usuario.is_staff === true ||
+    usuario.is_superuser === true
+  );
+}
+
 async function manejarLogin() {
   if (!validarLogin()) { shakeError(); return; }
   setLoading(true);
   alertaError.classList.add('hidden');
 
   try {
-    const res = await fetch('http://localhost:8000/api/usuarios/login/', {
+    // ── Intento 1: endpoint propio de LUMIKA (tabla usuario) ──
+    const res = await fetch(`${API_URL}/usuarios/login/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         nombre_usuario: inputUsuario.value.trim(),
-        contrasena: inputContrasena.value
+        contrasena:     inputContrasena.value
       })
     });
     const data = await res.json();
@@ -145,18 +154,54 @@ async function manejarLogin() {
     if (res.ok) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('usuario', JSON.stringify(data.usuario));
-      if (data.usuario.rol === 'admin') {
+
+      if (esAdmin(data.usuario)) {
         window.location.href = '../../admin/dashboard/dashboard.html';
       } else {
         window.location.href = '../../buscador/inicio/inicio.html';
       }
-    } else {
-      alertaTexto.textContent = data.error || 'Usuario o contraseña incorrectos';
-      alertaError.classList.remove('hidden');
-      inputUsuario.classList.add('input--error');
-      inputContrasena.classList.add('input--error');
-      shakeError();
+      return;
     }
+
+    // ── Intento 2: credenciales de Django superuser / staff ───
+    // Si el usuario no existe en la tabla `usuario` de LUMIKA,
+    // puede ser un superusuario creado con manage.py createsuperuser.
+    const resAdmin = await fetch(`${API_URL}/usuarios/login-admin/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nombre_usuario: inputUsuario.value.trim(),
+        contrasena:     inputContrasena.value
+      })
+    });
+
+    if (resAdmin.ok) {
+      const dataAdmin = await resAdmin.json();
+      localStorage.setItem('token', dataAdmin.token);
+      localStorage.setItem('usuario', JSON.stringify(dataAdmin.usuario));
+      window.location.href = '../../admin/dashboard/dashboard.html';
+      return;
+    }
+
+    // ── Ambos fallaron: mostrar error ─────────────────────
+    // Preferimos el mensaje del intento 2 si el 1ro devolvió
+    // "no encontrado" (el usuario podría ser admin de Django).
+    let mensajeError = 'Usuario o contraseña incorrectos';
+    if (res.status === 401) {
+      try {
+        const dataAdmin2 = await resAdmin.json().catch(() => ({}));
+        mensajeError = dataAdmin2.error || mensajeError;
+      } catch (_) { /* usar mensaje por defecto */ }
+    } else {
+      mensajeError = data.error || mensajeError;
+    }
+
+    alertaTexto.textContent = mensajeError;
+    alertaError.classList.remove('hidden');
+    inputUsuario.classList.add('input--error');
+    inputContrasena.classList.add('input--error');
+    shakeError();
+
   } catch {
     alertaTexto.textContent = 'No se pudo conectar al servidor. Verifica que el backend esté corriendo.';
     alertaError.classList.remove('hidden');
@@ -166,7 +211,7 @@ async function manejarLogin() {
   }
 }
 
-// ── 7. REGISTRO — backend real ─────────────────────────────
+// ── 7. REGISTRO ────────────────────────────────────────────
 const btnRegistro      = document.getElementById('btn-registro');
 const inputNombre      = document.getElementById('reg-nombre');
 const inputCorreo      = document.getElementById('reg-correo');
@@ -214,7 +259,7 @@ async function manejarRegistro() {
   btnRegistro.textContent = 'Creando cuenta...';
 
   try {
-    const res = await fetch('http://localhost:8000/api/usuarios/registro/', {
+    const res = await fetch(`${API_URL}/usuarios/registro/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA — Agregar Producto</title>
+  <title>LUMIKA — Formulario Admin</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
@@ -13,96 +12,81 @@
 </head>
 <body>
 
-  <header class="navbar-admin">
-    <div class="navbar-admin__brand">
-      <img src="../../assets/img/logo.png" alt="LUMIKA" class="navbar-admin__logo">
-      <span class="navbar-admin__title">LUMIKA</span>
-      <span class="navbar-admin__badge">Admin</span>
-    </div>
-    
-    <nav class="navbar-admin__links hide-mobile">
-      <a href="../dashboard/dashboard.html" class="nav-item">
-        <i class="fa-solid fa-house"></i>
-        <span>Panel Administrador</span>
-      </a>
-      <a href="./agregar-producto.html" class="nav-item">
-        <i class="fa-solid fa-plus"></i>
-        <span>Agregar Producto</span>
-      </a>
-      <a href="../gestionar-productos/gestionar-productos.html" class="nav-item">
-        <i class="fa-solid fa-pen-to-square"></i>
-        <span>Editar Producto</span>
-      </a>
-      <a href="../gestionar-productos/gestionar-productos.html" class="nav-item">
-        <i class="fa-solid fa-eye"></i>
-        <span>Visualizar Producto</span>
-      </a>
-      <a href="../gestionar-productos/gestionar-productos.html" class="nav-item">
-        <i class="fa-solid fa-trash"></i>
-        <span>Eliminar Producto</span>
-      </a>
-      <a href="#" class="nav-item">
-        <i class="fa-solid fa-right-from-bracket"></i>
-        <span>Cerrar Sesión</span>
-      </a>
-    </nav>
+  <header class="admin-top-banner">
+    <h1 id="dynamic-title" class="banner-title">Agregar producto</h1>
   </header>
 
-  <main class="form-container">
-    <div class="form-header">Agregar producto</div>
+  <main class="page-wrapper form-wrapper-clean">
+    
+    <div class="mode-selector">
+      <button type="button" class="mode-tab active" id="tab-producto" onclick="switchForm('producto')">Producto</button>
+      <button type="button" class="mode-tab" id="tab-articulo" onclick="switchForm('articulo')">Artículo</button>
+    </div>
 
-    <form class="product-form">
+    <form id="form-admin-lumika" class="form-clean-layout">
       
-      <div class="form-group">
-        <label class="form-label">Nombre del producto</label>
-        <input type="text" class="form-control" required>
-      </div>
-      
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Categoría</label>
-          <input type="text" class="form-control">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Subcategoría</label>
-          <input type="text" class="form-control">
-        </div>
+      <div class="form-clean-group">
+        <label class="form-clean-label" id="label-nombre">Nombre del producto</label>
+        <input type="text" class="form-clean-input" required>
       </div>
 
-      <div class="criteria-section">
-        <h3 class="criteria-title">Criterios ambientales</h3>
+      <div class="form-clean-row">
+        <div class="form-clean-group">
+          <label class="form-clean-label">Categoría</label>
+          <select class="form-clean-input">
+            <option value=""></option>
+            <option value="shampoo">Shampoo</option>
+          </select>
+        </div>
+        <div class="form-clean-group">
+          <label class="form-clean-label">Subcategoría</label>
+          <select class="form-clean-input">
+            <option value=""></option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-clean-group" id="field-imagen">
+        <label class="form-clean-label">Imagen:</label>
+        <div class="form-clean-file">
+          <i class="fa-solid fa-upload"></i>
+          <input type="file" id="file-input" hidden>
+        </div>
+      </div>
+
+      <div class="environmental-section" id="section-criterios">
+        <h3 class="environmental-title">Criterios ambientales</h3>
         
         <label class="checkbox-container">
-          <input type="checkbox"> Usa microplásticos
+          <input type="checkbox"> <span class="checkmark"></span> Usa microplásticos
         </label>
         <label class="checkbox-container">
-          <input type="checkbox"> Realiza pruebas en animales
+          <input type="checkbox"> <span class="checkmark"></span> Realiza pruebas en animales
         </label>
         <label class="checkbox-container">
-          <input type="checkbox"> Tiene certificación ambiental
+          <input type="checkbox"> <span class="checkmark"></span> Tiene certificación ambiental
         </label>
         <label class="checkbox-container">
-          <input type="checkbox"> Usa envases sustentables
+          <input type="checkbox"> <span class="checkmark"></span> Usa envases sustentables
         </label>
         <label class="checkbox-container">
-          <input type="checkbox"> Usa plásticos de un solo uso
+          <input type="checkbox"> <span class="checkmark"></span> Usa plásticos de un solo uso
         </label>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">Ventajas ecológicas</label>
-        <input type="text" class="form-control">
+      <div class="form-clean-group">
+        <label class="form-clean-label" id="label-ventajas">Ventajas ecológicas</label>
+        <input type="text" class="form-clean-input">
       </div>
 
-      <div class="form-group">
-        <label class="form-label">Desventajas ecológicas</label>
-        <input type="text" class="form-control">
+      <div class="form-clean-group">
+        <label class="form-clean-label" id="label-desventajas">Desventajas ecológicas</label>
+        <input type="text" class="form-clean-input">
       </div>
 
-      <div class="form-actions">
-        <button type="submit" class="btn-submit">Guardar producto</button>
-        
-        <a href="../dashboard/dashboard.html" class="btn-back-form">
+      <div class="action-container-clean">
+        <button type="submit" class="btn-olive-large" id="btn-submit-text">Guardar producto</button>
+        <a href="../dashboard/dashboard.html" class="btn-regresar-oval">
           <i class="fa-solid fa-arrow-left"></i> Regresar
         </a>
       </div>
@@ -110,14 +94,46 @@
     </form>
   </main>
 
-  <div class="feedback-modal" id="successModal">
-    <div class="feedback-box">
-      <div class="circle-icon">
-        <i class="fa-solid fa-check"></i>
-      </div>
-      <h2>Agregado Correctamente</h2>
-    </div>
-  </div>
+  <script>
+    function switchForm(mode) {
+      const title = document.getElementById('dynamic-title');
+      const labelNombre = document.getElementById('label-nombre');
+      const labelVentajas = document.getElementById('label-ventajas');
+      const labelDesventajas = document.getElementById('label-desventajas');
+      const btnSubmit = document.getElementById('btn-submit-text');
+      
+      const fieldImagen = document.getElementById('field-imagen');
+      const sectionCriterios = document.getElementById('section-criterios');
+      
+      const tabProducto = document.getElementById('tab-producto');
+      const tabArticulo = document.getElementById('tab-articulo');
 
+      if (mode === 'producto') {
+        title.innerText = "Agregar producto";
+        labelNombre.innerText = "Nombre del producto";
+        labelVentajas.innerText = "Ventajas ecológicas";
+        labelDesventajas.innerText = "Desventajas ecológicas";
+        btnSubmit.innerText = "Guardar producto";
+        
+        fieldImagen.style.display = "block";
+        sectionCriterios.style.display = "block";
+        
+        tabProducto.classList.add('active');
+        tabArticulo.classList.remove('active');
+      } else if (mode === 'articulo') {
+        title.innerText = "Agregar Artículo";
+        labelNombre.innerText = "Nombre del artículo";
+        labelVentajas.innerText = "Resumen o Descripción corta";
+        labelDesventajas.innerText = "Contenido / Detalles";
+        btnSubmit.innerText = "Guardar artículo";
+        
+        fieldImagen.style.display = "none";
+        sectionCriterios.style.display = "none";
+        
+        tabArticulo.classList.add('active');
+        tabProducto.classList.remove('active');
+      }
+    }
+  </script>
 </body>
 </html>

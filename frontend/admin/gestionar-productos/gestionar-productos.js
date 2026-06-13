@@ -19,3 +19,4 @@ document.getElementById('confirm-delete-btn').addEventListener('click', () => {
 function redirigirEditar(id) {
     window.location.href = `./agregar-producto.html?edit=true&id=${id}`;
 }
+

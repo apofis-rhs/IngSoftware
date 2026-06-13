@@ -67,7 +67,7 @@ DATABASES = {
         'USER':     os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST':     os.getenv('DB_HOST'),
-        'PORT':     os.getenv('DB_PORT', '5432'),
+        'PORT':     os.getenv('DB_PORT', '27000'),
     }
 }
 
@@ -93,3 +93,12 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [],
     'DEFAULT_PERMISSION_CLASSES': [],
 }
+
+
+
+STATICFILES_DIRS = [
+    BASE_DIR.parent / 'frontend',
+]
+
+
+TEMPLATES[0]['DIRS'] = [BASE_DIR.parent / 'frontend']
