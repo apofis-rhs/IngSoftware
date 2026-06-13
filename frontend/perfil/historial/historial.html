@@ -3,13 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA</title>
+  <title>LUMIKA - Historial</title>
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
   <link rel="stylesheet" href="./historial.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
+
+  <div class="page-header">
+    <a href="../mi-perfil/mi-perfil.html" class="btn-back"></a>
+    <span class="page-header__title">Historial de Búsquedas</span>
+  </div>
+
+  <main class="page-wrapper">
+    
+    <div class="historial-sub">
+      <p>Un registro de los productos y artículos que has consultado recientemente.</p>
+    </div>
+
+    <div class="timeline-container">
+      <div id="historial-container" class="timeline">
+        <div style="text-align: center; padding: 40px; color: #BAC423;">
+          <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px;"></i> Cargando historial...
+        </div>
+      </div>
+    </div>
+
+  </main>
+
   <script type="module" src="./historial.js"></script>
 </body>
 </html>
