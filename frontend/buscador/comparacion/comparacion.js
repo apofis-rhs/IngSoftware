@@ -1,8 +1,8 @@
 // comparacion - logica especifica
 import { compararProductos } from '../../assets/js/api.js';
 
-// === MOCK PARA PRUEBAS SIN BACKEND ===
-// Descomenta este objeto si el backend no responde
+// === MOCK PARA PRUEBAS  ===
+// Descomenta para probar
 
 const MOCK_COMPARACION = [
   {
@@ -69,7 +69,7 @@ async function cargarComparacion(ids) {
     
     pintarComparacion(res.data);
 
-    // Descomenta este objeto si el backend no responde
+    // Descomenta para probar
     
     console.warn('Backend falló, usando MOCK');
     pintarComparacion(MOCK_COMPARACION.slice(0, ids.length));
@@ -80,7 +80,7 @@ async function cargarComparacion(ids) {
   } catch (error) {
     mostrarError(`Error de conexión: ${error.message}`);
     
-    // Descomenta este objeto si el backend no responde
+    // Descomenta para probar
     
     console.warn('Fetch falló, usando MOCK');
     pintarComparacion(MOCK_COMPARACION.slice(0, ids.length));
