@@ -1,36 +1,208 @@
-.card {
-    max-width: 700px;
-    margin: 0 auto;
+/* HEADER CON TÍTULO GRANDE */
+.page-header__title {
+  font-size: 25px;
+  font-weight: 700;
 }
 
+/* =========================================
+   PARTÍCULAS FLOTANTES DEL FONDO
+   ========================================= */
+.particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: -1;
+  animation: floatSpin linear infinite;
+  opacity: 0.5;
+}
+
+@keyframes floatSpin {
+  0%   { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  20%  { opacity: 0.6; }
+  80%  { opacity: 0.6; }
+  100% { transform: translateY(-200px) rotate(360deg); opacity: 0; }
+}
+
+/* CONTENEDOR PRINCIPAL */
+.evaluacion-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px 20px 80px;
+  min-height: calc(100vh - 160px);
+}
+
+/* TARJETA DE EVALUACIÓN */
+.evaluacion-card {
+  background: #ffffff;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 500px;
+  padding: 40px;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.03);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  animation: popInCard 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Barra superior decorativa */
+.evaluacion-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(90deg, #FFD460 0%, #BAC423 100%);
+}
+
+@keyframes popInCard {
+  0% { opacity: 0; transform: translateY(40px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* HEADER INTERNO & EMOJI DINÁMICO */
+.eval-emoji {
+  font-size: 64px;
+  margin-bottom: 16px;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-block;
+}
+.eval-emoji.bounce {
+  animation: emojiBounce 0.4s ease;
+}
+@keyframes emojiBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2) translateY(-10px); }
+}
+
+.eval-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text-primary, #1a1a1a);
+  margin-bottom: 8px;
+}
+.eval-subtitle {
+  font-size: 14px;
+  color: var(--color-text-muted, #666);
+  line-height: 1.5;
+  margin-bottom: 32px;
+}
+
+/* ESTRELLAS JUGUETONAS */
+
 .stars {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  /* Eliminamos el flex-direction: row-reverse; */
 }
 
 .star {
-    font-size: 40px;
-    color: #D9D9D9;
-    cursor: pointer;
-    transition: color 0.2s ease;
-    user-select: none;
+  font-size: 40px;
+  color: #E0E0E0;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* Solo hacemos que salte la estrella que estás tocando */
 .star:hover {
-    color: #FFAC00;
+  transform: scale(1.15) rotate(-5deg);
+  text-shadow: 0 4px 12px rgba(255, 172, 0, 0.4);
 }
 
-.star--filled {
-    color: #FFAC00;
+/* Clase para las estrellas que ya están seleccionadas por JS */
+.star.star--filled {
+  color: var(--color-primary-dark, #FFAC00);
 }
 
-#comentario {
-    resize: vertical;
-    min-height: 120px;
+/* TEXTAREA ESTILIZADO */
+.eval-form-group {
+  text-align: left;
+  margin-bottom: 32px;
+}
+.eval-textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 120px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  border: 2px solid #edf2f7;
+  background: #fdfdfd;
+  font-family: inherit;
+  font-size: 15px;
+  color: #333;
+  transition: all 0.3s ease;
+}
+.eval-textarea:focus {
+  outline: none;
+  border-color: var(--color-success, #BAC423);
+  box-shadow: 0 0 0 4px rgba(186, 196, 35, 0.15);
+  background: #fff;
 }
 
-#mensaje {
-    margin-top: 1rem;
+/* BOTÓN PILL */
+.btn-guardar-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 50px;
+  background: linear-gradient(135deg, var(--color-success, #BAC423) 0%, #a2ab1e 100%);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(186, 196, 35, 0.3);
+}
+.btn-guardar-pill:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(186, 196, 35, 0.4);
+}
+.btn-guardar-pill:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* PANTALLA DE ÉXITO */
+.eval-success {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px 0;
+  animation: fadeIn 0.5s ease forwards;
+}
+.eval-success-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #FFF8E1; /* Fondo amarillito suave */
+  color: var(--color-primary-dark, #FFAC00);
+  font-size: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  animation: heartBeat 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.15); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 480px) {
+  .evaluacion-card { padding: 32px 24px; }
+  .star { font-size: 32px; }
 }

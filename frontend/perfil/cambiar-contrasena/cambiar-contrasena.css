@@ -1,20 +1,320 @@
-.card {
-    max-width: 600px;
-    margin: 0 auto;
+.page-header__title {
+  font-size: 25px; /* Aumentado para que destaque más */
+  font-weight: 700;
 }
 
-#btnCambiar {
-    margin-top: 1rem;
+/* WRAPPER PRINCIPAL */
+.cambiar-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%; /* NUEVO: Obliga al contenedor a estirarse de lado a lado */
+  min-height: calc(100vh - 80px);
+  padding: 40px 20px;
+  position: relative;
+  background-color: transparent;
 }
 
-#mensaje {
-    margin-top: 1rem;
+/* TARJETA CONSISTENTE CON LUMIKA */
+.cambiar-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 212, 96, 0.05) 0%, #ffffff 25%, #ffffff 75%, rgba(186, 196, 35, 0.05) 100%);
+  border-radius: 24px;
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto; /* NUEVO: Un doble seguro para que siempre se centre horizontalmente */
+  box-shadow: 0 12px 36px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.03);
+  text-align: center;
+  overflow: hidden !important; 
+  opacity: 0;
+  transform: translateY(20px);
+  animation: cardEntrada 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.1s;
+  z-index: 10;
 }
 
-@media (max-width: 768px) {
+/* Barra superior decorativa */
+.cambiar-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(90deg, #FFD460 0%, #FF8C99 50%, #BAC423 100%);
+  z-index: 2;
+}
 
-    .card {
-        max-width: 100%;
-    }
+@keyframes cardEntrada {
+  to { opacity: 1; transform: translateY(0); }
+}
 
+/* FLIP ANIMATIONS (Manteniendo la lógica de tu JS) */
+.cambiar-card.flip-out { animation: flipOut 0.4s ease forwards; }
+.cambiar-card.flip-in { animation: flipIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+@keyframes flipOut { to { opacity: 0; transform: scale(0.9) rotateY(15deg); } }
+@keyframes flipIn {
+  from { opacity: 0; transform: scale(0.9) rotateY(-15deg); }
+  to   { opacity: 1; transform: scale(1) rotateY(0); }
+}
+
+/* ÍCONO SUPERIOR (Escudo) */
+.cambiar-icon-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #FFF8E1;
+  color: #FFAC00;
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  opacity: 0;
+  transform: scale(0.5);
+  animation: iconPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.3s;
+}
+@keyframes iconPop { to { opacity: 1; transform: scale(1); } }
+
+/* TEXTOS */
+.cambiar-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text-primary, #1a1a1a);
+  margin-bottom: 8px;
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards 0.4s;
+}
+.cambiar-subtitle {
+  font-size: 14px;
+  color: var(--color-text-muted, #666);
+  line-height: 1.6;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards 0.5s;
+}
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+/* FORMULARIOS E INPUTS */
+
+/* FORMULARIOS E INPUTS */
+.cambiar-form-group {
+  text-align: left;
+  margin-bottom: 20px;
+  opacity: 0;
+  transform: translateY(10px);
+  /* Animación general y segura para todos los campos */
+  animation: fadeUp 0.5s ease forwards 0.5s;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  margin-left: 12px;
+  display: block;
+  margin-bottom: 8px;
+  transition: color 0.3s ease;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 100%; /* NUEVO: Mantiene todo estrictamente dentro de su columna */
+}
+
+.input-icon {
+  position: absolute;
+  left: 18px;
+  color: #a0aab5;
+  font-size: 16px;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.form-input {
+  width: 100%;
+  box-sizing: border-box; /* ESTO EVITA QUE EL INPUT SE SALGA DE LA TARJETA */
+  padding: 14px 20px 14px 48px;
+  border-radius: 50px;
+  border: 2px solid #edf2f7;
+  background: #ffffff;
+  font-size: 15px;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+/* MICROINTERACCIONES INPUTS */
+.input-wrapper:focus-within .input-icon {
+  color: #FFAC00; 
+  transform: scale(1.15) translateY(-1px);
+}
+.form-input:focus {
+  outline: none;
+  border-color: #FFAC00;
+  box-shadow: 0 0 0 4px rgba(255, 172, 0, 0.15);
+}
+.input-wrapper:focus-within ~ .form-label, 
+.form-group:focus-within .form-label {
+  color: #FFAC00;
+}
+
+/* MICROINTERACCIONES INPUTS */
+.input-wrapper:focus-within .input-icon {
+  color: #FFAC00; /* Amarillo Primary Dark */
+  transform: scale(1.15) translateY(-1px);
+}
+.form-input:focus {
+  outline: none;
+  border-color: #FFAC00;
+  box-shadow: 0 0 0 4px rgba(255, 172, 0, 0.15);
+}
+.input-wrapper:focus-within ~ .form-label, 
+.form-group:focus-within .form-label {
+  color: #FFAC00;
+}
+
+/* BOTÓN GUARDAR (Estilo Pill) */
+.cambiar-btn-wrap {
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards 0.9s;
+}
+.btn-guardar-pill {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #BAC423 0%, #a2ab1e 100%);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(186, 196, 35, 0.3);
+}
+.btn-guardar-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(186, 196, 35, 0.4);
+}
+
+/* BARRA DE PROGRESO DEL BOTÓN */
+.cambiar-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.5);
+  width: 0;
+}
+.cambiar-progress.running {
+  width: 100%;
+  transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* PANTALLA DE ÉXITO */
+.cambiar-success {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px 0;
+}
+.cambiar-success-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #EAF3DE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.cambiar-success-icon svg {
+  width: 40px;
+  height: 40px;
+  stroke: #BAC423;
+  stroke-width: 2.5;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.checkmark {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: drawCheck 0.5s ease forwards 0.3s;
+}
+@keyframes drawCheck { to { stroke-dashoffset: 0; } }
+
+/* BOTÓN REGRESAR OUTLINE */
+.btn-regresar-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border-radius: 50px;
+  border: 2px solid #FF4A58;
+  color: #FF4A58;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  background: transparent;
+  transition: all 0.2s ease;
+}
+.btn-regresar-outline:hover {
+  background: #FF4A58;
+  color: #fff;
+}
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+  .cambiar-card { padding: 40px 24px; }
+  .cambiar-title { font-size: 22px; }
+}
+
+/* =========================================
+   PARTÍCULAS DEL FONDO (Solución de la línea)
+   ========================================= */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0; /* Asegura que pasen por detrás de la tarjeta */
+  animation: floatParticle linear infinite;
+}
+
+@keyframes floatParticle {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 0.5; }
+  50%  { opacity: 0.8; }
+  100% { transform: translateY(-100px) rotate(180deg); opacity: 0; }
+}
+
+/* IMPORTANTE: Asegurarnos de que la tarjeta esté por encima de las partículas */
+.cambiar-card {
+  z-index: 10;
+}
+/* =========================================
+   EFECTO RIPPLE (Para evitar botones mutantes)
+   ========================================= */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(0);
+  animation: ripple-anim 0.5s ease-out;
+  pointer-events: none;
+}
+
+@keyframes ripple-anim {
+  to { 
+    transform: scale(4); 
+    opacity: 0; 
+  }
 }
