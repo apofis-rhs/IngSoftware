@@ -1,4 +1,6 @@
 // buscador: resultados - logica especifica
+
+
 import { buscarProductos, logout } from '../../assets/js/api.js';
 import { getRutaImagen }           from '../../assets/js/imagenes.js';
 

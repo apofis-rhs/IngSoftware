@@ -2,13 +2,80 @@ import os
 import json
 import base64
 from openai import OpenAI
-from rest_framework.decorators import api_view
+from django.db.models import Q
+from django.db.models import Count
+from django.http import JsonResponse
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
+from apps.usuarios.models import Favorito
+from rest_framework.permissions import AllowAny
 
 from .models import Producto
 from .serializers import ProductoListSerializer, ProductoDetalleSerializer, ProductoAdminSerializer
 
+
+# Endpoint para las métricas del Dashboard Principal
+def obtener_metricas_dashboard(request):
+    if request.method == 'GET':
+        # Contamos usando el campo real 'color_semaforo'
+        total_productos = Producto.objects.count()
+        en_verde = Producto.objects.filter(color_semaforo__iexact='verde').count()
+        en_rojo = Producto.objects.filter(color_semaforo__iexact='rojo').count()
+        
+        # Asumiendo que 'sin info' se guarda como null, vacío o la cadena 'sin info'
+        sin_info = Producto.objects.filter(color_semaforo__isnull=True).count() + \
+                   Producto.objects.filter(color_semaforo='').count() + \
+                   Producto.objects.filter(color_semaforo__iexact='sin info').count()
+        
+        data = {
+            'total': total_productos,
+            'en_verde': en_verde,
+            'en_rojo': en_rojo,
+            'sin_info': sin_info
+        }
+        return JsonResponse(data)
+
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([AllowAny]) 
+def lista_productos(request):
+    if request.method == 'GET':
+        try:
+            productos = Producto.objects.all()
+            serializer = ProductoListSerializer(productos, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def productos_populares(request):
+    """
+    Obtiene las marcas comerciales (Productos) más deseadas en Favoritos
+    e incluye sus datos para el menú dinámico.
+    """
+    # 1. Contamos cuáles ID de producto comercial aparecen más en Favoritos
+    populares_ids = (
+        Favorito.objects.values('id_producto_id')
+        .annotate(total_favoritos=Count('id_producto_id'))
+        .order_by('-total_favoritos')[:6]
+    )
+    
+    lista_ids = [item['id_producto_id'] for item in populares_ids]
+    
+    # 2. Traemos las marcas comerciales de la base de datos
+    productos = Producto.objects.filter(id_producto__in=lista_ids)
+    productos_ordenados = sorted(productos, key=lambda p: lista_ids.index(p.id_producto))
+    
+    # Fallback por si no hay favoritos aún: mostrar los primeros productos de marcas reales
+    if not productos_ordenados:
+        productos_ordenados = Producto.objects.all()[:6]
+
+    serializer = ProductoListSerializer(productos_ordenados, many=True)
+    return Response(serializer.data)
 
 def _get_usuario(request):
     from apps.usuarios.models import Usuario
@@ -163,14 +230,30 @@ def _guardar_clasificacion(id_producto, resultado, producto_obj):
 
 
 @api_view(['GET'])
+@permission_classes([AllowAny]) # Aseguramos que cualquier usuario logueado acceda
 def buscar_productos(request):
+    # 1. Capturamos tanto el texto 'q' como el filtro por subcategoría opcional
     q = request.query_params.get('q', '').strip()
-    if not q:
-        return Response(
-            {'error': 'Parámetro q requerido'}, status=status.HTTP_400_BAD_REQUEST
+    subcategoria_id = request.query_params.get('subcategoria', '').strip()
+    
+    # Empezamos con el query de todos los productos
+    productos = Producto.objects.all()
+    
+    # Si el usuario escribió en la barra de búsqueda
+    if q:
+        productos = productos.filter(
+            Q(nombre_producto__icontains=q) |
+            Q(razon_clasificacion__icontains=q)
         )
-    productos = Producto.objects.filter(nombre_producto__icontains=q)
-    return Response(ProductoListSerializer(productos, many=True).data)
+        
+    # Si el usuario presionó un botón de categoría/artículo (Capilar, Facial, etc.)
+    if subcategoria_id and subcategoria_id.isdigit():
+        productos = productos.filter(id_subcategoria_id=int(subcategoria_id))
+        
+    # Ordenamos para mostrar primero los que ya tienen clasificación ecológica completada
+    productos = productos.order_by('-estado_evaluacion')
+    
+    return Response(ProductoListSerializer(productos[:20], many=True).data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])

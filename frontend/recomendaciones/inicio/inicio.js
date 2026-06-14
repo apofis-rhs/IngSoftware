@@ -1,93 +1,64 @@
-// recomendaciones: inicio - logica especifica
-import { buscarArticulos } from '../../assets/js/api.js';
-import { getRutaImagen }   from '../../assets/js/imagenes.js';
+// recomendaciones/inicio.js — conectado a la BD
+import { buscarArticulos, estaLogueado } from '../../assets/js/api.js';
 
-document.addEventListener('DOMContentLoaded', async () => {
-  if (!localStorage.getItem('token')) {
-    window.location.href = '../../auth/login/login.html';
-    return;
+document.addEventListener('DOMContentLoaded', () => {
+
+  if (!estaLogueado()) {
+    window.location.href = '../../auth/login/login.html'; return;
   }
 
-  const inputRecomendacion  = document.getElementById('input-recomendacion');
-  const seccionRecomendados = document.getElementById('grid-recomendados');
-  const seccionPopulares    = document.getElementById('grid-populares');
-
-  function pintarCard(articulo, contenedor) {
-    const color  = articulo.color_semaforo || 'gris';
-    const imgSrc = getRutaImagen(articulo, '../../');
-    const precio = articulo.precio_min != null
-      ? `$${articulo.precio_min} - $${articulo.precio_max}`
-      : 'Precio no disponible';
-
-    const card = document.createElement('article');
-    card.className = 'product-card-grid recomendacion-card';
-    card.style.cursor = 'pointer';
-    card.innerHTML = `
-      <div class="product-card-grid__img">
-        <img src="${imgSrc}"
-             alt="${articulo.nombre_articulo}"
-             style="width:100%; height:100%; object-fit:cover; border-radius:var(--radius-md);"
-             onerror="this.src='../../assets/images/placeholder.svg'">
-        <span class="product-card-grid__dot semaforo-dot--${color}"></span>
-      </div>
-      <div class="product-card-grid__info">
-        <h3 class="product-card-grid__name">${articulo.nombre_articulo}</h3>
-        <p class="product-card-grid__price">${precio}</p>
-      </div>
-    `;
-    card.addEventListener('click', () => {
-      window.location.href = `../detalle-articulo/detalle-articulo.html?id=${articulo.id_articulo}`;
+  ['btn-cerrar-sesion', 'btn-cerrar-sesion-mobile'].forEach(id => {
+    document.getElementById(id)?.addEventListener('click', e => {
+      e.preventDefault();
+      localStorage.removeItem('token'); localStorage.removeItem('usuario');
+      window.location.href = '../../auth/login/login.html';
     });
-    contenedor.appendChild(card);
-  }
+  });
 
-  const TERMINOS = ['rastrillo', 'cepillo', 'esponja', 'bolsa', 'taza'];
-  if (seccionRecomendados) seccionRecomendados.innerHTML = '<p class="text-muted">Cargando...</p>';
-  if (seccionPopulares)    seccionPopulares.innerHTML    = '<p class="text-muted">Cargando...</p>';
+  const hamburger = document.getElementById('hamburger');
+  const navDrawer = document.getElementById('nav-drawer');
+  hamburger?.addEventListener('click', () => navDrawer?.classList.toggle('open'));
+  document.addEventListener('click', e => {
+    if (!hamburger?.contains(e.target) && !navDrawer?.contains(e.target))
+      navDrawer?.classList.remove('open');
+  });
 
-  try {
-    let todos = [];
-    for (const termino of TERMINOS) {
-      const { ok, data } = await buscarArticulos(termino);
-      if (ok && Array.isArray(data)) {
-        data.forEach(a => {
-          if (!todos.find(x => x.id_articulo === a.id_articulo)) todos.push(a);
-        });
-        if (todos.length >= 12) break;
-      }
+  const inputBuscar = document.getElementById('input-buscar');
+  const btnBuscar   = document.getElementById('btn-buscar');
+  const loader      = document.getElementById('loader');
+
+  async function buscar() {
+    const texto = inputBuscar?.value.trim();
+    if (!texto || texto.length < 3) {
+      mostrarToast('Escribe al menos 3 caracteres para buscar.'); return;
     }
 
-    if (seccionRecomendados) {
-      seccionRecomendados.innerHTML = '';
-      const verdes = todos.filter(a => a.color_semaforo === 'verde').slice(0, 6);
-      verdes.length > 0
-        ? verdes.forEach(a => pintarCard(a, seccionRecomendados))
-        : (seccionRecomendados.innerHTML = '<p class="text-muted">Sin recomendados disponibles.</p>');
-    }
+    if (loader) loader.style.display = 'flex';
+    if (btnBuscar) btnBuscar.disabled = true;
 
-    if (seccionPopulares) {
-      seccionPopulares.innerHTML = '';
-      const otros = todos.filter(a => a.color_semaforo !== 'verde').slice(0, 6);
-      if (otros.length > 0) {
-        otros.forEach(a => pintarCard(a, seccionPopulares));
-      } else if (todos.length > 0) {
-        todos.slice(0, 6).forEach(a => pintarCard(a, seccionPopulares));
+    try {
+      const { ok, data } = await buscarArticulos(texto);
+      if (ok) {
+        localStorage.setItem('resultadosArticulos', JSON.stringify(data));
+        localStorage.setItem('textoArticulo', texto);
+        window.location.href = '../resultados/resultados.html';
       } else {
-        seccionPopulares.innerHTML = '<p class="text-muted">Sin populares disponibles.</p>';
+        mostrarToast('Error al buscar. Intenta de nuevo.');
       }
+    } finally {
+      if (loader) loader.style.display = 'none';
+      if (btnBuscar) btnBuscar.disabled = false;
     }
-  } catch (err) {
-    console.error('Error cargando artículos:', err);
-    if (seccionRecomendados) seccionRecomendados.innerHTML = '<p class="text-muted">Error de conexión.</p>';
-    if (seccionPopulares)    seccionPopulares.innerHTML    = '<p class="text-muted">Error de conexión.</p>';
   }
 
-  if (inputRecomendacion) {
-    inputRecomendacion.addEventListener('keypress', (e) => {
-      if (e.key !== 'Enter') return;
-      const texto = inputRecomendacion.value.trim();
-      if (!texto) return;
-      window.location.href = `../resultados/resultados.html?q=${encodeURIComponent(texto)}`;
-    });
+  btnBuscar?.addEventListener('click', buscar);
+  inputBuscar?.addEventListener('keypress', e => { if (e.key === 'Enter') buscar(); });
+
+  function mostrarToast(msg) {
+    const t = document.createElement('div');
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 20px;border-radius:12px;z-index:9999;font-size:0.9rem';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2800);
   }
 });

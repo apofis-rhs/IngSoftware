@@ -1,1 +1,370 @@
-/* favoritos - estilos especificos */
+/* AJUSTE PARA HACER LA LETRA DEL NAVBAR MÁS GRANDE */
+.page-header__title {
+  font-size: 25px;
+  font-weight: 700;
+}
+
+/* =========================================
+   PARTÍCULAS FLOTANTES DEL FONDO
+   ========================================= */
+.particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: -1; /* Para que queden detrás de las tarjetas */
+  animation: floatSpin linear infinite;
+  opacity: 0.6;
+}
+
+@keyframes floatSpin {
+  0%   { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  20%  { opacity: 0.6; }
+  80%  { opacity: 0.6; }
+  100% { transform: translateY(-200px) rotate(360deg); opacity: 0; }
+}
+
+/* GRID DINÁMICO */
+.fav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+  padding: 24px 20px 60px;
+  position: relative;
+  z-index: 1; /* Asegura que el grid esté sobre las partículas */
+}
+
+/* TARJETA DE PRODUCTO */
+.fav-card {
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.03);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+  position: relative;
+  opacity: 0;
+  /* Animación de entrada más divertida y elástica */
+  animation: popInCard 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes popInCard {
+  0% { opacity: 0; transform: translateY(40px) scale(0.9) rotate(-3deg); }
+  100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+}
+
+.fav-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 16px 32px rgba(0,0,0,0.1);
+  border-color: rgba(186, 196, 35, 0.3); /* Un toque verde en el borde al hacer hover */
+}
+
+/* ZONA DE LA IMAGEN */
+.fav-card__img-wrap {
+  width: 100%;
+  height: 220px;
+  background: linear-gradient(135deg, #fdfdfd 0%, #f0f0f0 100%);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow: hidden;
+}
+
+/* IMAGEN REAL - ANIMACIÓN DE GIRO Y ZOOM */
+.fav-card__img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.fav-card:hover .fav-card__img-wrap img {
+  transform: scale(1.12) rotate(4deg); /* Hace zoom y gira un poquito */
+}
+
+/* PUNTO DEL SEMÁFORO */
+.fav-card__dot {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  z-index: 2;
+  border: 2px solid #fff;
+}
+
+/* BOTÓN ELIMINAR (Con efecto temblor) */
+.fav-card__btn-remove {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--color-secondary-dark, #FF4A58);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.fav-card__btn-remove:hover {
+  background: var(--color-secondary-dark, #FF4A58);
+  color: #fff;
+  /* Animación Wiggle (temblor) al pasar el mouse */
+  animation: wiggle 0.4s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-10deg) scale(1.1); }
+  50% { transform: rotate(10deg) scale(1.1); }
+}
+
+/* INFORMACIÓN DEL PRODUCTO */
+.fav-card__info {
+  padding: 20px;
+  background: #ffffff;
+  position: relative;
+  z-index: 2;
+}
+
+.fav-card__title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text-primary, #1a1a1a);
+  margin-bottom: 6px;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.fav-card__price {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-muted, #9E9E9E);
+}
+
+/* ESTADO VACÍO ANIMADO */
+.fav-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+}
+
+.fav-empty i {
+  font-size: 56px;
+  color: #FFD460;
+  margin-bottom: 20px;
+  display: inline-block;
+  /* El icono flota constantemente */
+  animation: floatUpDown 3s ease-in-out infinite;
+}
+
+@keyframes floatUpDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px) scale(1.05); text-shadow: 0 10px 20px rgba(255, 212, 96, 0.4); }
+}
+
+/* ANIMACIÓN DE ELIMINACIÓN */
+.fav-card.removing {
+  animation: popOut 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+  pointer-events: none;
+}
+
+@keyframes popOut {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(0.5) rotate(10deg); opacity: 0; }
+}
+
+/* NOTIFICACIÓN FLOTANTE (TOAST) */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--color-success, #BAC423);
+  color: #fff;
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(186, 196, 35, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: toastIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, 
+             toastOut 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards 2.5s;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes toastOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(30px) scale(0.9); }
+}
+
+/* =========================================
+   TÍTULOS DE SECCIÓN DIVIDIDA
+   ========================================= */
+
+   /* =========================================
+   TÍTULOS DE SECCIÓN DIVIDIDA (ESTILO PÍLDORA)
+   ========================================= */
+.fav-section {
+  margin-bottom: 16px;
+}
+
+.fav-section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 20px 16px 20px; /* Margen para alinearlo con el Grid */
+  padding: 8px 24px 8px 8px; /* Más espacio a la derecha, menos a la izquierda para el ícono */
+  background: #ffffff;
+  border-radius: 50px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.03);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary, #1a1a1a);
+  animation: slideRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  opacity: 0;
+}
+
+/* El círculo de color que envuelve al ícono */
+.title-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Colores dinámicos según la sección */
+.fav-section-title--buscador .title-icon {
+  background: linear-gradient(135deg, #FFD460 0%, #FFAC00 100%);
+}
+
+.fav-section-title--recom .title-icon {
+  background: linear-gradient(135deg, #BAC423 0%, #a2ab1e 100%);
+}
+
+/* Animación de entrada para los títulos */
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Ajuste del padding del grid para que respire bien con los nuevos títulos */
+.fav-grid {
+  padding: 8px 20px 32px;
+}
+
+
+/* ENLACE DE LA TARJETA */
+.fav-card__link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  height: 100%;
+}
+
+/* =========================================
+   NUEVO: SELECTOR DE MÓDULOS (FILTRO CREATIVO)
+   ========================================= */
+.fav-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 20px;
+  margin-bottom: 32px;
+  animation: slideRight 0.5s ease forwards 0.2s;
+  opacity: 0;
+}
+
+.fav-filter-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-muted, #9E9E9E);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.fav-select-wrapper {
+  position: relative;
+  display: inline-block;
+  min-width: 240px;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.fav-select-wrapper:hover {
+  transform: translateY(-3px);
+}
+
+.fav-select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  background: #ffffff;
+  border: 2px solid #eaeaea;
+  border-radius: 50px;
+  padding: 12px 48px 12px 24px;
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: 600;
+  color: var(--color-text-primary, #1a1a1a);
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.04);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.fav-select:focus, .fav-select:hover {
+  outline: none;
+  border-color: #FFAC00; /* Primary Dark */
+  box-shadow: 0 0 0 4px rgba(255, 172, 0, 0.15);
+}
+
+.fav-select-wrapper .select-icon {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  color: #FFAC00;
+  pointer-events: none;
+  font-size: 14px;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Animación cuando el select se despliega (Focus) */
+.fav-select:focus + .select-icon {
+  transform: translateY(-50%) rotate(180deg);
+  color: #BAC423; /* Cambia a verde éxito */
+}

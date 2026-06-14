@@ -1,15 +1,91 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA</title>
+
+  <title>LUMIKA - Favoritos</title>
+
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
   <link rel="stylesheet" href="./favoritos.css">
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body>
+
+  <div class="page-header">
+    <a href="../mi-perfil/mi-perfil.html" class="btn-back"></a>
+    <span class="page-header__title">Mis Favoritos</span>
+  </div>
+
+  <main class="page-wrapper">
+
+    <div class="fav-filter-container">
+      <label for="filtro-modulo" class="fav-filter-label">Mostrar:</label>
+      <div class="fav-select-wrapper">
+        <select id="filtro-modulo" class="fav-select">
+          <option value="todos">Todos mis favoritos</option>
+          <option value="buscador">Del Buscador</option>
+          <option value="recomendaciones">De Recomendaciones</option>
+        </select>
+        <i class="fa-solid fa-chevron-down select-icon"></i>
+      </div>
+    </div>
+
+    <div class="fav-section" id="seccion-buscador">
+      <h2 class="fav-section-title fav-section-title--buscador">
+        <div class="title-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+        Del Buscador
+      </h2>
+      
+      <div id="favoritos-buscador" class="fav-grid">
+         </div>
+    </div>
+
+    <div class="fav-section" id="seccion-recom">
+      <h2 class="fav-section-title fav-section-title--recom">
+        <div class="title-icon"><i class="fa-regular fa-newspaper"></i></div>
+        De Recomendaciones
+      </h2>
+      
+      <div id="favoritos-recomendaciones" class="fav-grid">
+         </div>
+    </div>
+
+  </main>
+
   <script type="module" src="./favoritos.js"></script>
+
+  <script>
+    const hamburger = document.getElementById('hamburger');
+    const navDrawer = document.getElementById('nav-drawer');
+
+    if (hamburger) {
+      hamburger.addEventListener('click', () => {
+        navDrawer.classList.toggle('open');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (
+          !hamburger.contains(e.target) &&
+          !navDrawer.contains(e.target)
+        ) {
+          navDrawer.classList.remove('open');
+        }
+      });
+
+      window.addEventListener('resize', () => {
+        if (window.innerWidth >= 769) {
+          navDrawer.classList.remove('open');
+        }
+      });
+    }
+  </script>
+
 </body>
 </html>

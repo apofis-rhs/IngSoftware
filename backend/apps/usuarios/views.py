@@ -1,4 +1,5 @@
 import base64
+from django.contrib.auth.models import User as DjangoUser
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.decorators import api_view
@@ -10,12 +11,29 @@ from .serializers import UsuarioSerializer, ConsultaSerializer, FavoritoSerializ
 
 
 def _get_usuario(request):
+    """
+    Detecta de forma segura si quien hace la petición es un usuario de la app
+    o un administrador del backend de Django.
+    """
     auth = request.headers.get('Authorization', '')
     if not auth.startswith('Bearer '):
         return None
+    
     try:
-        uid = int(base64.b64decode(auth[7:].encode()).decode())
+        # Decodificamos el token que viene en Base64
+        token_puro = base64.b64decode(auth[7:].encode()).decode()
+        
+        # 🆕 CASO 1: Es un Administrador (Su token inicia con "django-")
+        if token_puro.startswith('django-'):
+            admin_id = int(token_puro.split('-')[1]) # Separamos el texto y obtenemos el ID numérico
+            # Buscamos en la tabla nativa de administración de Django
+            django_admin = DjangoUser.objects.get(id=admin_id, is_active=True)
+            return django_admin # Retornamos el objeto administrador
+            
+        # 🟢 CASO 2: Es un Usuario común (Su token es un ID numérico puro)
+        uid = int(token_puro)
         return Usuario.objects.get(id_usuario=uid, estatus_cuenta='activo')
+        
     except Exception:
         return None
 

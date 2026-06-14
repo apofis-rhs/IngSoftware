@@ -1,100 +1,182 @@
-// Variable de control de modo activo: 'manual' o 'ia'
-let modoActivo = 'manual';
+// admin/agregar-producto.js
+import {
+  clasificarProducto,
+  crearProducto,
+  editarProducto,
+  obtenerProducto,
+  listarSubcategorias,
+  loginAdmin
+} from '../../assets/js/api.js';
 
-function cambiarModo(modo) {
-    modoActivo = modo;
-    
-    // Elementos HTML
-    const btnManual = document.getElementById('btn-modo-manual');
-    const btnIA = document.getElementById('btn-modo-ia');
-    const seccionManual = document.getElementById('seccion-manual');
-    const seccionIA = document.getElementById('seccion-ia');
-    const btnSubmit = document.getElementById('btn-guardar-main');
+const token   = localStorage.getItem('token');
+const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
 
-    if (modo === 'manual') {
-        btnManual.classList.add('active');
-        btnIA.classList.remove('active');
-        seccionManual.classList.replace('hidden-field', 'visible-field');
-        seccionIA.classList.replace('visible-field', 'hidden-field');
-        btnSubmit.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar producto';
-    } else {
-        btnIA.classList.add('active');
-        btnManual.classList.remove('active');
-        seccionIA.classList.replace('hidden-field', 'visible-field');
-        seccionManual.classList.replace('visible-field', 'hidden-field');
-        btnSubmit.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Clasificar con IA Qwen';
-    }
+if (!token || (usuario.rol !== 'admin' && !usuario.is_staff && !usuario.is_superuser)) {
+  window.location.href = '../../auth/login/login.html';
 }
 
-// Interceptar el envío de datos
-document.getElementById('form-agregar-producto').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const API_BASE = "http://127.0.0.1:8000/api/productos/";
-    const modalExito = document.getElementById('successModal');
+let modoActivo = 'manual';
 
-    // Datos generales obligatorios en ambos flujos
-    const payloadGeneral = {
-        nombre_producto: document.getElementById('input-nombre').value,
-        categoria: document.getElementById('input-categoria').value,
-        subcategoria: document.getElementById('input-subcategoria').value
-    };
+document.addEventListener('DOMContentLoaded', async () => {
 
-    if (modoActivo === 'manual') {
-        // --- FLUJO MODO MANUAL ---
-        const payloadManual = {
-            ...payloadGeneral,
-            ventajas: document.getElementById('input-ventajas').value,
-            desventajas: document.getElementById('input-desventajas').value,
-            criterios: {
-                microplasticos: document.getElementById('check-microplasticos').checked,
-                pruebas_animales: document.getElementById('check-animales').checked,
-                certificacion: document.getElementById('check-certificacion').checked,
-                empaque_sustentable: document.getElementById('check-empaque').checked,
-                un_solo_uso: document.getElementById('check-plastico-unico').checked
-            }
-        };
+  const elNombre = document.getElementById('admin-nombre');
+  if (elNombre) elNombre.textContent = usuario.nombre_usuario || usuario.username || 'Admin';
 
-        fetch(API_BASE, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer MQ==' },
-            body: JSON.stringify(payloadManual)
-        })
-        .then(res => handleResponse(res));
+  ['btn-cerrar-sesion', 'btn-cerrar-sesion-mobile'].forEach(id => {
+    document.getElementById(id)?.addEventListener('click', e => {
+      e.preventDefault();
+      localStorage.removeItem('token'); localStorage.removeItem('usuario');
+      window.location.href = '../../auth/login/login.html';
+    });
+  });
 
-    } else {
-        // --- FLUJO MODO AUTOMÁTICO IA ---
-        // 1. Primero guarda el cascarón del producto
-        fetch(API_BASE, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer MQ==' },
-            body: JSON.stringify(payloadGeneral)
-        })
-        .then(res => res.json())
-        .then(productoCreado => {
-            // 2. Con el ID que nos regresa Django, mandamos los textos brutos a evaluar con Qwen
-            const payloadIA = {
-                ingredientes: document.getElementById('input-ia-ingredientes').value,
-                empaque: document.getElementById('input-ia-empaque').value
-            };
+  const hamburger = document.getElementById('hamburger');
+  const navDrawer = document.getElementById('nav-drawer');
+  hamburger?.addEventListener('click', () => navDrawer?.classList.toggle('open'));
+  document.addEventListener('click', e => {
+    if (!hamburger?.contains(e.target) && !navDrawer?.contains(e.target))
+      navDrawer?.classList.remove('open');
+  });
 
-            return fetch(`${API_BASE}${productoCreado.id_producto}/clasificar/`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer MQ==' },
-                body: JSON.stringify(payloadIA)
-            });
-        })
-        .then(res => handleResponse(res));
+  // Subcategorías usando api.js
+  await cargarSubcategorias();
+
+  // Modo edición
+  const params     = new URLSearchParams(window.location.search);
+  const esEdicion  = params.get('edit') === 'true';
+  const idProducto = params.get('id');
+
+  if (esEdicion && idProducto) {
+    const h = document.getElementById('form-title');
+    if (h) h.textContent = 'Editar producto';
+    document.getElementById('btn-modo-ia')?.classList.add('hidden');
+
+    // Usa obtenerProducto de api.js
+    const { ok, data } = await obtenerProducto(idProducto);
+    if (ok) {
+      setVal('input-nombre',     data.nombre_producto);
+      setVal('input-precio-min', data.precio_min);
+      setVal('input-precio-max', data.precio_max);
+      const sel = document.getElementById('input-subcategoria');
+      if (sel) sel.value = data.id_subcategoria || data.subcategoria?.id_subcategoria || '';
     }
+  }
 
-    function handleResponse(res) {
-        if (res.status === 201 || res.ok) {
-            modalExito.style.display = 'flex';
-            document.getElementById('form-agregar-producto').reset();
-            setTimeout(() => { modalExito.style.display = 'none'; }, 2000);
-        } else {
-            alert("Error al guardar o procesar en el servidor.");
-        }
-    }
+  document.getElementById('btn-modo-manual')?.addEventListener('click', () => setModo('manual'));
+  document.getElementById('btn-modo-ia')?.addEventListener('click',     () => setModo('ia'));
+  document.getElementById('form-agregar-producto')?.addEventListener('submit', e =>
+    manejarSubmit(e, esEdicion, idProducto)
+  );
 });
 
+async function cargarSubcategorias() {
+  const sel = document.getElementById('input-subcategoria');
+  if (!sel) return;
+  // Usa listarSubcategorias de api.js
+  const { ok, data } = await listarSubcategorias().catch(() => ({ ok: false, data: [] }));
+  if (!ok) return;
+  sel.innerHTML = `<option value="">Selecciona una subcategoría...</option>` +
+    data.map(s => `<option value="${s.id_subcategoria}">${s.nombre_subcategoria}</option>`).join('');
+}
+
+function setModo(modo) {
+  modoActivo = modo;
+  document.getElementById('btn-modo-manual')?.classList.toggle('active', modo === 'manual');
+  document.getElementById('btn-modo-ia')?.classList.toggle('active',     modo === 'ia');
+  const secManual = document.getElementById('seccion-manual');
+  const secIA     = document.getElementById('seccion-ia');
+  if (secManual) secManual.style.display = modo === 'manual' ? 'block' : 'none';
+  if (secIA)     secIA.style.display     = modo === 'ia'     ? 'block' : 'none';
+  const btnSubmit = document.getElementById('btn-guardar-main');
+  if (btnSubmit) {
+    btnSubmit.innerHTML = modo === 'manual'
+      ? '<i class="fa-solid fa-floppy-disk"></i> Guardar producto'
+      : '<i class="fa-solid fa-wand-magic-sparkles"></i> Clasificar con IA';
+  }
+}
+
+async function manejarSubmit(e, esEdicion, idProducto) {
+  e.preventDefault();
+
+  const nombre    = getVal('input-nombre');
+  const subcatId  = getVal('input-subcategoria');
+  const precioMin = getVal('input-precio-min');
+  const precioMax = getVal('input-precio-max');
+  const btnSubmit = document.getElementById('btn-guardar-main');
+  const modal     = document.getElementById('successModal');
+
+  if (!nombre) { mostrarError('El nombre del producto es obligatorio.'); return; }
+
+  const textoOrig = btnSubmit.innerHTML;
+  btnSubmit.disabled = true;
+  btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
+
+  const body = {
+    nombre_producto: nombre,
+    id_subcategoria: parseInt(subcatId) || null,
+    precio_min:      parseFloat(precioMin) || null,
+    precio_max:      parseFloat(precioMax) || null,
+  };
+
+  try {
+    if (modoActivo === 'manual') {
+      // Usa crearProducto o editarProducto de api.js
+      const { ok, data } = esEdicion
+        ? await editarProducto(idProducto, body)
+        : await crearProducto(body);
+
+      ok ? abrirModal(modal)
+         : mostrarError(data?.nombre_producto?.[0] || data?.error || 'Error al guardar.');
+
+    } else {
+      // Usa crearProducto + clasificarProducto de api.js
+      const { ok: okCreate, data: productoCreado } = await crearProducto(body);
+      if (!okCreate) { mostrarError('No se pudo crear el producto base.'); return; }
+
+      btnSubmit.innerHTML = '<i class="fa-solid fa-brain fa-spin"></i> Analizando con IA...';
+
+      const { ok: okIA } = await clasificarProducto(productoCreado.id_producto, {
+        ingredientes:    getVal('input-ia-ingredientes'),
+        empaque:         getVal('input-ia-empaque'),
+        certificaciones: getVal('input-ia-certificaciones') || '',
+        info_ambiental:  getVal('input-ia-info-ambiental')  || '',
+      });
+
+      if (okIA) {
+        abrirModal(modal);
+      } else {
+        mostrarToast('Producto creado, pero la IA no está disponible ahora.', 'warning');
+        setTimeout(() => window.location.href = '../gestionar-productos/gestionar-productos.html', 2500);
+      }
+    }
+  } catch { mostrarError('Error de conexión. ¿Está corriendo el backend?'); }
+  finally  { btnSubmit.disabled = false; btnSubmit.innerHTML = textoOrig; }
+}
+
+function abrirModal(modal) {
+  if (!modal) { window.location.href = '../gestionar-productos/gestionar-productos.html'; return; }
+  modal.classList.add('open');
+  setTimeout(() => {
+    modal.classList.remove('open');
+    window.location.href = '../gestionar-productos/gestionar-productos.html';
+  }, 2000);
+}
+
+function getVal(id)      { return document.getElementById(id)?.value?.trim() || ''; }
+function setVal(id, val) { const el = document.getElementById(id); if (el && val != null) el.value = val; }
+
+function mostrarError(texto) {
+  const div = document.getElementById('mensaje-error');
+  if (div) { div.textContent = texto; div.style.display = 'block'; setTimeout(() => div.style.display = 'none', 4000); }
+  else alert(texto);
+}
+
+function mostrarToast(msg, tipo = 'success') {
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:${tipo==='error'?'#ff4d5a':tipo==='warning'?'#FFAC00':'#BAC423'};
+    color:#fff;padding:12px 24px;border-radius:12px;z-index:9999;font-size:.9rem;font-weight:500`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}

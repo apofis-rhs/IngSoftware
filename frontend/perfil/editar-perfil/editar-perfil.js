@@ -1,115 +1,75 @@
-import {
-    obtenerPerfil,
-    editarPerfil,
-    estaLogueado
-} from "../../assets/js/api.js";
+// editar-perfil.js — conectado a la BD
+import { obtenerPerfil, editarPerfil, estaLogueado } from '../../assets/js/api.js';
 
-// Verificar sesión
-if (!estaLogueado()) {
-    window.location.href =
-        "../../auth/login/login.html";
-}
+document.addEventListener('DOMContentLoaded', async () => {
 
-// Cargar información actual
-async function cargarPerfil() {
+  if (!estaLogueado()) {
+    window.location.href = '../../auth/login/login.html'; return;
+  }
 
-    try {
+  ['btn-cerrar-sesion', 'btn-cerrar-sesion-mobile'].forEach(id => {
+    document.getElementById(id)?.addEventListener('click', e => {
+      e.preventDefault();
+      localStorage.removeItem('token');
+      localStorage.removeItem('usuario');
+      window.location.href = '../../auth/login/login.html';
+    });
+  });
 
-        const { ok, data } = await obtenerPerfil();
+  const formView   = document.getElementById('form-view');
+  const successView = document.getElementById('success-view');
+  const btnGuardar = document.getElementById('btnGuardar');
+  const divMensaje = document.getElementById('mensaje');
+  const inputNombre  = document.getElementById('nombre');
+  const inputUsuario = document.getElementById('usuario');
+  const inputCorreo  = document.getElementById('correo');
 
-        if (!ok) {
-            mostrarMensaje(
-                "No fue posible cargar el perfil.",
-                "error"
-            );
-            return;
-        }
-
-        console.log("Perfil:", data);
-
-        document.getElementById("nombre").value =
-            data.nombre || "";
-
-        document.getElementById("usuario").value =
-            data.nombre_usuario || "";
-
-        document.getElementById("correo").value =
-            data.correo || "";
-
-    } catch (error) {
-
-        console.error(error);
-
-        mostrarMensaje(
-            "Ocurrió un error al cargar el perfil.",
-            "error"
-        );
+  // ── Cargar datos actuales del perfil ─────────────────────
+  try {
+    const { ok, data } = await obtenerPerfil();
+    if (ok) {
+      if (inputNombre)  inputNombre.value  = data.nombre_completo || '';
+      if (inputUsuario) inputUsuario.value = data.nombre_usuario  || '';
+      if (inputCorreo)  inputCorreo.value  = data.correo          || '';
     }
-}
+  } catch (err) {
+    console.error('Error al cargar perfil:', err);
+  }
 
-// Guardar cambios
-async function guardarCambios() {
+  // ── Guardar cambios reales en la BD ──────────────────────
+  btnGuardar?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    if (divMensaje) divMensaje.innerHTML = '';
 
-    const datos = {
+    const nombre_completo = inputNombre?.value.trim();
+    const nombre_usuario  = inputUsuario?.value.trim();
+    const correo          = inputCorreo?.value.trim();
 
-        nombre:
-            document.getElementById("nombre").value.trim(),
-
-        nombre_usuario:
-            document.getElementById("usuario").value.trim(),
-
-        correo:
-            document.getElementById("correo").value.trim()
-
-    };
-
-    try {
-
-        const { ok } = await editarPerfil(datos);
-
-        if (ok) {
-
-            mostrarMensaje(
-                "Perfil actualizado correctamente.",
-                "success"
-            );
-
-        } else {
-
-            mostrarMensaje(
-                "No fue posible actualizar el perfil.",
-                "error"
-            );
-        }
-
-    } catch (error) {
-
-        console.error(error);
-
-        mostrarMensaje(
-            "Ocurrió un error inesperado.",
-            "error"
-        );
+    if (!nombre_completo || !nombre_usuario || !correo) {
+      mostrarError('Por favor, completa todos los campos.'); return;
     }
-}
 
-// Mostrar alertas
-function mostrarMensaje(texto, tipo) {
+    const textoOriginal = btnGuardar.innerHTML;
+    btnGuardar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+    btnGuardar.disabled = true;
 
-    const mensaje =
-        document.getElementById("mensaje");
+    const { ok, data } = await editarPerfil({ nombre_completo, nombre_usuario, correo });
 
-    mensaje.innerHTML = `
-        <div class="alerta alerta--${tipo}">
-            ${texto}
-        </div>
-    `;
-}
+    if (ok) {
+      localStorage.setItem('usuario', JSON.stringify(data));
+      if (formView)    formView.style.display    = 'none';
+      if (successView) successView.style.display = 'flex';
+    } else {
+      const msg = data?.correo?.[0] || data?.nombre_usuario?.[0] || data?.error || 'No se pudo actualizar.';
+      mostrarError(msg);
+      btnGuardar.innerHTML = textoOriginal;
+      btnGuardar.disabled  = false;
+    }
+  });
 
-// Evento botón guardar
-document
-    .getElementById("btnGuardar")
-    .addEventListener("click", guardarCambios);
-
-// Iniciar pantalla
-cargarPerfil();
+  function mostrarError(texto) {
+    if (!divMensaje) return;
+    divMensaje.innerHTML = `<div class="alerta alerta--error" style="margin-top:16px">${texto}</div>`;
+    setTimeout(() => { divMensaje.innerHTML = ''; }, 4000);
+  }
+});
