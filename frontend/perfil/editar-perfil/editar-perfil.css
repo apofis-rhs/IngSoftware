@@ -1,24 +1,219 @@
-/* EDITAR PERFIL */
-
-.card {
-    max-width: 600px;
-    margin: 0 auto;
+/* CONTAINER PRINCIPAL */
+.editar-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px;
 }
 
-#btnGuardar {
-    margin-top: 1rem;
+/* CABECERA (Animación de entrada) */
+.editar-header {
+  margin-bottom: 32px;
+  text-align: center;
+  opacity: 0;
+  animation: slideDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+.editar-titulo {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text-primary, #1a1a1a);
+  margin-bottom: 8px;
+}
+.editar-subtitulo {
+  font-size: 15px;
+  color: var(--color-text-muted, #666);
 }
 
-#mensaje {
-    margin-top: 1rem;
+/* TARJETA CON DISEÑO LIMPIO Y COLORIDO */
+.editar-card {
+  position: relative;
+  /* Degradado interno muy sutil con los colores de Lumika */
+  background: linear-gradient(135deg, rgba(255, 212, 96, 0.08) 0%, #ffffff 25%, #ffffff 75%, rgba(186, 196, 35, 0.08) 100%);
+  border-radius: 24px;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.03);
+  padding: 40px;
+  width: 100%;
+  overflow: hidden; 
+  z-index: 1;
+  opacity: 0;
+  animation: slideUp 0.6s ease forwards 0.2s;
 }
 
-/* Responsive */
+/* Barra superior decorativa (Primary -> Secondary -> Success) */
+.editar-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(90deg, #FFD460 0%, #FF8C99 50%, #BAC423 100%);
+  z-index: 2;
+}
 
+/* GRID DEL FORMULARIO */
+.editar-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+.form-group--full {
+  grid-column: 1 / -1;
+}
+
+/* INPUTS Y ANIMACIÓN EN CASCADA */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0;
+}
+/* Retraso progresivo para que aparezcan uno por uno */
+.editar-form-grid .form-group:nth-child(1) { animation: fadeRight 0.5s ease forwards 0.3s; }
+.editar-form-grid .form-group:nth-child(2) { animation: fadeRight 0.5s ease forwards 0.4s; }
+.editar-form-grid .form-group:nth-child(3) { animation: fadeRight 0.5s ease forwards 0.5s; }
+
+.form-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-left: 12px;
+  transition: color 0.3s ease;
+}
+
+/* CONTENEDOR DEL INPUT (Para controlar el ícono) */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.input-icon {
+  position: absolute;
+  left: 20px;
+  color: #a0aab5;
+  font-size: 18px;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.form-input {
+  width: 100%;
+  padding: 16px 20px 16px 52px;
+  border-radius: 50px;
+  border: 2px solid #edf2f7;
+  background: #ffffff;
+  font-size: 15px;
+  font-family: inherit;
+  color: #333;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+  transition: all 0.3s ease;
+}
+
+/* MICROINTERACCIONES: Al hacer clic en el input */
+.input-wrapper:focus-within .input-icon {
+  color: #BAC423; /* Verde de tu paleta */
+  transform: scale(1.2) rotate(-5deg); /* El ícono crece y se inclina sutilmente */
+}
+.form-input:focus {
+  outline: none;
+  border-color: #BAC423;
+  box-shadow: 0 0 0 4px rgba(186, 196, 35, 0.15), inset 0 2px 4px rgba(0,0,0,0.01);
+  background: #fff;
+}
+.input-wrapper:focus-within ~ .form-label, 
+.form-group:focus-within .form-label {
+  color: #BAC423; /* La etiqueta también se pinta */
+}
+
+/* ÁREA DE MENSAJES (JS) */
+.mensaje-contenedor {
+  margin-top: 20px;
+}
+
+/* BOTONES ANIMADOS */
+.editar-acciones {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  margin-top: 40px;
+  border-top: 2px dashed rgba(0,0,0,0.05);
+  padding-top: 24px;
+  opacity: 0;
+  animation: slideUp 0.5s ease forwards 0.6s;
+}
+
+.btn-regresar-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border-radius: 50px;
+  border: 2px solid #FF4A58;
+  color: #FF4A58;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  background: transparent;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+.btn-regresar-outline:hover {
+  background: #FF4A58;
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(255, 74, 88, 0.2);
+}
+
+.btn-guardar-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #BAC423 0%, #a2ab1e 100%);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(186, 196, 35, 0.3);
+}
+.btn-guardar-pill:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(186, 196, 35, 0.4);
+}
+
+/* KEYFRAMES PARA ANIMACIONES */
+@keyframes slideDown {
+  0% { opacity: 0; transform: translateY(-20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeRight {
+  0% { opacity: 0; transform: translateX(-20px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
-
-    .card {
-        max-width: 100%;
-    }
-
+  .editar-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .editar-card {
+    padding: 32px 20px;
+  }
+  .editar-acciones {
+    flex-direction: column-reverse;
+  }
+  .btn-regresar-outline, 
+  .btn-guardar-pill {
+    width: 100%;
+  }
 }

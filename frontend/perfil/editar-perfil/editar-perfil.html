@@ -1,210 +1,143 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>LUMIKA - Editar Perfil</title>
-
+  <title>LUMIKA — Mi Perfil</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
   <link rel="stylesheet" href="./editar-perfil.css">
-
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-
 <body>
+
 
   <!-- NAVBAR -->
   <nav class="navbar">
-
     <a class="navbar__logo" href="../../inicio/inicio.html">
+      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
       <span class="navbar__logo-text">LUMIKA</span>
     </a>
-
     <div class="navbar__links hide-mobile">
-
-      <a href="../../inicio/inicio.html"
-         class="navbar__link">
-        <i class="fa-solid fa-house"></i>
-        Inicio
-      </a>
-
-      <a href="../mi-perfil/mi-perfil.html"
-         class="navbar__link navbar__link--active">
-        <i class="fa-regular fa-user"></i>
-        Perfil
-      </a>
-
-      <a href="../favoritos/favoritos.html"
-         class="navbar__link">
-        <i class="fa-regular fa-star"></i>
-        Favoritos
-      </a>
-
-      <a href="#"
-         id="btn-cerrar-sesion"
-         class="navbar__link navbar__link--danger">
-        <i class="fa-solid fa-right-from-bracket"></i>
-        Cerrar sesión
-      </a>
-
+      <a href="../../inicio/inicio.html"                 class="navbar__link"><i class="fa-solid fa-house"></i> Inicio</a>
+      <a href="../mi-perfil/mi-perfil.html"                         class="navbar__link navbar__link--active"><i class="fa-regular fa-user"></i> Perfil</a>
+      <a href="../../buscador/inicio/inicio.html"        class="navbar__link"><i class="fa-solid fa-magnifying-glass"></i> Búsqueda</a>
+      <a href="../../recomendaciones/inicio/inicio.html" class="navbar__link"><i class="fa-solid fa-plus"></i> Recomendaciones</a>
+      <a href="../favoritos/favoritos.html"              class="navbar__link"><i class="fa-regular fa-star"></i> Mis Favoritos</a>
+      <a href="#" id="btn-cerrar-sesion"                 class="navbar__link navbar__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
     </div>
-
-    <button class="navbar__hamburger hide-desktop"
-            id="hamburger">
-
-      <span></span>
-      <span></span>
-      <span></span>
-
+    <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
     </button>
-
   </nav>
 
-  <!-- NAV-DRAWER -->
-  <!-- MENÚ MÓVIL -->
-<div class="nav-drawer" id="nav-drawer">
+  <!-- DRAWER MÓVIL -->
+  <div class="nav-drawer" id="nav-drawer">
+    <a href="../../inicio/inicio.html"                 class="nav-drawer__link"><i class="fa-solid fa-house"></i> Inicio</a>
+    <a href="../mi-perfil/mi-perfil.html"                         class="nav-drawer__link"><i class="fa-regular fa-user"></i> Perfil</a>
+    <a href="../../buscador/inicio/inicio.html"        class="nav-drawer__link"><i class="fa-solid fa-magnifying-glass"></i> Búsqueda</a>
+    <a href="../../recomendaciones/inicio/inicio.html" class="nav-drawer__link"><i class="fa-solid fa-plus"></i> Recomendaciones</a>
+    <a href="../favoritos/favoritos.html"              class="nav-drawer__link"><i class="fa-regular fa-star"></i> Mis Favoritos</a>
+    <div class="nav-drawer__divider"></div>
+    <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
+  </div>
 
-  <a href="../../inicio/inicio.html"
-     class="nav-drawer__link">
-    <i class="fa-solid fa-house"></i>
-    Inicio
-  </a>
-
-  <a href="../mi-perfil/mi-perfil.html"
-     class="nav-drawer__link">
-    <i class="fa-regular fa-user"></i>
-    Perfil
-  </a>
-
-  <a href="../favoritos/favoritos.html"
-     class="nav-drawer__link">
-    <i class="fa-regular fa-star"></i>
-    Favoritos
-  </a>
-
-  <div class="nav-drawer__divider"></div>
-
-  <a href="#"
-     id="btn-cerrar-sesion-mobile"
-     class="nav-drawer__link nav-drawer__link--danger">
-    <i class="fa-solid fa-right-from-bracket"></i>
-    Cerrar sesión
-  </a>
-
-</div>
-
-
-  <!-- CONTENIDO PRINCIPAL -->
+  <!-- CONTENIDO -->
   <main class="page-wrapper">
+    <div class="editar-container">
+      
+      <div class="editar-header" id="header-view">
+        <h1 class="editar-titulo">Editar Perfil</h1>
+        <p class="editar-subtitulo">Actualiza tu información personal en Lumika</p>
+      </div>
 
-    <div class="page-header">
+      <div class="editar-card">
+        
+        <div id="form-view">
+          <div class="editar-form-grid">
+            
+            <div class="form-group">
+              <label class="form-label" for="nombre">Nombre completo</label>
+              <div class="input-wrapper">
+                <i class="fa-regular fa-id-badge input-icon"></i>
+                <input type="text" id="nombre" class="form-input" placeholder="Tu nombre completo">
+              </div>
+            </div>
 
-      <a href="../mi-perfil/mi-perfil.html"
-         class="btn-back"></a>
+            <div class="form-group">
+              <label class="form-label" for="usuario">Nombre de usuario</label>
+              <div class="input-wrapper">
+                <i class="fa-regular fa-user input-icon"></i>
+                <input type="text" id="usuario" class="form-input" placeholder="@usuario">
+              </div>
+            </div>
 
-      <span class="page-header__title">
-        Editar Perfil
-      </span>
+            <div class="form-group form-group--full">
+              <label class="form-label" for="correo">Correo electrónico</label>
+              <div class="input-wrapper">
+                <i class="fa-regular fa-envelope input-icon"></i>
+                <input type="email" id="correo" class="form-input" placeholder="tu@correo.com">
+              </div>
+            </div>
+
+          </div>
+
+          <div id="mensaje" class="mensaje-contenedor"></div>
+
+          <div class="editar-acciones">
+            <a href="../mi-perfil/mi-perfil.html" class="btn-regresar-outline">
+              <i class="fa-solid fa-arrow-left"></i> Regresar
+            </a>
+            <button id="btnGuardar" class="btn-guardar-pill">
+              <i class="fa-regular fa-floppy-disk"></i> Guardar Cambios
+            </button>
+          </div>
+        </div>
+
+        <div id="success-view" style="display: none; flex-direction: column; align-items: center; text-align: center; padding: 20px 0; width: 100%; animation: slideUp 0.5s ease forwards;">
+          <div style="width: 80px; height: 80px; background: #EAF3DE; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+            <svg viewBox="0 0 24 24" style="width: 40px; height: 40px; stroke: #BAC423; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round;">
+              <polyline points="20 6 9 17 4 12" stroke-dasharray="30" stroke-dashoffset="0" style="animation: drawCheck 0.5s ease forwards;"></polyline>
+            </svg>
+          </div>
+          <h2 style="font-size: 24px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px;">¡Guardado Correctamente!</h2>
+          <p style="font-size: 15px; color: #666; margin-bottom: 32px;">Tu información de perfil ha sido actualizada con éxito.</p>
+          <a href="../mi-perfil/mi-perfil.html" class="btn-guardar-pill" style="text-decoration: none;">
+             Volver a mi perfil
+          </a>
+        </div>
+
+      </div>
 
     </div>
-
-    <div class="card">
-
-      <div class="form-group">
-
-        <label class="form-label">
-          Nombre completo
-        </label>
-
-        <input
-          type="text"
-          id="nombre"
-          class="input">
-
-      </div>
-
-      <div class="form-group">
-
-        <label class="form-label">
-          Nombre de usuario
-        </label>
-
-        <input
-          type="text"
-          id="usuario"
-          class="input">
-
-      </div>
-
-      <div class="form-group">
-
-        <label class="form-label">
-          Correo electrónico
-        </label>
-
-        <input
-          type="email"
-          id="correo"
-          class="input">
-
-      </div>
-
-      <button
-        id="btnGuardar"
-        class="btn btn-primary btn-full">
-
-        Guardar Cambios
-
-      </button>
-
-      <div id="mensaje"></div>
-
-    </div>
-
   </main>
 
-  <!-- JS DE LA PANTALLA -->
   <script type="module" src="./editar-perfil.js"></script>
 
-  <!-- SCRIPT DEL MENÚ HAMBURGUESA -->
   <script>
-
     const hamburger = document.getElementById('hamburger');
     const navDrawer = document.getElementById('nav-drawer');
-
     if (hamburger) {
-
-      hamburger.addEventListener('click', () => {
-        navDrawer.classList.toggle('open');
-      });
-
+      hamburger.addEventListener('click', () => navDrawer.classList.toggle('open'));
       document.addEventListener('click', (e) => {
-
-        if (
-          !hamburger.contains(e.target) &&
-          !navDrawer.contains(e.target)
-        ) {
+        if (!hamburger.contains(e.target) && !navDrawer.contains(e.target))
           navDrawer.classList.remove('open');
-        }
-
       });
-
       window.addEventListener('resize', () => {
-
-        if (window.innerWidth >= 769) {
-          navDrawer.classList.remove('open');
-        }
-
+        if (window.innerWidth >= 769) navDrawer.classList.remove('open');
       });
-
     }
-
+    ['btn-cerrar-sesion','btn-cerrar-sesion-mobile'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        window.location.href = '../../auth/login/login.html';
+      });
+    });
   </script>
-
 </body>
 </html>

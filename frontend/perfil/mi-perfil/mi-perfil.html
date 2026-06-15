@@ -3,139 +3,155 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA - Mi Perfil</title>
-
+  <title>LUMIKA — Mi Perfil</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../assets/css/variables.css">
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/components.css">
   <link rel="stylesheet" href="./mi-perfil.css">
-
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-
 <body>
 
   <!-- NAVBAR -->
   <nav class="navbar">
     <a class="navbar__logo" href="../../inicio/inicio.html">
+      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
       <span class="navbar__logo-text">LUMIKA</span>
     </a>
-
     <div class="navbar__links hide-mobile">
-      <a href="../../inicio/inicio.html" class="navbar__link">
-        <i class="fa-solid fa-house"></i> Inicio
-      </a>
-
-      <a href="./mi-perfil.html"
-         class="navbar__link navbar__link--active">
-        <i class="fa-regular fa-user"></i> Perfil
-      </a>
-
-      <a href="../favoritos/favoritos.html"
-         class="navbar__link">
-        <i class="fa-regular fa-star"></i> Favoritos
-      </a>
-
-      <a href="#" id="btn-cerrar-sesion"
-         class="navbar__link navbar__link--danger">
-        <i class="fa-solid fa-right-from-bracket"></i>
-        Cerrar sesión
-      </a>
+      <a href="../../inicio/inicio.html"                 class="navbar__link"><i class="fa-solid fa-house"></i> Inicio</a>
+      <a href="./mi-perfil.html"                         class="navbar__link navbar__link--active"><i class="fa-regular fa-user"></i> Perfil</a>
+      <a href="../../buscador/inicio/inicio.html"        class="navbar__link"><i class="fa-solid fa-magnifying-glass"></i> Búsqueda</a>
+      <a href="../../recomendaciones/inicio/inicio.html" class="navbar__link"><i class="fa-solid fa-plus"></i> Recomendaciones</a>
+      <a href="../favoritos/favoritos.html"              class="navbar__link"><i class="fa-regular fa-star"></i> Mis Favoritos</a>
+      <a href="#" id="btn-cerrar-sesion"                 class="navbar__link navbar__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
     </div>
-
-    <button class="navbar__hamburger hide-desktop"
-            id="hamburger">
-      <span></span>
-      <span></span>
-      <span></span>
+    <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
     </button>
   </nav>
 
-  <!-- MENÚ MÓVIL -->
+  <!-- DRAWER MÓVIL -->
   <div class="nav-drawer" id="nav-drawer">
-
-    <a href="../../inicio/inicio.html"
-       class="nav-drawer__link">
-       Inicio
-    </a>
-
-    <a href="./mi-perfil.html"
-       class="nav-drawer__link">
-       Perfil
-    </a>
-
-    <a href="../favoritos/favoritos.html"
-       class="nav-drawer__link">
-       Favoritos
-    </a>
-
+    <a href="../../inicio/inicio.html"                 class="nav-drawer__link"><i class="fa-solid fa-house"></i> Inicio</a>
+    <a href="./mi-perfil.html"                         class="nav-drawer__link"><i class="fa-regular fa-user"></i> Perfil</a>
+    <a href="../../buscador/inicio/inicio.html"        class="nav-drawer__link"><i class="fa-solid fa-magnifying-glass"></i> Búsqueda</a>
+    <a href="../../recomendaciones/inicio/inicio.html" class="nav-drawer__link"><i class="fa-solid fa-plus"></i> Recomendaciones</a>
+    <a href="../favoritos/favoritos.html"              class="nav-drawer__link"><i class="fa-regular fa-star"></i> Mis Favoritos</a>
     <div class="nav-drawer__divider"></div>
+    <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
+  </div>
 
-    <a href="#"
-       id="btn-cerrar-sesion-mobile"
-       class="nav-drawer__link nav-drawer__link--danger">
-       Cerrar sesión
-    </a>
-
+  <!-- HERO DIAGONAL -->
+  <div class="perfil-hero">
+    <div class="perfil-avatar-wrap">
+      <div class="avatar avatar-lg" id="avatar-iniciales">?</div>
+    </div>
   </div>
 
   <!-- CONTENIDO -->
   <main class="page-wrapper">
+    <div class="perfil-container">
 
-    <div class="page-header">
-      <span class="page-header__title">
-        Mi Perfil
-      </span>
-    </div>
+      <p class="perfil-nombre" id="perfil-nombre">Cargando...</p>
+      <p class="perfil-usuario" id="perfil-usuario">@...</p>
 
-    <div class="card perfil-card">
+      <!-- CARDS GRID -->
+      <div class="perfil-cards">
 
-      <div class="avatar avatar-lg" id="avatar">
-        U
+        <a href="../historial/historial.html" class="perfil-card">
+          <div class="perfil-card__icon" style="background:#FFF8E1;color:#FFAC00">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+          </div>
+          <span class="perfil-card__label">Historial de búsquedas</span>
+        </a>
+
+        <a href="../favoritos/favoritos.html" class="perfil-card">
+          <div class="perfil-card__icon" style="background:#FCEBEB;color:#FF4A58">
+            <i class="fa-regular fa-star"></i>
+          </div>
+          <span class="perfil-card__label">Mis favoritos</span>
+        </a>
+
+        <a href="../evaluacion/evaluacion.html" class="perfil-card">
+          <div class="perfil-card__icon" style="background:#EAF3DE;color:#BAC423">
+            <i class="fa-regular fa-comment-dots"></i>
+          </div>
+          <span class="perfil-card__label">Dejar evaluación</span>
+        </a>
+
+        <a href="../cambiar-contrasena/cambiar-contrasena.html" class="perfil-card">
+          <div class="perfil-card__icon" style="background:#F0F0F0;color:#888">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <span class="perfil-card__label">Cambiar contraseña</span>
+        </a>
+
+        <a href="../editar-perfil/editar-perfil.html" class="perfil-card perfil-card--wide">
+          <div class="perfil-card__icon" style="background:#FFF8E1;color:#FFAC00">
+            <i class="fa-regular fa-pen-to-square"></i>
+          </div>
+          <span class="perfil-card__label">Editar perfil</span>
+        </a>
+
       </div>
 
-      <div class="perfil-info">
+      <!-- ELIMINAR CUENTA -->
+      <a href="#" class="perfil-eliminar" id="btn-eliminar">
+        <i class="fa-regular fa-trash-can"></i>
+        Eliminar cuenta
+      </a>
 
-        <p><strong>Nombre:</strong></p>
-        <p id="nombre">Cargando...</p>
-
-        <p><strong>Usuario:</strong></p>
-        <p id="usuario">Cargando...</p>
-
-        <p><strong>Correo:</strong></p>
-        <p id="correo">Cargando...</p>
-
-        <p><strong>Rol:</strong></p>
-        <p id="rol">Cargando...</p>
-
-        <p><strong>Estado:</strong></p>
-        <p id="estado">Cargando...</p>
-
-        <p><strong>Aceptó términos:</strong></p>
-        <p id="terminos">Cargando...</p>
-
+      <div class="modal-overlay" id="modal-eliminar">
+        <div class="modal-card">
+          <div class="modal-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <h3 class="modal-title">¿Eliminar cuenta?</h3>
+          <p class="modal-text">Esta acción es definitiva. Perderás todo tu historial de búsquedas y tus productos favoritos guardados.</p>
+          
+          <div class="modal-actions">
+            <button class="btn-modal-cancel" id="btn-cancelar-eliminar">Cancelar</button>
+            <button class="btn-modal-danger" id="btn-confirmar-eliminar">
+              <span id="texto-eliminar">Sí, eliminar</span>
+              <span id="loading-eliminar" class="hidden"><i class="fa-solid fa-spinner fa-spin"></i> Eliminando...</span>
+            </button>
+          </div>
+        </div>
       </div>
 
-    </div>
-
-    <div class="perfil-actions">
-
-      <a href="../editar-perfil/editar-perfil.html"
-         class="btn btn-primary">
-         Editar Perfil
-      </a>
-
-      <a href="../cambiar-contrasena/cambiar-contrasena.html"
-         class="btn btn-secondary">
-         Cambiar Contraseña
+      <a href="../../inicio/inicio.html" class="btn-regresar">
+        <i class="fa-solid fa-arrow-left"></i> Regresar
       </a>
 
     </div>
-
   </main>
 
   <script type="module" src="./mi-perfil.js"></script>
 
+  <script>
+    const hamburger = document.getElementById('hamburger');
+    const navDrawer = document.getElementById('nav-drawer');
+    if (hamburger) {
+      hamburger.addEventListener('click', () => navDrawer.classList.toggle('open'));
+      document.addEventListener('click', (e) => {
+        if (!hamburger.contains(e.target) && !navDrawer.contains(e.target))
+          navDrawer.classList.remove('open');
+      });
+      window.addEventListener('resize', () => {
+        if (window.innerWidth >= 769) navDrawer.classList.remove('open');
+      });
+    }
+    ['btn-cerrar-sesion','btn-cerrar-sesion-mobile'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        window.location.href = '../../auth/login/login.html';
+      });
+    });
+  </script>
 </body>
 </html>

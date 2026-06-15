@@ -117,4 +117,3 @@ async function manejarEnvio() {
     progress.style.width = '0';
   }
 }
-
