@@ -22,7 +22,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById(id)?.addEventListener('click', e => {
       e.preventDefault();
       localStorage.removeItem('token'); localStorage.removeItem('usuario');
-      window.location.href = '/auth/login/login.html';
+      window.location.href = '/auth/login/login.html?sesion=expirada';
+
     });
   });
 

@@ -19,7 +19,7 @@ urlpatterns = [
     path('api/evaluaciones/', include('apps.evaluaciones.urls')),
 
     # Raíz → página de inicio del sistema, iniciar donde debe ser!!!
-    path('', lambda req: HttpResponseRedirect('/inicio/inicio.html')),
+    path('', lambda req: HttpResponseRedirect('http://127.0.0.1:8000/inicio/inicio.html')),
 
     # Sirve todos los archivos estáticos del frontend
     re_path(r'^(?P<path>.+)$', serve, {'document_root': FRONTEND_DIR}),
