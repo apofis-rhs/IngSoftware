@@ -6,28 +6,25 @@
   <title>LUMIKA — Iniciar Sesión / Registro</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../assets/css/variables.css">
-  <link rel="stylesheet" href="../../assets/css/base.css">
-  <link rel="stylesheet" href="../../assets/css/components.css">
-  <link rel="stylesheet" href="./login.css">
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/auth/login/login.css">
 </head>
 <body>
 
   <nav class="navbar">
-    <a class="navbar__logo" href="../../inicio/inicio.html">
-      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
+    <a class="navbar__logo" href="/inicio/inicio.html">
+      <img class="navbar__logo-img" src="/assets/img/logo.png" alt="LUMIKA">
       <span class="navbar__logo-text">LUMIKA</span>
     </a>
   </nav>
 
   <main class="page-wrapper auth-wrapper">
-
-    <!-- Puntos flotantes -->
     <span class="dot-auth dot-auth-1" aria-hidden="true"></span>
     <span class="dot-auth dot-auth-2" aria-hidden="true"></span>
 
     <div class="contenedor__todo">
-
       <div class="caja__trasera">
         <div class="caja__trasera-login">
           <h3>¿Ya tienes una cuenta?</h3>
@@ -43,8 +40,8 @@
 
       <div class="contenedor__login-register card" id="caja-blanca">
 
-        <!-- FORMULARIO LOGIN -->
-        <form action="" class="formulario__login" id="form-login">
+        <!-- ══ LOGIN ══ -->
+        <form class="formulario__login" id="form-login" autocomplete="off">
           <h2 class="card__title" style="margin-bottom:20px;font-size:24px">Iniciar Sesión</h2>
 
           <div id="alerta-error" class="alerta alerta--error hidden" style="margin-bottom:16px">
@@ -59,29 +56,34 @@
 
           <div class="form-group">
             <label class="form-label" for="contrasena">Contraseña</label>
-            <input id="contrasena" class="input" type="password" placeholder="••••••••" autocomplete="current-password">
+            <div class="input-eye-wrap">
+              <input id="contrasena" class="input" type="password" placeholder="••••••••" autocomplete="current-password">
+              <button type="button" class="btn-eye" data-target="contrasena" tabindex="-1">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
             <span id="error-contrasena" class="form-error hidden">Ingresa tu contraseña</span>
           </div>
 
           <button id="btn-login" class="btn btn-primary" type="button" style="width:100%;margin-top:8px">
             <span id="btn-texto">Ingresar</span>
-            <span id="btn-loading" class="hidden">Cargando...</span>
+            <span id="btn-loading" class="hidden"><i class="fa-solid fa-spinner fa-spin"></i> Cargando...</span>
           </button>
 
-          <a href="../recuperar-contrasena/recuperar-contrasena.html" class="link-recuperar" style="display:block;margin-top:20px">
+          <a href="/auth/recuperar-contrasena/recuperar-contrasena.html" class="link-recuperar" style="display:block;margin-top:20px">
             ¿Olvidaste tu contraseña?
           </a>
         </form>
 
-        <!-- FORMULARIO REGISTRO -->
-        <form action="" class="formulario__register" id="form-register">
-          <h2 class="card__title" style="margin-bottom:20px;font-size:24px">Registrarse</h2>
+        <!-- ══ REGISTRO ══ -->
+        <form class="formulario__register" id="form-register" autocomplete="off">
+          <h2 class="card__title" style="margin-bottom:16px;font-size:24px">Registrarse</h2>
 
-          <div id="alerta-reg-error" class="alerta alerta--error hidden" style="margin-bottom:12px">
+          <div id="alerta-reg-error" class="alerta alerta--error hidden" style="margin-bottom:10px">
             <span id="alerta-reg-texto"></span>
           </div>
-          <div id="alerta-reg-success" class="alerta alerta--success hidden" style="margin-bottom:12px">
-            ¡Cuenta creada! Redirigiendo al login...
+          <div id="alerta-reg-success" class="alerta alerta--success hidden" style="margin-bottom:10px">
+            ¡Cuenta creada! Iniciando sesión...
           </div>
 
           <div class="form-group">
@@ -96,16 +98,40 @@
             <label class="form-label">Usuario</label>
             <input id="reg-usuario" class="input" type="text" placeholder="usuario123">
           </div>
+
+          <!-- Contraseña con ojo -->
           <div class="form-group">
             <label class="form-label">Contraseña</label>
-            <input id="reg-contrasena" class="input" type="password" placeholder="••••••••">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Confirmar contraseña</label>
-            <input id="reg-contrasena2" class="input" type="password" placeholder="••••••••">
+            <div class="input-eye-wrap">
+              <input id="reg-contrasena" class="input" type="password" placeholder="Mínimo 8 caracteres">
+              <button type="button" class="btn-eye" data-target="reg-contrasena" tabindex="-1">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
           </div>
 
-          <button id="btn-registro" class="btn btn-primary" type="button" style="width:100%;margin-top:8px">
+          <!-- Confirmar contraseña con ojo + palomita -->
+          <div class="form-group">
+            <label class="form-label">Confirmar contraseña</label>
+            <div class="input-eye-wrap">
+              <input id="reg-contrasena2" class="input" type="password" placeholder="Repite la contraseña">
+              <button type="button" class="btn-eye" data-target="reg-contrasena2" tabindex="-1">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+              <i class="fa-solid fa-check input-check hidden" id="check-pass"></i>
+            </div>
+          </div>
+
+          <!-- Aviso de privacidad -->
+          <div class="form-group" style="margin-top:8px">
+            <label class="checkbox-label">
+              <input type="checkbox" id="acepto-terminos">
+              <span>Acepto los <a href="#" class="link-terminos" id="link-terminos">Términos de uso</a> y el <a href="#" class="link-terminos" id="link-privacidad">Aviso de privacidad</a></span>
+            </label>
+            <span id="error-terminos" class="form-error hidden">Debes aceptar los términos</span>
+          </div>
+
+          <button id="btn-registro" class="btn btn-primary" type="button" style="width:100%;margin-top:12px">
             Crear cuenta
           </button>
         </form>
@@ -114,6 +140,17 @@
     </div>
   </main>
 
-  <script type="module" src="./login.js"></script>
+  <!-- Modal términos -->
+  <div class="modal-terminos" id="modal-terminos">
+    <div class="modal-terminos__box">
+      <button class="modal-terminos__close" id="cerrar-modal-terminos">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <h3 id="modal-terminos-titulo">Términos de uso</h3>
+      <div id="modal-terminos-contenido"></div>
+    </div>
+  </div>
+
+  <script type="module" src="/auth/login/login.js"></script>
 </body>
 </html>

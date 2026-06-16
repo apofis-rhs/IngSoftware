@@ -1,4 +1,3 @@
-// auth/login.js
 import { login, registro, loginAdmin } from '/assets/js/api.js';
 
 // ── SLIDER ────────────────────────────────────────────────
@@ -6,18 +5,21 @@ const contenedor     = document.querySelector('.contenedor__login-register');
 const cajaTrLogin    = document.querySelector('.caja__trasera-login');
 const cajaTrRegister = document.querySelector('.caja__trasera-register');
 
-function anchoPagina() {
-  if (window.innerWidth > 850) {
-    cajaTrRegister.style.display = 'block';
-    cajaTrLogin.style.display    = 'block';
-  } else {
-    cajaTrRegister.style.display = 'block';
-    cajaTrRegister.style.opacity = '1';
-    cajaTrLogin.style.display    = 'none';
-  }
+function limpiarFormulario(formId) {
+  const form = document.getElementById(formId);
+  if (!form) return;
+  form.querySelectorAll('input').forEach(i => {
+    i.value = '';
+    i.classList.remove('input--error', 'input--ok');
+  });
+  form.querySelectorAll('.form-error').forEach(e => e.classList.add('hidden'));
+  form.querySelectorAll('.alerta').forEach(e => e.classList.add('hidden'));
+  const check = form.querySelector('#check-pass');
+  if (check) check.classList.add('hidden');
 }
 
 function register() {
+  limpiarFormulario('form-login');
   contenedor?.classList.add('is-register');
   if (window.innerWidth > 850) {
     contenedor.style.left        = '440px';
@@ -31,6 +33,7 @@ function register() {
 }
 
 function iniciarSesion() {
+  limpiarFormulario('form-register');
   contenedor?.classList.remove('is-register');
   if (window.innerWidth > 850) {
     contenedor.style.left        = '10px';
@@ -38,6 +41,17 @@ function iniciarSesion() {
     cajaTrLogin.style.opacity    = '0';
   } else {
     cajaTrRegister.style.display = 'block';
+    cajaTrLogin.style.display    = 'none';
+  }
+}
+
+function anchoPagina() {
+  if (window.innerWidth > 850) {
+    cajaTrRegister.style.display = 'block';
+    cajaTrLogin.style.display    = 'block';
+  } else {
+    cajaTrRegister.style.display = 'block';
+    cajaTrRegister.style.opacity = '1';
     cajaTrLogin.style.display    = 'none';
   }
 }
@@ -51,13 +65,47 @@ const params = new URLSearchParams(window.location.search);
 if (params.get('modo') === 'registro') register();
 contenedor?.classList.add('listo');
 
-// ── Ripple ────────────────────────────────────────────────
+// ── Ojo contraseña ─────────────────────────────────────
+document.querySelectorAll('.btn-eye').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const input = document.getElementById(btn.dataset.target);
+    if (!input) return;
+    const esPassword = input.type === 'password';
+    input.type = esPassword ? 'text' : 'password';
+    btn.querySelector('i').className = esPassword ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+  });
+});
+
+// ── Palomita confirmación contraseña ──────────────────
+const inputPass1 = document.getElementById('reg-contrasena');
+const inputPass2 = document.getElementById('reg-contrasena2');
+const checkPass  = document.getElementById('check-pass');
+
+function verificarCoincidencia() {
+  if (!inputPass1 || !inputPass2 || !checkPass) return;
+  const v1 = inputPass1.value;
+  const v2 = inputPass2.value;
+  if (v2.length === 0) { checkPass.classList.add('hidden'); return; }
+  if (v1 === v2 && v2.length >= 8) {
+    checkPass.classList.remove('hidden');
+    inputPass2.classList.remove('input--error');
+    inputPass2.classList.add('input--ok');
+  } else {
+    checkPass.classList.add('hidden');
+    inputPass2.classList.remove('input--ok');
+    if (v2.length > 0) inputPass2.classList.add('input--error');
+  }
+}
+inputPass1?.addEventListener('input', verificarCoincidencia);
+inputPass2?.addEventListener('input', verificarCoincidencia);
+
+// ── Ripple ────────────────────────────────────────────
 document.querySelectorAll('.btn').forEach(btn => {
-  btn.addEventListener('click', function (e) {
+  btn.addEventListener('click', function(e) {
     const r = document.createElement('span');
     r.className = 'ripple';
     const s = Math.max(btn.offsetWidth, btn.offsetHeight);
-    r.style.cssText = `width:${s}px;height:${s}px;left:${e.offsetX - s / 2}px;top:${e.offsetY - s / 2}px`;
+    r.style.cssText = `width:${s}px;height:${s}px;left:${e.offsetX-s/2}px;top:${e.offsetY-s/2}px`;
     btn.appendChild(r);
     setTimeout(() => r.remove(), 600);
   });
@@ -68,7 +116,41 @@ function shakeError() {
   setTimeout(() => contenedor?.classList.remove('shake'), 400);
 }
 
-// ── Referencias DOM ───────────────────────────────────────
+// ── Modal términos ─────────────────────────────────────
+const TERMINOS_TEXTO = `
+<p>Al registrarte en LUMIKA aceptas usar la plataforma únicamente para consultar información sobre productos de cuidado personal y sus alternativas sustentables.</p>
+<p style="margin-top:12px">Queda prohibido el uso de la plataforma para fines comerciales, scraping de datos o cualquier actividad que atente contra su funcionamiento.</p>
+<p style="margin-top:12px">LUMIKA se reserva el derecho de suspender cuentas que incumplan estos términos.</p>`;
+
+const PRIVACIDAD_TEXTO = `
+<p>LUMIKA recopila únicamente los datos necesarios para tu experiencia: nombre, correo y usuario.</p>
+<p style="margin-top:12px">Tus datos <strong>no son vendidos</strong> a terceros. Se usan exclusivamente para personalizar tus búsquedas, recomendaciones y favoritos.</p>
+<p style="margin-top:12px">Puedes solicitar la eliminación de tu cuenta y datos en cualquier momento desde tu perfil.</p>`;
+
+const modalTerminos   = document.getElementById('modal-terminos');
+const modalTitulo     = document.getElementById('modal-terminos-titulo');
+const modalContenido  = document.getElementById('modal-terminos-contenido');
+
+document.getElementById('link-terminos')?.addEventListener('click', e => {
+  e.preventDefault();
+  modalTitulo.textContent = 'Términos de uso';
+  modalContenido.innerHTML = TERMINOS_TEXTO;
+  modalTerminos.classList.add('open');
+});
+document.getElementById('link-privacidad')?.addEventListener('click', e => {
+  e.preventDefault();
+  modalTitulo.textContent = 'Aviso de privacidad';
+  modalContenido.innerHTML = PRIVACIDAD_TEXTO;
+  modalTerminos.classList.add('open');
+});
+document.getElementById('cerrar-modal-terminos')?.addEventListener('click', () => {
+  modalTerminos.classList.remove('open');
+});
+modalTerminos?.addEventListener('click', e => {
+  if (e.target === modalTerminos) modalTerminos.classList.remove('open');
+});
+
+// ── LOGIN ─────────────────────────────────────────────
 const inputUsuario    = document.getElementById('usuario');
 const inputContrasena = document.getElementById('contrasena');
 const btnLogin        = document.getElementById('btn-login');
@@ -113,7 +195,6 @@ function setLoading(cargando) {
   btnLoading?.classList.toggle('hidden', !cargando);
 }
 
-// Admin si: rol='admin', is_staff=true o is_superuser=true
 function esAdmin(u) {
   return u.rol === 'admin' || u.is_staff === true || u.is_superuser === true;
 }
@@ -123,45 +204,26 @@ async function manejarLogin() {
   setLoading(true);
   alertaError?.classList.add('hidden');
 
-  const nombreUsuario = inputUsuario.value.trim();
-  const contrasena    = inputContrasena.value;
-
   try {
-    // ── Intento 1: usuario LUMIKA (/api/usuarios/login/) ──
-    const { ok, data } = await login(nombreUsuario, contrasena);
-
+    const { ok, data } = await login(inputUsuario.value.trim(), inputContrasena.value);
     if (ok) {
       localStorage.setItem('token',   data.token);
       localStorage.setItem('usuario', JSON.stringify(data.usuario));
-
-      // Admin LUMIKA (rol = 'admin') → dashboard
-      if (esAdmin(data.usuario)) {
-        window.location.href = '/admin/dashboard/dashboard.html';
-      } else {
-        window.location.href = '/buscador/inicio/inicio.html';
-      }
+      window.location.href = esAdmin(data.usuario)
+        ? '/admin/dashboard/dashboard.html'
+        : '/buscador/inicio/inicio.html';
       return;
     }
 
-    // ── Intento 2: Django superuser (/api/usuarios/login-admin/) ──
-    // Solo se intenta si el primer login falló con credenciales incorrectas
-    // (no si falló por otro motivo como servidor caído)
-    const { ok: okAdmin, data: dataAdmin } = await loginAdmin(nombreUsuario, contrasena)
-      .catch(() => ({ ok: false, data: {} }));
+    const { ok: okAdmin } = await loginAdmin(inputUsuario.value.trim(), inputContrasena.value)
+      .catch(() => ({ ok: false }));
+    if (okAdmin) { window.location.href = '/admin/dashboard/dashboard.html'; return; }
 
-    if (okAdmin) {
-      // loginAdmin ya guarda token y usuario en localStorage
-      window.location.href = '/admin/dashboard/dashboard.html';
-      return;
-    }
-
-    // ── Ambos fallaron: mostrar error ─────────────────────
     if (alertaTexto) alertaTexto.textContent = data.error || 'Usuario o contraseña incorrectos';
     alertaError?.classList.remove('hidden');
     inputUsuario?.classList.add('input--error');
     inputContrasena?.classList.add('input--error');
     shakeError();
-
   } catch {
     if (alertaTexto) alertaTexto.textContent = 'No se pudo conectar al servidor.';
     alertaError?.classList.remove('hidden');
@@ -171,7 +233,7 @@ async function manejarLogin() {
   }
 }
 
-// ── REGISTRO ──────────────────────────────────────────────
+// ── REGISTRO ──────────────────────────────────────────
 const btnRegistro      = document.getElementById('btn-registro');
 const inputNombre      = document.getElementById('reg-nombre');
 const inputCorreo      = document.getElementById('reg-correo');
@@ -182,37 +244,43 @@ const alertaRegError   = document.getElementById('alerta-reg-error');
 const alertaRegTexto   = document.getElementById('alerta-reg-texto');
 const alertaRegSuccess = document.getElementById('alerta-reg-success');
 
-function validarRegistro() {
+async function manejarRegistro() {
+  alertaRegError?.classList.add('hidden');
+  alertaRegSuccess?.classList.add('hidden');
+
   let ok = true;
   [inputNombre, inputCorreo, inputRegUsuario, inputRegPass, inputRegPass2].forEach(input => {
     if (!input?.value.trim()) { input?.classList.add('input--error'); ok = false; }
     else input?.classList.remove('input--error');
   });
+
   if (ok && inputRegPass?.value !== inputRegPass2?.value) {
     inputRegPass2?.classList.add('input--error');
     if (alertaRegTexto) alertaRegTexto.textContent = 'Las contraseñas no coinciden';
     alertaRegError?.classList.remove('hidden');
-    shakeError(); return false;
+    shakeError(); return;
   }
-  return ok;
-}
-
-async function manejarRegistro() {
-  alertaRegError?.classList.add('hidden');
-  alertaRegSuccess?.classList.add('hidden');
-
-  if (!validarRegistro()) {
-    if (alertaRegError?.classList.contains('hidden')) {
-      if (alertaRegTexto) alertaRegTexto.textContent = 'Completa todos los campos';
-      alertaRegError?.classList.remove('hidden');
-    }
+  if (ok && inputRegPass?.value.length < 8) {
+    if (alertaRegTexto) alertaRegTexto.textContent = 'La contraseña debe tener al menos 8 caracteres';
+    alertaRegError?.classList.remove('hidden');
+    shakeError(); return;
+  }
+  if (!document.getElementById('acepto-terminos')?.checked) {
+    document.getElementById('error-terminos')?.classList.remove('hidden');
+    shakeError(); return;
+  } else {
+    document.getElementById('error-terminos')?.classList.add('hidden');
+  }
+  if (!ok) {
+    if (alertaRegTexto) alertaRegTexto.textContent = 'Completa todos los campos';
+    alertaRegError?.classList.remove('hidden');
     shakeError(); return;
   }
 
   if (btnRegistro) { btnRegistro.disabled = true; btnRegistro.textContent = 'Creando cuenta...'; }
 
   try {
-    const { ok, data } = await registro({
+    const { ok: okReg, data } = await registro({
       nombre_completo: inputNombre.value.trim(),
       correo:          inputCorreo.value.trim(),
       nombre_usuario:  inputRegUsuario.value.trim(),
@@ -222,9 +290,19 @@ async function manejarRegistro() {
       estatus_cuenta:  'activo',
     });
 
-    if (ok) {
+    if (okReg) {
       alertaRegSuccess?.classList.remove('hidden');
-      setTimeout(() => iniciarSesion(), 2000);
+      // Auto-login después del registro
+      setTimeout(async () => {
+        const { ok: okLogin, data: loginData } = await login(inputRegUsuario.value.trim(), inputRegPass.value);
+        if (okLogin) {
+          localStorage.setItem('token',   loginData.token);
+          localStorage.setItem('usuario', JSON.stringify(loginData.usuario));
+          window.location.href = '/buscador/inicio/inicio.html';
+        } else {
+          iniciarSesion();
+        }
+      }, 1500);
     } else {
       const msg = typeof data === 'object' ? Object.values(data).flat().join(' ') : 'Error al crear la cuenta';
       if (alertaRegTexto) alertaRegTexto.textContent = msg;

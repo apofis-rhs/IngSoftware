@@ -41,7 +41,10 @@
           <label class="form-label" for="contrasenaActual">Contraseña actual</label>
           <div class="input-wrapper">
             <i class="fa-solid fa-unlock-keyhole input-icon"></i>
-            <input id="contrasenaActual" class="input form-input" type="password" placeholder="••••••••">
+            <div class="input-eye-wrap">
+              <input id="contrasenaActual" class="input form-input" type="password" placeholder="••••••••">
+              <button type="button" class="btn-eye" data-target="contrasenaActual" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
+            </div>
           </div>
         </div>
 
@@ -49,7 +52,10 @@
           <label class="form-label" for="nuevaContrasena">Nueva contraseña</label>
           <div class="input-wrapper">
             <i class="fa-solid fa-lock input-icon"></i>
-            <input id="nuevaContrasena" class="input form-input" type="password" placeholder="••••••••">
+            <div class="input-eye-wrap">
+              <input id="nuevaContrasena" class="input form-input" type="password" placeholder="••••••••">
+              <button type="button" class="btn-eye" data-target="nuevaContrasena" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
+            </div>
           </div>
         </div>
 
@@ -57,7 +63,11 @@
           <label class="form-label" for="confirmarContrasena">Confirmar contraseña</label>
           <div class="input-wrapper">
             <i class="fa-solid fa-check-double input-icon"></i>
-            <input id="confirmarContrasena" class="input form-input" type="password" placeholder="••••••••">
+            <div class="input-eye-wrap">
+              <input id="confirmarContrasena" class="input form-input" type="password" placeholder="••••••••">
+              <button type="button" class="btn-eye" data-target="confirmarContrasena" tabindex="-1"><i class="fa-regular fa-eye"></i></button>
+              <i class="fa-solid fa-check input-check hidden" id="check-nueva-pass"></i>
+            </div>
           </div>
         </div>
 
@@ -79,9 +89,9 @@
         </div>
         <h2 class="cambiar-title" style="opacity:1;animation:none">¡Contraseña actualizada!</h2>
         <p class="cambiar-subtitle" style="opacity:1;animation:none">
-          Tu contraseña se cambió correctamente. Ya puedes usar tu nueva contraseña para iniciar sesión.
+          Tu contraseña se cambió correctamente. Por seguridad, inicia sesión nuevamente.
         </p>
-        <a href="../mi-perfil/mi-perfil.html" class="btn-regresar-outline" style="opacity:1;animation:none;margin-top:10px;">
+        <a href="/auth/login/login.html" class="btn-regresar-outline" style="opacity:1;animation:none;margin-top:10px;">
           <i class="fa-solid fa-arrow-left"></i> Volver a mi perfil
         </a>
       </div>

@@ -5,31 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LUMIKA - Inicio</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="../../assets/css/variables.css">
-  <link rel="stylesheet" href="../../assets/css/base.css">
-  <link rel="stylesheet" href="../../assets/css/components.css">
-  <link rel="stylesheet" href="./inicio.css">
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/buscador/inicio/inicio.css">
 </head>
 <body>
   <nav class="navbar">
     <a class="navbar__logo" href="#">
-      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
+      <img class="navbar__logo-img" src="/assets/img/logo.png" alt="LUMIKA">
       <span class="navbar__logo-text">LUMIKA</span>
     </a>
     <div class="navbar__links hide-mobile">
-      <a href="../../inicio/inicio.html" class="navbar__link">
+      <a href="/inicio/inicio.html" class="navbar__link">
         <i class="fa-solid fa-house"></i> Inicio
       </a>
-      <a href="../../perfil/mi-perfil/mi-perfil.html" class="navbar__link">
+      <a href="/perfil/mi-perfil/mi-perfil.html" class="navbar__link">
         <i class="fa-regular fa-user"></i> Perfil
       </a>
-      <a href="../../buscador/inicio/inicio.html" class="navbar__link navbar__link--active">
+      <a href="/buscador/inicio/inicio.html" class="navbar__link navbar__link--active">
         <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
       </a>
-      <a href="../../recomendaciones/inicio/inicio.html" class="navbar__link">
+      <a href="/recomendaciones/inicio/inicio.html" class="navbar__link">
         <i class="fa-solid fa-plus"></i> Recomendaciones
       </a>
-      <a href="../../perfil/favoritos/favoritos.html" class="navbar__link">
+      <a href="/perfil/favoritos/favoritos.html" class="navbar__link">
         <i class="fa-regular fa-star"></i> Mis Favoritos
       </a>
       <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger">
@@ -42,19 +42,19 @@
   </nav>
 
   <div class="nav-drawer" id="nav-drawer">
-    <a href="../../inicio/inicio.html" class="nav-drawer__link">
+    <a href="/inicio/inicio.html" class="nav-drawer__link">
       <i class="fa-solid fa-house"></i> Inicio
     </a>
-    <a href="../../perfil/mi-perfil/mi-perfil.html" class="nav-drawer__link">
+    <a href="/perfil/mi-perfil/mi-perfil.html" class="nav-drawer__link">
       <i class="fa-regular fa-user"></i> Perfil
     </a>
-    <a href="../../buscador/inicio/inicio.html" class="nav-drawer__link">
+    <a href="/buscador/inicio/inicio.html" class="nav-drawer__link">
       <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
     </a>
-    <a href="../../recomendaciones/inicio/inicio.html" class="nav-drawer__link">
+    <a href="/recomendaciones/inicio/inicio.html" class="nav-drawer__link">
       <i class="fa-solid fa-plus"></i> Recomendaciones
     </a>
-    <a href="../../perfil/favoritos/favoritos.html" class="nav-drawer__link">
+    <a href="/perfil/favoritos/favoritos.html" class="nav-drawer__link">
       <i class="fa-regular fa-star"></i> Mis Favoritos
     </a>
     <div class="nav-drawer__divider"></div>
@@ -64,51 +64,27 @@
   </div>
 
   <main class="page-wrapper">
-    <div class="search-bar">
+    <div class="search-bar" style="position:relative">
       <span>🔍</span>
-      <input type="text" id="input-busqueda" placeholder="Buscar producto o marca...">
+      <input type="text" id="input-busqueda" placeholder="Buscar producto o marca..." autocomplete="off">
+    </div>
+    <!-- Sugerencias en tiempo real -->
+    <div id="resultados-vivos" style="background:var(--color-bg-white);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);margin-top:4px;overflow:hidden;display:flex;flex-direction:column"></div>
+
+    <!-- Barra categorías + ordenamiento -->
+    <div id="barra-categorias" style="margin:var(--space-4) 0"></div>
+
+    <div id="loader" class="text-muted text-center" style="display:none;margin-top:var(--space-4)">
+      <i class="fa-solid fa-spinner fa-spin"></i> Cargando...
     </div>
 
-    <div id="loader" class="text-muted text-center" style="display: none; margin-top: var(--space-4);">Cargando...</div>
-
-    <h2>Recomendados</h2>
+    <h2 style="margin-top:var(--space-4)">⭐ Recomendados</h2>
     <div id="recomendados" class="product-grid"></div>
 
-    <h2>Más populares</h2>
+    <h2 style="margin-top:var(--space-6)">🔥 Más populares</h2>
     <div id="populares" class="product-grid"></div>
   </main>
 
   <script type="module" src="./inicio.js"></script>
-
-  <script>
-    const hamburger = document.getElementById('hamburger');
-    const navDrawer = document.getElementById('nav-drawer');
-
-    if(hamburger){
-      hamburger.addEventListener('click', () => navDrawer.classList.toggle('open'));
-
-      document.addEventListener('click', (e) => {
-        if(!hamburger.contains(e.target) && !navDrawer.contains(e.target)) {
-          navDrawer.classList.remove('open');
-        }
-      });
-
-      window.addEventListener('resize', () => {
-        if(window.innerWidth >= 769) {
-          navDrawer.classList.remove('open');
-        }
-      });
-    }
-
-    ['btn-cerrar-sesion', 'btn-cerrar-sesion-mobile'].forEach(id => {
-      const btn = document.getElementById(id);
-      if(btn) btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          localStorage.removeItem('token');
-          localStorage.removeItem('usuario');
-          window.location.href = '../../auth/login/login.html';
-      });        
-    });
-  </script>
 </body>
 </html>

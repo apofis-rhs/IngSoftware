@@ -1,148 +1,132 @@
-// buscador: alternativas - logica especifica
-import { obtenerArticulo, obtenerAlternativasArticulo } from '/assets/js/api.js';
-
-const loader = document.querySelector('#loader');
-const grid = document.querySelector('#grid-alternativas');
-const acciones = document.querySelector('#acciones-comparar');
-const btnComparar = document.querySelector('#btn-ver-comparaciones');
-const productoOriginal = document.querySelector('#producto-original');
-
-let idOriginal = null;
-let alternativasSeleccionadas = new Set();
+import { obtenerProducto, obtenerAlternativasProducto } from '/assets/js/api.js';
+import { getRutaImagen } from '/assets/js/imagenes.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Redirige si no hay token
   if (!localStorage.getItem('token')) {
-    window.location.href = '/auth/login/login.html';
-    return;
+    window.location.href = '/auth/login/login.html'; return;
   }
 
-  const params = new URLSearchParams(window.location.search);
-  idOriginal = params.get('id');
-
-  if (!idOriginal) {
-    mostrarError('Falta el ID del artículo. Usa ?id=2');
-    return;
-  }
-
-  await cargarAlternativas(idOriginal);
-
-  document.querySelector('#btn-regresar')?.addEventListener('click', () => window.history.back());
-  btnComparar?.addEventListener('click', irAComparacion);
-});
-
-async function cargarAlternativas(id) {
-  try {
-    const [resArticulo, resAlternativas] = await Promise.all([
-      obtenerArticulo(id),
-      obtenerAlternativasArticulo(id)
-    ]);
-
-    if (!resArticulo.ok) {
-      mostrarError('Artículo original no encontrado');
-      return;
-    }
-
-    const original = resArticulo.data;
-
-    // Si ya es verde, no necesita alternativas
-    if (original.color_semaforo === 'verde') {
-      if (productoOriginal) {
-        productoOriginal.innerHTML = `<strong>${original.nombre_articulo}</strong> ya tiene semáforo verde. ¡Es una de las mejores opciones!`;
-      }
-      loader?.classList.add('hidden');
-      grid.innerHTML = `<div class="alerta alerta--info">Este artículo ya es la mejor opción disponible.</div>`;
-      grid?.classList.remove('hidden');
-      return;
-    }
-
-    if (!resAlternativas.ok || !resAlternativas.data?.length) {
-      if (productoOriginal) {
-        productoOriginal.innerHTML = `No encontramos alternativas para <strong>${original.nombre_articulo}</strong> por ahora.`;
-      }
-      loader?.classList.add('hidden');
-      grid.innerHTML = `<div class="alerta alerta--warning">No hay alternativas disponibles en este momento.</div>`;
-      grid?.classList.remove('hidden');
-      return;
-    }
-
-    // Ordenar por precio_min ascendente
-    const alternativasOrdenadas = [...resAlternativas.data].sort((a, b) => (a.precio_min || 0) - (b.precio_min || 0));
-
-    if (productoOriginal) {
-      productoOriginal.innerHTML = `${alternativasOrdenadas.length} alternativas para <strong>${original.nombre_articulo}</strong>, ordenadas de menor a mayor precio.`;
-    }
-
-    pintarAlternativas(alternativasOrdenadas);
-
-  } catch (error) {
-    console.error('Error cargando alternativas:', error);
-    mostrarError(`Error de conexión: ${error.message}`);
-  }
-}
-
-function pintarAlternativas(lista) {
-  grid.innerHTML = lista.map(alt => {
-    const color = alt.color_semaforo || 'gris';
-    const precio = alt.precio_min != null
-      ? `$${alt.precio_min}${alt.precio_max ? ` - $${alt.precio_max}` : ''}`
-      : 'Precio no disponible';
-    return `
-      <div class="card card-alternativa" data-id="${alt.id_articulo}">
-        <label style="display:flex; gap:var(--space-4); align-items:center; cursor:pointer">
-          <input type="checkbox" class="checkbox-alternativa" value="${alt.id_articulo}" style="width:20px; height:20px; flex-shrink:0">
-          <div class="semaforo-dot" style="background:var(--color-semaforo-${color}); width:16px; height:16px; border-radius:50%; flex-shrink:0"></div>
-          <div style="flex:1">
-            <h3 class="text-h3" style="margin-bottom:var(--space-1)">${alt.nombre_articulo}</h3>
-            <p class="text-muted">${precio}</p>
-          </div>
-          <a href="/buscador/detalle-producto/detalle-producto.html?id=${alt.id_articulo}"
-             class="btn btn--secondary"
-             onclick="event.stopPropagation()">
-            Ver
-          </a>
-        </label>
-      </div>
-    `;
-  }).join('');
-
-  // Listeners checkboxes
-  document.querySelectorAll('.checkbox-alternativa').forEach(cb => {
-    cb.addEventListener('change', (e) => {
-      const id = e.target.value;
-      if (e.target.checked) {
-        alternativasSeleccionadas.add(id);
-      } else {
-        alternativasSeleccionadas.delete(id);
-      }
-
-      const haySeleccion = alternativasSeleccionadas.size > 0;
-      btnComparar.disabled = !haySeleccion;
-      btnComparar.style.opacity = haySeleccion ? '1' : '0.5';
-      btnComparar.style.cursor = haySeleccion ? 'pointer' : 'not-allowed';
-      btnComparar.textContent = `Ver Comparaciones (${alternativasSeleccionadas.size + 1})`;
-
-      // Máximo 2 alternativas (+ el original = 3 total)
-      if (alternativasSeleccionadas.size >= 2) {
-        document.querySelectorAll('.checkbox-alternativa:not(:checked)').forEach(box => { box.disabled = true; });
-      } else {
-        document.querySelectorAll('.checkbox-alternativa').forEach(box => { box.disabled = false; });
-      }
+  // Nav
+  ['btn-cerrar-sesion','btn-cerrar-sesion-mobile'].forEach(id => {
+    document.getElementById(id)?.addEventListener('click', e => {
+      e.preventDefault();
+      localStorage.removeItem('token'); localStorage.removeItem('usuario');
+      window.location.href = '/auth/login/login.html';
     });
   });
+  const hamburger = document.getElementById('hamburger');
+  const navDrawer  = document.getElementById('nav-drawer');
+  hamburger?.addEventListener('click', () => navDrawer?.classList.toggle('open'));
+  document.addEventListener('click', e => {
+    if (!hamburger?.contains(e.target) && !navDrawer?.contains(e.target))
+      navDrawer?.classList.remove('open');
+  });
 
-  loader?.classList.add('hidden');
-  grid?.classList.remove('hidden');
-  acciones?.classList.remove('hidden');
-}
+  const loader           = document.getElementById('loader');
+  const grid             = document.getElementById('grid-alternativas');
+  const acciones         = document.getElementById('acciones-comparar');
+  const btnComparar      = document.getElementById('btn-ver-comparaciones');
+  const productoOriginal = document.getElementById('producto-original');
 
-function irAComparacion() {
-  if (alternativasSeleccionadas.size === 0) return;
-  const ids = [idOriginal, ...Array.from(alternativasSeleccionadas)];
-  const query = ids.map(id => `id=${id}`).join('&');
-  window.location.href = `../comparacion/comparacion.html?${query}`;
-}
+  const params   = new URLSearchParams(window.location.search);
+  const idOriginal = params.get('id');
 
-function mostrarError(mensaje) {
-  loader.innerHTML = `<div class="alerta alerta--error">${mensaje}</div>`;
-}
+  if (!idOriginal) { mostrarError('Falta el ID del producto'); return; }
+
+  let seleccionadas = new Set();
+
+  try {
+    // Llamar con obtenerProducto (productos, no artículos)
+    const [resProd, resAlts] = await Promise.all([
+      obtenerProducto(idOriginal),
+      obtenerAlternativasProducto(idOriginal)
+    ]);
+
+    if (!resProd.ok) { mostrarError('Producto no encontrado'); return; }
+    const original = resProd.data;
+
+    // Si ya es verde
+    if (original.color_semaforo === 'verde' && original.estado_evaluacion !== 'insuficiente') {
+      if (productoOriginal) productoOriginal.innerHTML = `<strong>${original.nombre_producto}</strong> ya tiene semáforo verde. ¡Es la mejor opción!`;
+      loader?.classList.add('hidden');
+      grid.innerHTML = '<div class="alerta alerta--info">Este producto ya es la mejor alternativa disponible.</div>';
+      grid?.classList.remove('hidden');
+      return;
+    }
+
+    // Sin alternativas
+    if (!resAlts.ok || !resAlts.data?.length) {
+      if (productoOriginal) productoOriginal.innerHTML = `No hay alternativas verdes para <strong>${original.nombre_producto}</strong> aún.`;
+      loader?.classList.add('hidden');
+      grid.innerHTML = '<div class="alerta alerta--warning">Sin alternativas disponibles en este momento.</div>';
+      grid?.classList.remove('hidden');
+      return;
+    }
+
+    // Máximo 3 (ya viene limitado del backend)
+    const alts = resAlts.data.slice(0, 3);
+
+    if (productoOriginal) {
+      productoOriginal.innerHTML = `${alts.length} alternativa${alts.length > 1 ? 's' : ''} verde${alts.length > 1 ? 's' : ''} para <strong>${original.nombre_producto}</strong>`;
+    }
+
+    grid.innerHTML = alts.map(alt => {
+      const imgSrc = getRutaImagen(alt);
+      const precio = alt.precio_min != null ? `$${alt.precio_min} – $${alt.precio_max}` : 'Precio no disponible';
+      return `
+        <div class="card card-alternativa" data-id="${alt.id_producto}">
+          <label style="display:flex;gap:var(--space-3);align-items:center;cursor:pointer">
+            <input type="checkbox" class="checkbox-alternativa" value="${alt.id_producto}" style="width:20px;height:20px;flex-shrink:0">
+            <img src="${imgSrc}" alt="${alt.nombre_producto}"
+                 style="width:48px;height:48px;object-fit:cover;border-radius:var(--radius-sm);flex-shrink:0"
+                 onerror="this.src='/assets/images/placeholder.svg'">
+            <div class="semaforo-dot" style="background:var(--color-semaforo-verde);width:14px;height:14px;border-radius:50%;flex-shrink:0"></div>
+            <div style="flex:1">
+              <h3 class="text-h3" style="margin-bottom:4px">${alt.nombre_producto}</h3>
+              <p class="text-muted" style="font-size:0.85rem">${precio}</p>
+            </div>
+            <a href="/buscador/detalle-producto/detalle-producto.html?id=${alt.id_producto}"
+               class="btn btn--secondary" style="flex-shrink:0" onclick="event.stopPropagation()">Ver</a>
+          </label>
+        </div>`;
+    }).join('');
+
+    // Checkboxes — máximo 2 para comparar (+ el original = 3)
+    grid.querySelectorAll('.checkbox-alternativa').forEach(cb => {
+      cb.addEventListener('change', e => {
+        if (e.target.checked) seleccionadas.add(e.target.value);
+        else seleccionadas.delete(e.target.value);
+
+        if (btnComparar) {
+          const hay = seleccionadas.size > 0;
+          btnComparar.disabled = !hay;
+          btnComparar.style.opacity = hay ? '1' : '0.5';
+          btnComparar.textContent = `Comparar (${seleccionadas.size + 1} productos)`;
+        }
+
+        // Bloquear si ya seleccionó 2
+        grid.querySelectorAll('.checkbox-alternativa:not(:checked)').forEach(box => {
+          box.disabled = seleccionadas.size >= 2;
+        });
+      });
+    });
+
+    loader?.classList.add('hidden');
+    grid?.classList.remove('hidden');
+    acciones?.classList.remove('hidden');
+
+  } catch (err) {
+    mostrarError(`Error de conexión: ${err.message}`);
+  }
+
+  document.getElementById('btn-regresar')?.addEventListener('click', () => window.history.back());
+  btnComparar?.addEventListener('click', () => {
+    if (!seleccionadas.size) return;
+    const ids = [idOriginal, ...Array.from(seleccionadas)];
+    window.location.href = `/buscador/comparacion/comparacion.html?${ids.map(id=>`id=${id}`).join('&')}`;
+  });
+
+  function mostrarError(msg) {
+    if (loader) loader.innerHTML = `<div class="alerta alerta--error">${msg}</div>`;
+  }
+});

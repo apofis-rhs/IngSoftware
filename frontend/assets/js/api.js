@@ -337,3 +337,23 @@ export async function eliminarArticulo(idArticulo) {
   });
   return { ok: res.ok || res.status === 204 };
 }
+
+
+// ─────────────────────────────────────────
+// CATEGORÍAS
+// ─────────────────────────────────────────
+export async function listarCategorias() {
+  const res = await fetch(`${API_URL}/productos/categorias/`, { headers: authHeaders() });
+  return { ok: res.ok, data: await res.json() };
+}
+
+// buscarProductos con filtros opcionales
+// opciones = { categoria, orden } (además de texto)
+export async function buscarProductosFiltrado(texto = '', opciones = {}) {
+  const params = new URLSearchParams();
+  if (texto)            params.set('q', texto);
+  if (opciones.categoria) params.set('categoria', opciones.categoria);
+  if (opciones.orden)   params.set('orden', opciones.orden);
+  const res = await fetch(`${API_URL}/productos/buscar/?${params}`, { headers: authHeaders() });
+  return { ok: res.ok, data: await res.json() };
+}

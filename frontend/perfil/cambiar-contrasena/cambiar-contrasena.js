@@ -37,6 +37,31 @@ document.addEventListener('DOMContentLoaded', () => {
     input.addEventListener('input', () => alertaError?.classList.add('hidden'));
   });
 
+  // Ojo contraseña
+  document.querySelectorAll('.btn-eye').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = document.getElementById(btn.dataset.target);
+      if (!input) return;
+      const esPass = input.type === 'password';
+      input.type = esPass ? 'text' : 'password';
+      btn.querySelector('i').className = esPass ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+    });
+  });
+
+  // Palomita confirmar contraseña
+  const inpNueva     = document.getElementById('nuevaContrasena');
+  const inpConfirmar = document.getElementById('confirmarContrasena');
+  const checkNueva   = document.getElementById('check-nueva-pass');
+  function verificar() {
+    if (!inpNueva || !inpConfirmar || !checkNueva) return;
+    const ok = inpNueva.value === inpConfirmar.value && inpConfirmar.value.length >= 8;
+    checkNueva.classList.toggle('hidden', !ok);
+    inpConfirmar.classList.toggle('input--ok', ok);
+    inpConfirmar.classList.toggle('input--error', !ok && inpConfirmar.value.length > 0);
+  }
+  inpNueva?.addEventListener('input', verificar);
+  inpConfirmar?.addEventListener('input', verificar);
+
   // Ripple
   btnCambiar?.addEventListener('click', function(e) {
     const r = document.createElement('span');
@@ -103,6 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
           if (succView) succView.style.display = 'flex';
           card?.classList.remove('flip-out');
           card?.classList.add('flip-in');
+          // Cerrar sesión por seguridad
+          localStorage.removeItem('token');
+          localStorage.removeItem('usuario');
         }, 350);
       } else {
         mostrarError(data?.error || data?.detail || 'La contraseña actual es incorrecta.');
