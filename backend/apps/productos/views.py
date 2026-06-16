@@ -179,12 +179,30 @@ def _guardar_clasificacion(id_producto, resultado, producto_obj):
 @api_view(['GET'])
 def buscar_productos(request):
     q = request.query_params.get('q', '').strip()
-    if not q:
-        return Response(
-            {'error': 'Parámetro q requerido'}, status=status.HTTP_400_BAD_REQUEST
-        )
-    productos = Producto.objects.filter(nombre_producto__icontains=q)
-    return Response(ProductoListSerializer(productos, many=True).data)
+    cat = request.query_params.get('categoria', '').strip()
+    orden = request.query_params.get('orden', '').strip()  # precio_asc, precio_desc, nombre
+
+    qs = Producto.objects.all()
+    if q:
+        qs = qs.filter(nombre_producto__icontains=q)
+    if cat:
+        qs = qs.filter(id_subcategoria__id_categoria_id=cat)
+
+    if orden == 'precio_asc':
+        qs = qs.order_by('precio_min')
+    elif orden == 'precio_desc':
+        qs = qs.order_by('-precio_min')
+    else:
+        qs = qs.order_by('nombre_producto')
+
+    return Response(ProductoListSerializer(qs, many=True).data)
+
+
+@api_view(['GET'])
+def listar_categorias(request):
+    from .models import Categoria
+    cats = Categoria.objects.all().order_by('nombre_categoria')
+    return Response([{'id_categoria': c.id_categoria, 'nombre_categoria': c.nombre_categoria} for c in cats])
 
 
 @api_view(['GET'])
@@ -252,13 +270,12 @@ def alternativas_producto(request, id_producto):
     try:
         producto = Producto.objects.get(id_producto=id_producto)
     except Producto.DoesNotExist:
-        return Response(
-            {'error': 'Producto no encontrado'}, status=status.HTTP_404_NOT_FOUND
-        )
+        return Response({'error': 'Producto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    # Solo verdes, misma subcategoría, máximo 3
     alternativas = Producto.objects.filter(
         id_subcategoria=producto.id_subcategoria,
         color_semaforo='verde',
-    ).exclude(id_producto=id_producto)
+    ).exclude(id_producto=id_producto).order_by('precio_min')[:3]
     return Response(ProductoListSerializer(alternativas, many=True).data)
 
 

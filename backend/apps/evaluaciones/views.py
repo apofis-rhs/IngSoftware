@@ -13,7 +13,10 @@ def _get_usuario(request):
     if not auth.startswith('Bearer '):
         return None
     try:
-        uid = int(base64.b64decode(auth[7:].encode()).decode())
+        decoded = base64.b64decode(auth[7:].encode()).decode()
+        if decoded.startswith('django-'):
+            return None  # admin no puede evaluar como usuario
+        uid = int(decoded)
         return Usuario.objects.get(id_usuario=uid, estatus_cuenta='activo')
     except Exception:
         return None
