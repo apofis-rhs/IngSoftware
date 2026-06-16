@@ -8,12 +8,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <!-- CSS globales del proyecto -->
-  <link rel="stylesheet" href="../../assets/css/variables.css">
-  <link rel="stylesheet" href="../../assets/css/base.css">
-  <link rel="stylesheet" href="../../assets/css/components.css">
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
 
   <!-- CSS propio de esta pantalla -->
-  <link rel="stylesheet" href="./inicio.css">
+  <link rel="stylesheet" href="/recomendaciones/inicio/inicio.css">
 </head>
 
 
@@ -22,26 +22,26 @@
   <!-- NAVBAR CON LOGIN -->
 <nav class="navbar">
   <!-- Logo -->
-    <a href="../../inicio/inicio.html" class="navbar__logo">
-      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
+    <a href="/buscador/inicio/inicio.html" class="navbar__logo">
+      <img class="navbar__logo-img" src="/assets/img/logo.png" alt="LUMIKA">
       <span class="navbar__logo-text">LUMIKA</span>
     </a>
 
   <!-- Links desktop -->
   <div class="navbar__links hide-mobile">
-    <a href="../../inicio/inicio.html" class="navbar__link">
+    <a href="/buscador/inicio/inicio.html" class="navbar__link">
       <i class="fa-solid fa-house"></i> Inicio
     </a>
-    <a href="../../perfil/mi-perfil/mi-perfil.html" class="navbar__link">
+    <a href="/perfil/mi-perfil/mi-perfil.html" class="navbar__link">
       <i class="fa-regular fa-user"></i> Perfil
     </a>
-    <a href="../../buscador/inicio/inicio.html" class="navbar__link">
+    <a href="/buscador/inicio/inicio.html" class="navbar__link">
       <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
     </a>
-    <a href="../../recomendaciones/inicio/inicio.html" class="navbar__link navbar__link--active">
+    <a href="/recomendaciones/inicio/inicio.html" class="navbar__link navbar__link--active">
       <i class="fa-solid fa-plus"></i> Recomendaciones
     </a>
-    <a href="../../perfil/favoritos/favoritos.html" class="navbar__link">
+    <a href="/perfil/favoritos/favoritos.html" class="navbar__link">
       <i class="fa-regular fa-star"></i> Mis Favoritos
     </a>
     <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger">
@@ -59,23 +59,23 @@
 
   <!-- DRAWER MÓVIL -->
   <div class="nav-drawer" id="nav-drawer">
-    <a href="../../inicio/inicio.html" class="nav-drawer__link">
+    <a href="/buscador/inicio/inicio.html" class="nav-drawer__link">
       <i class="fa-solid fa-house"></i> Inicio
     </a>
 
-    <a href="../../perfil/mi-perfil/mi-perfil.html" class="nav-drawer__link">
+    <a href="/perfil/mi-perfil/mi-perfil.html" class="nav-drawer__link">
       <i class="fa-regular fa-user"></i> Perfil
     </a>
 
-    <a href="../../buscador/inicio/inicio.html" class="nav-drawer__link">
+    <a href="/buscador/inicio/inicio.html" class="nav-drawer__link">
       <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
     </a>
 
-    <a href="../../recomendaciones/inicio/inicio.html" class="nav-drawer__link">
+    <a href="/recomendaciones/inicio/inicio.html" class="nav-drawer__link">
       <i class="fa-solid fa-plus"></i> Recomendaciones
     </a>
 
-    <a href="../../perfil/favoritos/favoritos.html" class="nav-drawer__link">
+    <a href="/perfil/favoritos/favoritos.html" class="nav-drawer__link">
       <i class="fa-regular fa-star"></i> Mis Favoritos
     </a>
 
@@ -121,41 +121,7 @@
 
   </main>
 
-  <script type="module" src="./inicio.js"></script>
-
-  <script>
-    const hamburger = document.getElementById('hamburger');
-    const navDrawer = document.getElementById('nav-drawer');
-
-    if (hamburger) {
-      hamburger.addEventListener('click', () => navDrawer.classList.toggle('open'));
-
-      document.addEventListener('click', (e) => {
-        if (!hamburger.contains(e.target) && !navDrawer.contains(e.target)) {
-          navDrawer.classList.remove('open');
-        }
-      });
-
-      window.addEventListener('resize', () => {
-        if (window.innerWidth >= 769) {
-          navDrawer.classList.remove('open');
-        }
-      });
-    }
-
-    ['btn-cerrar-sesion', 'btn-cerrar-sesion-mobile'].forEach(id => {
-      const btn = document.getElementById(id);
-
-      if (btn) {
-        btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          localStorage.removeItem('token');
-          localStorage.removeItem('usuario');
-          window.location.href = '../../auth/login/login.html';
-        });
-      }
-    });
-  </script>
+  <script type="module" src="/recomendaciones/inicio/inicio.js"></script>
 
 </body>
 </html>

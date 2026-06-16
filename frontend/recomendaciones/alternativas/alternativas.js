@@ -89,7 +89,7 @@ async function cargarAlternativas(id) {
               <input type="checkbox" class="checkbox-alternativa" value="${alt.id_articulo}" style="width:20px;height:20px;flex-shrink:0">
               <img src="${imgSrc}" alt="${alt.nombre_articulo}"
                    style="width:48px;height:48px;object-fit:cover;border-radius:var(--radius-sm);flex-shrink:0"
-                   onerror="this.src='../../assets/images/placeholder.svg'">
+                   onerror="this.src='/assets/images/placeholder.svg'">
               <div class="semaforo-dot"
                    style="background:var(--color-semaforo-${color});width:14px;height:14px;border-radius:50%;flex-shrink:0"></div>
               <div style="flex:1">
@@ -132,7 +132,7 @@ async function cargarAlternativas(id) {
 function irAComparacion() {
   if (seleccionadas.size === 0) return;
   const ids = [idOriginal, ...Array.from(seleccionadas)];
-  window.location.href = `../comparacion/comparacion.html?${ids.map(id => `id=${id}`).join('&')}`;
+  window.location.href = `/recomendaciones/comparacion/comparacion.html?${ids.map(id => `id=${id}`).join('&')}`;
 }
 
 function mostrarError(msg) {

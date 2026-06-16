@@ -1,170 +1,87 @@
-// recomendaciones: detalle-articulo - logica especifica
-import { obtenerArticulo, agregarFavorito, eliminarFavorito, logout } from '/assets/js/api.js';
+import { obtenerArticulo, obtenerAlternativasArticulo } from '/assets/js/api.js';
 
-// ── NAVBAR: hamburguesa + drawer ──────────────────────────────
+// Nav
 const hamburger = document.getElementById('hamburger');
 const navDrawer  = document.getElementById('nav-drawer');
-
-if (hamburger && navDrawer) {
-  hamburger.addEventListener('click', () => navDrawer.classList.toggle('open'));
-  document.addEventListener('click', (e) => {
-    if (!hamburger.contains(e.target) && !navDrawer.contains(e.target)) {
-      navDrawer.classList.remove('open');
-    }
+hamburger?.addEventListener('click', () => navDrawer?.classList.toggle('open'));
+document.addEventListener('click', e => {
+  if (!hamburger?.contains(e.target) && !navDrawer?.contains(e.target))
+    navDrawer?.classList.remove('open');
+});
+['btn-cerrar-sesion','btn-cerrar-sesion-mobile'].forEach(id => {
+  document.getElementById(id)?.addEventListener('click', e => {
+    e.preventDefault();
+    localStorage.removeItem('token'); localStorage.removeItem('usuario');
+    window.location.href = '/auth/login/login.html';
   });
-  window.addEventListener('resize', () => {
-    if (window.innerWidth >= 769) navDrawer.classList.remove('open');
-  });
-}
-
-// ── Cerrar sesión ─────────────────────────────────────────────
-['btn-cerrar-sesion', 'btn-cerrar-sesion-mobile'].forEach(id => {
-  const btn = document.getElementById(id);
-  if (btn) {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      localStorage.removeItem('token');
-      localStorage.removeItem('usuario');
-      window.location.href = '/auth/login/login.html';
-    });
-  }
 });
 
-// ── Lógica principal ──────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   if (!localStorage.getItem('token')) {
-    window.location.href = '/auth/login/login.html';
-    return;
+    window.location.href = '/auth/login/login.html'; return;
   }
 
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
+  const id = new URLSearchParams(window.location.search).get('id');
+  if (!id) { mostrarError('No se especificó ID del artículo'); return; }
 
-  if (!id) {
-    mostrarError('No se especificó ID del artículo');
-    return;
-  }
-
-  await cargarArticulo(id);
-  setupEventos(id);
-});
-
-async function cargarArticulo(id) {
   try {
-    const { ok, data } = await obtenerArticulo(id);
+    // Cargar artículo y sus alternativas en paralelo
+    const [resArt, resAlts] = await Promise.all([
+      obtenerArticulo(id),
+      obtenerAlternativasArticulo(id)
+    ]);
 
-    if (!ok) {
-      mostrarError(data?.mensaje || 'Artículo no encontrado');
-      return;
-    }
+    if (!resArt.ok) { mostrarError(resArt.data?.error || 'Artículo no encontrado'); return; }
+    const data = resArt.data;
 
     // Nombre
-    const elNombre = document.getElementById('nombre-articulo') || document.querySelector('.detalle-header__title');
+    const elNombre = document.getElementById('nombre-articulo');
     if (elNombre) elNombre.textContent = data.nombre_articulo;
+    document.title = `LUMIKA — ${data.nombre_articulo}`;
 
-    // Precio
-    const elPrecio = document.getElementById('precio');
-    if (elPrecio) {
-      elPrecio.textContent = data.precio_min != null
-        ? `$${data.precio_min} - $${data.precio_max}`
-        : 'Precio no disponible';
-    }
+    // Impacto ambiental
+    const elImpacto = document.getElementById('impacto-ambiental');
+    if (elImpacto) elImpacto.textContent = data.impacto_ambiental || 'Sin información disponible.';
 
-    // Semáforo
-    const color = data.color_semaforo || 'gris';
-    const elDot = document.getElementById('semaforo-dot');
-    if (elDot) elDot.style.background = `var(--color-semaforo-${color})`;
-
-    const elEstado = document.getElementById('estado-evaluacion');
-    if (elEstado) {
-      const estados = {
-        'aprobado': 'Aprobado',
-        'precaucion': 'Usar con precaución',
-        'no_recomendado': 'No recomendado',
-        'insuficiente': 'Datos insuficientes'
-      };
-      elEstado.textContent = estados[data.estado_evaluacion] || data.estado_evaluacion || '';
-    }
-
-    // Descripción / explicación
-    const elExplicacion = document.getElementById('explicacion-semaforo') || document.getElementById('descripcion');
-    if (elExplicacion) elExplicacion.textContent = data.razon_clasificacion || data.explicacion_semaforo || '';
-
-    // Alternativas (lista previa si el backend las incluye)
-    if (data.alternativas && data.alternativas.length) {
-      const listaAlt = document.getElementById('lista-alternativas');
-      if (listaAlt) {
-        listaAlt.innerHTML = data.alternativas.map(alt => `
-          <div class="list-item" style="cursor:pointer" onclick="window.location.href='/recomendaciones/detalle-articulo/detalle-articulo.html?id=${alt.id_articulo}'">
-            <div class="list-item__dot" style="background:var(--color-semaforo-${alt.color_semaforo || 'gris'})"></div>
-            <span class="list-item__text">${alt.nombre_articulo}</span>
-          </div>
-        `).join('');
+    // Alternativas del modelo Alternativa (precio, descripcion)
+    const listaAlts = document.getElementById('lista-alternativas');
+    if (listaAlts) {
+      // resAlts viene de obtenerAlternativasArticulo
+      const alts = resArt.data.alternativas || (resAlts.ok ? resAlts.data : []);
+      if (alts?.length) {
+        listaAlts.innerHTML = alts.map(alt => `
+          <div style="display:flex;align-items:center;gap:var(--space-3);
+                      padding:var(--space-3) 0;border-bottom:1px solid var(--color-border)">
+            <i class="fa-solid fa-leaf" style="color:var(--color-success);flex-shrink:0"></i>
+            <div style="flex:1">
+              <p style="font-weight:600;margin:0">${alt.nombre}</p>
+              ${alt.descripcion ? `<p style="font-size:0.85rem;color:var(--color-text-muted);margin:2px 0 0">${alt.descripcion}</p>` : ''}
+            </div>
+            ${alt.precio_min != null ? `<span style="font-size:0.85rem;color:var(--color-text-muted)">$${alt.precio_min} – $${alt.precio_max}</span>` : ''}
+          </div>`).join('');
+      } else {
+        document.getElementById('card-alternativas')?.classList.add('hidden');
       }
     }
 
-    // Mostrar contenido, ocultar loader
-    const loader    = document.getElementById('loader');
-    const contenido = document.getElementById('contenido-articulo') || document.getElementById('contenido-producto');
-    if (loader)    loader.classList.add('hidden');
-    if (contenido) contenido.classList.remove('hidden');
+    // Mostrar contenido
+    document.getElementById('loader')?.classList.add('hidden');
+    document.getElementById('contenido-articulo')?.classList.remove('hidden');
+
+    // Botones
+    document.getElementById('btn-regresar')?.addEventListener('click', () => window.history.back());
+    document.getElementById('btn-volver-resultados')?.addEventListener('click', () => window.history.back());
+    document.getElementById('btn-ver-alternativas')?.addEventListener('click', () => {
+      window.location.href = `/recomendaciones/alternativas/alternativas.html?id=${id}`;
+    });
 
   } catch (err) {
-    console.error('Error cargando artículo:', err);
+    console.error(err);
     mostrarError(`Error de conexión: ${err.message}`);
   }
-}
+});
 
-function setupEventos(id) {
-  // Volver
-  const btnVolver = document.getElementById('btn-volver-resultados');
-  if (btnVolver) btnVolver.addEventListener('click', () => window.history.back());
-
-  // Ver alternativas
-  const btnVerAlternativas = document.getElementById('btn-ver-alternativas');
-  if (btnVerAlternativas) {
-    btnVerAlternativas.addEventListener('click', () => {
-      window.location.href = `../alternativas/alternativas.html?id=${id}`;
-    });
-  }
-
-  // Favorito
-  let esFavorito = false;
-  const btnFavorito  = document.getElementById('btn-favorito');
-  const iconStar     = document.getElementById('icon-star');
-
-  function actualizarEstrella(activo) {
-    esFavorito = activo;
-    [btnFavorito?.querySelector('i'), iconStar].forEach(icon => {
-      if (!icon) return;
-      icon.classList.toggle('fa-regular', !activo);
-      icon.classList.toggle('fa-solid',   activo);
-      icon.classList.toggle('text-warning', activo);
-    });
-  }
-
-  if (btnFavorito) {
-    btnFavorito.addEventListener('click', async () => {
-      try {
-        if (esFavorito) {
-          await eliminarFavorito(id);
-          actualizarEstrella(false);
-        } else {
-          await agregarFavorito(id);
-          actualizarEstrella(true);
-        }
-      } catch (err) {
-        console.error('Error actualizando favorito:', err);
-      }
-    });
-  }
-
-  if (iconStar) {
-    iconStar.addEventListener('click', () => btnFavorito?.click());
-  }
-}
-
-function mostrarError(mensaje) {
+function mostrarError(msg) {
   const loader = document.getElementById('loader');
-  if (loader) loader.innerHTML = `<div class="alerta alerta--error">${mensaje}</div>`;
+  if (loader) loader.innerHTML = `<div class="alerta alerta--error" style="margin:var(--space-4)">${msg}</div>`;
 }

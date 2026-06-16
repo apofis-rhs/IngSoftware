@@ -9,12 +9,22 @@ class AlternativaSerializer(serializers.ModelSerializer):
 
 
 class ArticuloListSerializer(serializers.ModelSerializer):
+    id_subcategoria = serializers.IntegerField(
+        source='id_subcategoria_id', read_only=True
+    )
+
     class Meta:
         model = Articulo
-        fields = ['id_articulo', 'nombre_articulo', 'id_subcategoria']
+        fields = [
+            'id_articulo', 'nombre_articulo',
+            'impacto_ambiental', 'id_subcategoria',
+        ]
 
 
 class ArticuloDetalleSerializer(serializers.ModelSerializer):
+    id_subcategoria = serializers.IntegerField(
+        source='id_subcategoria_id', read_only=True
+    )
     alternativas = serializers.SerializerMethodField()
 
     def get_alternativas(self, obj):
@@ -22,4 +32,8 @@ class ArticuloDetalleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Articulo
-        fields = '__all__'
+        fields = [
+            'id_articulo', 'nombre_articulo',
+            'impacto_ambiental', 'id_subcategoria',
+            'alternativas',
+        ]

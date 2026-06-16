@@ -357,3 +357,13 @@ export async function buscarProductosFiltrado(texto = '', opciones = {}) {
   const res = await fetch(`${API_URL}/productos/buscar/?${params}`, { headers: authHeaders() });
   return { ok: res.ok, data: await res.json() };
 }
+
+
+// Recomendaciones basadas en historial del usuario
+// Regresa: { recomendados: [...], populares: [...] }
+export async function obtenerRecomendaciones() {
+  const res = await fetch(`${API_URL}/articulos/recomendaciones/`, {
+    headers: authHeaders()
+  });
+  return { ok: res.ok, data: await res.json() };
+}

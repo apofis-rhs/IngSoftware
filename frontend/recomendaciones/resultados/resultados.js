@@ -85,7 +85,7 @@ async function ejecutarBusqueda(q, listaResultados, contadorResultados) {
           <img src="${imgSrc}"
                alt="${a.nombre_articulo}"
                style="width:52px; height:52px; object-fit:cover; border-radius:var(--radius-sm); flex-shrink:0;"
-               onerror="this.src='../../assets/images/placeholder.svg'">
+               onerror="this.src='/assets/images/placeholder.svg'">
           <div class="resultado-card__dot semaforo-${color}" style="flex-shrink:0"></div>
           <div class="resultado-card__content" style="flex:1">
             <h3 class="resultado-card__title">${a.nombre_articulo}</h3>
@@ -97,7 +97,7 @@ async function ejecutarBusqueda(q, listaResultados, contadorResultados) {
 
     listaResultados.querySelectorAll('.resultado-card').forEach(el => {
       el.addEventListener('click', () => {
-        window.location.href = `../detalle-articulo/detalle-articulo.html?id=${el.dataset.id}`;
+        window.location.href = `/recomendaciones/detalle-articulo/detalle-articulo.html?id=${el.dataset.id}`;
       });
     });
 

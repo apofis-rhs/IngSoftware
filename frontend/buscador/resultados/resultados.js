@@ -1,9 +1,12 @@
-import { buscarProductos } from '/assets/js/api.js';
-import { getRutaImagen }   from '/assets/js/imagenes.js';
+import { buscarProductosFiltrado, listarCategorias } from '/assets/js/api.js';
+import { getRutaImagen } from '/assets/js/imagenes.js';
 
 const POR_PAGINA = 10;
-let todosResultados = [];
-let visibles = POR_PAGINA;
+let todosResultados  = [];
+let visibles         = POR_PAGINA;
+let categoriaActual  = '';
+let ordenActual      = 'nombre';
+let categorias       = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (!localStorage.getItem('token')) {
@@ -29,73 +32,116 @@ document.addEventListener('DOMContentLoaded', async () => {
   const inputBusqueda    = document.querySelector('#input-busqueda');
   const tituloResultados = document.querySelector('#titulo-resultados');
   const listaResultados  = document.querySelector('#lista-resultados');
-  const btnRegresar      = document.querySelector('#btn-regresar');
+  const pillsContainer   = document.getElementById('pills-categoria');
 
+  // ── Cargar categorías reales desde la BD ─────────────
+  try {
+    const { ok, data } = await listarCategorias();
+    if (ok && data.length) {
+      categorias = data;
+      // Reconstruir pills con categorías reales
+      if (pillsContainer) {
+        pillsContainer.innerHTML = `<button class="pill pill--active" data-cat="">Todas</button>` +
+          data.map(c =>
+            `<button class="pill" data-cat="${c.id_categoria}">${c.nombre_categoria}</button>`
+          ).join('');
+
+        pillsContainer.querySelectorAll('.pill').forEach(btn => {
+          btn.addEventListener('click', () => {
+            pillsContainer.querySelectorAll('.pill').forEach(b => b.classList.remove('pill--active'));
+            btn.classList.add('pill--active');
+            categoriaActual = btn.dataset.cat || '';
+            visibles = POR_PAGINA;
+            ejecutarBusqueda(inputBusqueda?.value.trim() || '');
+          });
+        });
+      }
+    }
+  } catch(_) {}
+
+  // ── Búsqueda inicial desde URL ────────────────────────
   const params = new URLSearchParams(window.location.search);
   const q = params.get('q') || '';
   if (inputBusqueda) inputBusqueda.value = q;
-  if (q) await ejecutarBusqueda(q, listaResultados, tituloResultados);
-  else if (listaResultados) listaResultados.innerHTML = '<p class="text-muted text-center">Escribe algo para buscar</p>';
 
+  if (q) {
+    await ejecutarBusqueda(q);
+  } else {
+    // Sin q → cargar todos
+    await ejecutarBusqueda('');
+  }
+
+  // Nueva búsqueda al escribir (Enter)
   inputBusqueda?.addEventListener('keypress', async e => {
     if (e.key !== 'Enter') return;
     const texto = inputBusqueda.value.trim();
-    if (!texto) return;
     const url = new URL(window.location);
     url.searchParams.set('q', texto);
     window.history.pushState({}, '', url);
     visibles = POR_PAGINA;
-    await ejecutarBusqueda(texto, listaResultados, tituloResultados);
+    await ejecutarBusqueda(texto);
   });
 
-  btnRegresar?.addEventListener('click', () => window.history.back());
+  document.querySelector('#btn-regresar')?.addEventListener('click', () => window.history.back());
+
+  async function ejecutarBusqueda(q) {
+    if (listaResultados) listaResultados.innerHTML = '<p class="text-muted text-center">Buscando...</p>';
+    document.getElementById('btn-cargar-resultados')?.remove();
+
+    try {
+      const { ok, data } = await buscarProductosFiltrado(q, {
+        categoria: categoriaActual,
+        orden:     ordenActual,
+      });
+
+      if (!ok || !data?.length) {
+        if (tituloResultados) tituloResultados.textContent = 'Resultados (0)';
+        if (listaResultados) listaResultados.innerHTML =
+          `<div class="alerta alerta--warning">No encontramos resultados${q ? ` para "<strong>${q}</strong>"` : ''}.</div>`;
+        return;
+      }
+
+      todosResultados = data;
+      visibles = POR_PAGINA;
+      if (tituloResultados) tituloResultados.textContent = `Resultados (${data.length})`;
+      renderResultados(listaResultados);
+
+    } catch (err) {
+      if (listaResultados) listaResultados.innerHTML = '<div class="alerta alerta--error">Error de conexión</div>';
+    }
+  }
 });
 
-async function ejecutarBusqueda(q, listaResultados, tituloResultados) {
-  listaResultados.innerHTML = '<p class="text-muted text-center">Buscando...</p>';
-  document.getElementById('btn-cargar-resultados')?.remove();
-
-  try {
-    const { ok, data } = await buscarProductos(q);
-
-    if (!ok || !data?.length) {
-      if (tituloResultados) tituloResultados.textContent = 'Resultados (0)';
-      listaResultados.innerHTML = `<div class="alerta alerta--warning">No encontramos resultados para "<strong>${q}</strong>"</div>`;
-      return;
-    }
-
-    todosResultados = data;
-    visibles = POR_PAGINA;
-    if (tituloResultados) tituloResultados.textContent = `Resultados (${data.length})`;
-    renderResultados(listaResultados);
-
-  } catch (err) {
-    listaResultados.innerHTML = '<div class="alerta alerta--error">Error de conexión al servidor</div>';
-  }
-}
-
 function renderResultados(listaResultados) {
+  if (!listaResultados) return;
   const slice = todosResultados.slice(0, visibles);
 
   listaResultados.innerHTML = slice.map(p => {
     const color  = p.estado_evaluacion === 'insuficiente' ? 'gris' : (p.color_semaforo || 'gris');
     const imgSrc = getRutaImagen(p);
-    const precio = p.precio_min != null ? `$${p.precio_min} – $${p.precio_max}` : 'Precio no disponible';
+    const precio = p.precio_min != null ? `$${p.precio_min} – $${p.precio_max}` : '';
+
+    // Nombre de categoría desde el id_subcategoria
+    const catNombre = '';  // opcional — se puede agregar si el serializer lo incluye
+
     return `
-      <div class="list-item-full fade-in-up" data-id="${p.id_producto}" style="cursor:pointer;display:flex;align-items:center;gap:var(--space-3)">
+      <div class="list-item-full fade-in-up" data-id="${p.id_producto}"
+           style="cursor:pointer;display:flex;align-items:center;gap:var(--space-3)">
         <img src="${imgSrc}" alt="${p.nombre_producto}"
              style="width:52px;height:52px;object-fit:cover;border-radius:var(--radius-md);flex-shrink:0"
              onerror="this.src='/assets/images/placeholder.svg'">
-        <div class="semaforo-dot" style="width:12px;height:12px;border-radius:50%;background:var(--color-semaforo-${color});flex-shrink:0"></div>
+        <div class="semaforo-dot"
+             style="width:12px;height:12px;border-radius:50%;background:var(--color-semaforo-${color});flex-shrink:0"></div>
         <div style="flex:1;min-width:0">
-          <p class="list-item-full__name" style="margin:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.nombre_producto}</p>
-          <p class="list-item-full__sub" style="margin:0;color:var(--color-text-muted);font-size:0.85rem">${precio}</p>
+          <p style="margin:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+            ${p.nombre_producto}
+          </p>
+          ${precio ? `<p style="margin:0;color:var(--color-text-muted);font-size:0.85rem">${precio}</p>` : ''}
         </div>
         <i class="fa-solid fa-chevron-right" style="color:var(--color-text-muted);flex-shrink:0"></i>
       </div>`;
   }).join('');
 
-  // Click en cada item
   listaResultados.querySelectorAll('.list-item-full').forEach(el => {
     el.addEventListener('click', () => {
       window.location.href = `/buscador/detalle-producto/detalle-producto.html?id=${el.dataset.id}`;
