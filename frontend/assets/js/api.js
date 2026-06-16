@@ -246,3 +246,94 @@ export async function clasificarProducto(idProducto, datos) {
   });
   return { ok: res.ok, data: await res.json() };
 }
+
+// ─────────────────────────────────────────
+// ADMIN — productos (CRUD completo)
+// Requieren token de admin/staff
+// ─────────────────────────────────────────
+
+// Regresa lista completa de productos (solo admin)
+export async function listarProductos() {
+  const res = await fetch(`${API_URL}/productos/`, { headers: authHeaders() });
+  return { ok: res.ok, data: await res.json() };
+}
+
+// Crear un producto nuevo
+// datos = { nombre_producto, id_subcategoria, precio_min, precio_max, ... }
+export async function crearProducto(datos) {
+  const res = await fetch(`${API_URL}/productos/`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(datos)
+  });
+  return { ok: res.ok, data: await res.json() };
+}
+
+// Editar un producto existente
+export async function editarProducto(idProducto, datos) {
+  const res = await fetch(`${API_URL}/productos/${idProducto}/`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify(datos)
+  });
+  return { ok: res.ok, data: await res.json() };
+}
+
+// Eliminar un producto
+export async function eliminarProducto(idProducto) {
+  const res = await fetch(`${API_URL}/productos/${idProducto}/`, {
+    method: 'DELETE',
+    headers: authHeaders()
+  });
+  return { ok: res.ok || res.status === 204 };
+}
+
+// Regresa lista de subcategorías
+export async function listarSubcategorias() {
+  const res = await fetch(`${API_URL}/productos/subcategorias/`, { headers: authHeaders() });
+  return { ok: res.ok, data: await res.json() };
+}
+
+// Login de superusuario Django (manage.py createsuperuser)
+// Solo se usa si el endpoint /api/usuarios/login-admin/ existe en el backend
+export async function loginAdmin(nombre_usuario, contrasena) {
+  const res = await fetch(`${API_URL}/usuarios/login-admin/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre_usuario, contrasena })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (res.ok) {
+    localStorage.setItem('token',   data.token);
+    localStorage.setItem('usuario', JSON.stringify(data.usuario));
+  }
+  return { ok: res.ok, data };
+}
+
+
+// ─────────────────────────────────────────
+// ADMIN — artículos
+// ─────────────────────────────────────────
+
+export async function listarArticulosAdmin() {
+  const res = await fetch(`${API_URL}/productos/articulos-admin/`, { headers: authHeaders() });
+  return { ok: res.ok, data: await res.json() };
+}
+
+export async function crearArticulo(datos) {
+  // datos = { nombre_articulo, impacto_ambiental, id_subcategoria }
+  const res = await fetch(`${API_URL}/productos/articulos-admin/`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(datos)
+  });
+  return { ok: res.ok, data: await res.json() };
+}
+
+export async function eliminarArticulo(idArticulo) {
+  const res = await fetch(`${API_URL}/productos/articulos-admin/${idArticulo}/`, {
+    method: 'DELETE',
+    headers: authHeaders()
+  });
+  return { ok: res.ok || res.status === 204 };
+}

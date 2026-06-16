@@ -1,5 +1,5 @@
 // recomendaciones: detalle-articulo - logica especifica
-import { obtenerArticulo, agregarFavorito, eliminarFavorito, logout } from '../../assets/js/api.js';
+import { obtenerArticulo, agregarFavorito, eliminarFavorito, logout } from '/assets/js/api.js';
 
 // ── NAVBAR: hamburguesa + drawer ──────────────────────────────
 const hamburger = document.getElementById('hamburger');
@@ -25,7 +25,7 @@ if (hamburger && navDrawer) {
       e.preventDefault();
       localStorage.removeItem('token');
       localStorage.removeItem('usuario');
-      window.location.href = '../../auth/login/login.html';
+      window.location.href = '/auth/login/login.html';
     });
   }
 });
@@ -33,7 +33,7 @@ if (hamburger && navDrawer) {
 // ── Lógica principal ──────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   if (!localStorage.getItem('token')) {
-    window.location.href = '../../auth/login/login.html';
+    window.location.href = '/auth/login/login.html';
     return;
   }
 
@@ -95,7 +95,7 @@ async function cargarArticulo(id) {
       const listaAlt = document.getElementById('lista-alternativas');
       if (listaAlt) {
         listaAlt.innerHTML = data.alternativas.map(alt => `
-          <div class="list-item" style="cursor:pointer" onclick="window.location.href='detalle-articulo.html?id=${alt.id_articulo}'">
+          <div class="list-item" style="cursor:pointer" onclick="window.location.href='/recomendaciones/detalle-articulo/detalle-articulo.html?id=${alt.id_articulo}'">
             <div class="list-item__dot" style="background:var(--color-semaforo-${alt.color_semaforo || 'gris'})"></div>
             <span class="list-item__text">${alt.nombre_articulo}</span>
           </div>

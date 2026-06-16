@@ -1,6 +1,6 @@
 // recomendaciones: resultados - logica especifica
-import { buscarArticulos, logout } from '../../assets/js/api.js';
-import { getRutaImagen }           from '../../assets/js/imagenes.js';
+import { buscarArticulos, logout } from '/assets/js/api.js';
+import { getRutaImagen }           from '/assets/js/imagenes.js';
 
 // ── NAVBAR ────────────────────────────────────────────────────
 const hamburger = document.getElementById('hamburger');
@@ -17,13 +17,13 @@ if (hamburger && navDrawer) {
   if (btn) btn.addEventListener('click', (e) => {
     e.preventDefault();
     localStorage.removeItem('token'); localStorage.removeItem('usuario');
-    window.location.href = '../../auth/login/login.html';
+    window.location.href = '/auth/login/login.html';
   });
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (!localStorage.getItem('token')) {
-    window.location.href = '../../auth/login/login.html';
+    window.location.href = '/auth/login/login.html';
     return;
   }
 
@@ -77,7 +77,7 @@ async function ejecutarBusqueda(q, listaResultados, contadorResultados) {
 
     listaResultados.innerHTML = data.map(a => {
       const color  = a.color_semaforo || 'gris';
-      const imgSrc = getRutaImagen(a, '../../');
+      const imgSrc = getRutaImagen(a);
       const precio = a.precio_min != null ? `$${a.precio_min} - $${a.precio_max}` : 'Precio no disponible';
       return `
         <article class="resultado-card" data-id="${a.id_articulo}"

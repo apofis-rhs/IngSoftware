@@ -30,6 +30,8 @@ class Producto(models.Model):
     color_semaforo = models.CharField(max_length=20, null=True, blank=True)
     razon_clasificacion = models.CharField(max_length=500, null=True, blank=True)
     estado_evaluacion = models.CharField(max_length=20, null=True, blank=True)
+    imagen = models.CharField(max_length=200, null=True, blank=True)
+    ingredientes = models.TextField(null=True, blank=True)
     id_subcategoria = models.ForeignKey(
         Subcategoria, on_delete=models.DO_NOTHING, db_column='id_subcategoria'
     )

@@ -1,80 +1,74 @@
-// ============================================================
-// login.js — Autenticación LUMIKA
-// ============================================================
+// auth/login.js
+import { login, registro, loginAdmin } from '/assets/js/api.js';
 
-// ── 1. VARIABLES DEL DOM ───────────────────────────────────
-const contenedor_login_register = document.querySelector(".contenedor__login-register");
-const caja_trasera_login        = document.querySelector(".caja__trasera-login");
-const caja_trasera_register     = document.querySelector(".caja__trasera-register");
-const btn_mostrar_login         = document.getElementById("btn-mostrar-login");
-const btn_mostrar_registro      = document.getElementById("btn-mostrar-registro");
+// ── SLIDER ────────────────────────────────────────────────
+const contenedor     = document.querySelector('.contenedor__login-register');
+const cajaTrLogin    = document.querySelector('.caja__trasera-login');
+const cajaTrRegister = document.querySelector('.caja__trasera-register');
 
-// ── 2. ANIMACIONES DEL SLIDER ─────────────────────────────
 function anchoPagina() {
   if (window.innerWidth > 850) {
-    caja_trasera_register.style.display = "block";
-    caja_trasera_login.style.display = "block";
+    cajaTrRegister.style.display = 'block';
+    cajaTrLogin.style.display    = 'block';
   } else {
-    caja_trasera_register.style.display = "block";
-    caja_trasera_register.style.opacity = "1";
-    caja_trasera_login.style.display = "none";
+    cajaTrRegister.style.display = 'block';
+    cajaTrRegister.style.opacity = '1';
+    cajaTrLogin.style.display    = 'none';
   }
 }
 
 function register() {
-  contenedor_login_register.classList.add("is-register");
+  contenedor?.classList.add('is-register');
   if (window.innerWidth > 850) {
-    contenedor_login_register.style.left = "440px";
-    caja_trasera_register.style.opacity = "0";
-    caja_trasera_login.style.opacity = "1";
+    contenedor.style.left        = '440px';
+    cajaTrRegister.style.opacity = '0';
+    cajaTrLogin.style.opacity    = '1';
   } else {
-    caja_trasera_register.style.display = "none";
-    caja_trasera_login.style.display = "block";
-    caja_trasera_login.style.opacity = "1";
+    cajaTrRegister.style.display = 'none';
+    cajaTrLogin.style.display    = 'block';
+    cajaTrLogin.style.opacity    = '1';
   }
 }
 
 function iniciarSesion() {
-  contenedor_login_register.classList.remove("is-register");
+  contenedor?.classList.remove('is-register');
   if (window.innerWidth > 850) {
-    contenedor_login_register.style.left = "10px";
-    caja_trasera_register.style.opacity = "1";
-    caja_trasera_login.style.opacity = "0";
+    contenedor.style.left        = '10px';
+    cajaTrRegister.style.opacity = '1';
+    cajaTrLogin.style.opacity    = '0';
   } else {
-    caja_trasera_register.style.display = "block";
-    caja_trasera_login.style.display = "none";
+    cajaTrRegister.style.display = 'block';
+    cajaTrLogin.style.display    = 'none';
   }
 }
 
-if (btn_mostrar_registro) btn_mostrar_registro.addEventListener("click", register);
-if (btn_mostrar_login)    btn_mostrar_login.addEventListener("click", iniciarSesion);
-window.addEventListener("resize", anchoPagina);
+document.getElementById('btn-mostrar-registro')?.addEventListener('click', register);
+document.getElementById('btn-mostrar-login')?.addEventListener('click', iniciarSesion);
+window.addEventListener('resize', anchoPagina);
 anchoPagina();
 
-// ── 3. DETECTAR ?modo=registro ─────────────────────────────
 const params = new URLSearchParams(window.location.search);
 if (params.get('modo') === 'registro') register();
-contenedor_login_register.classList.add('listo');
+contenedor?.classList.add('listo');
 
-// ── 4. RIPPLE en botones ───────────────────────────────────
+// ── Ripple ────────────────────────────────────────────────
 document.querySelectorAll('.btn').forEach(btn => {
-  btn.addEventListener('click', function(e) {
+  btn.addEventListener('click', function (e) {
     const r = document.createElement('span');
     r.className = 'ripple';
-    const size = Math.max(btn.offsetWidth, btn.offsetHeight);
-    r.style.cssText = `width:${size}px;height:${size}px;left:${e.offsetX - size/2}px;top:${e.offsetY - size/2}px`;
+    const s = Math.max(btn.offsetWidth, btn.offsetHeight);
+    r.style.cssText = `width:${s}px;height:${s}px;left:${e.offsetX - s / 2}px;top:${e.offsetY - s / 2}px`;
     btn.appendChild(r);
     setTimeout(() => r.remove(), 600);
   });
 });
 
-// ── 5. SHAKE en error ──────────────────────────────────────
 function shakeError() {
-  contenedor_login_register.classList.add('shake');
-  setTimeout(() => contenedor_login_register.classList.remove('shake'), 400);
+  contenedor?.classList.add('shake');
+  setTimeout(() => contenedor?.classList.remove('shake'), 400);
 }
 
-// ── 6. LOGIN ───────────────────────────────────────────────
+// ── Referencias DOM ───────────────────────────────────────
 const inputUsuario    = document.getElementById('usuario');
 const inputContrasena = document.getElementById('contrasena');
 const btnLogin        = document.getElementById('btn-login');
@@ -85,133 +79,99 @@ const alertaTexto     = document.getElementById('alerta-texto');
 const errorUsuario    = document.getElementById('error-usuario');
 const errorContrasena = document.getElementById('error-contrasena');
 
-const API_URL = 'http://localhost:8000/api';
-
-if (inputUsuario && inputContrasena && btnLogin) {
-  inputUsuario.addEventListener('input', () => {
-    errorUsuario.classList.add('hidden');
-    inputUsuario.classList.remove('input--error');
-    alertaError.classList.add('hidden');
-  });
-  inputContrasena.addEventListener('input', () => {
-    errorContrasena.classList.add('hidden');
-    inputContrasena.classList.remove('input--error');
-    alertaError.classList.add('hidden');
-  });
-  [inputUsuario, inputContrasena].forEach(el => {
-    el.addEventListener('keydown', e => { if (e.key === 'Enter') manejarLogin(); });
-  });
-  btnLogin.addEventListener('click', manejarLogin);
-}
+inputUsuario?.addEventListener('input', () => {
+  errorUsuario?.classList.add('hidden');
+  inputUsuario.classList.remove('input--error');
+  alertaError?.classList.add('hidden');
+});
+inputContrasena?.addEventListener('input', () => {
+  errorContrasena?.classList.add('hidden');
+  inputContrasena.classList.remove('input--error');
+  alertaError?.classList.add('hidden');
+});
+[inputUsuario, inputContrasena].forEach(el =>
+  el?.addEventListener('keydown', e => { if (e.key === 'Enter') manejarLogin(); })
+);
+btnLogin?.addEventListener('click', manejarLogin);
 
 function validarLogin() {
-  let valido = true;
-  if (!inputUsuario.value.trim()) {
-    errorUsuario.classList.remove('hidden');
-    inputUsuario.classList.add('input--error');
-    valido = false;
+  let ok = true;
+  if (!inputUsuario?.value.trim()) {
+    errorUsuario?.classList.remove('hidden');
+    inputUsuario?.classList.add('input--error'); ok = false;
   }
-  if (!inputContrasena.value) {
-    errorContrasena.classList.remove('hidden');
-    inputContrasena.classList.add('input--error');
-    valido = false;
+  if (!inputContrasena?.value) {
+    errorContrasena?.classList.remove('hidden');
+    inputContrasena?.classList.add('input--error'); ok = false;
   }
-  return valido;
+  return ok;
 }
 
 function setLoading(cargando) {
-  btnLogin.disabled = cargando;
-  btnTexto.classList.toggle('hidden', cargando);
-  btnLoading.classList.toggle('hidden', !cargando);
+  if (btnLogin) btnLogin.disabled = cargando;
+  btnTexto?.classList.toggle('hidden', cargando);
+  btnLoading?.classList.toggle('hidden', !cargando);
 }
 
-// ── Determina si un usuario es admin (cualquier tipo) ──────
-function esAdmin(usuario) {
-  return (
-    usuario.rol === 'admin' ||
-    usuario.is_staff === true ||
-    usuario.is_superuser === true
-  );
+// Admin si: rol='admin', is_staff=true o is_superuser=true
+function esAdmin(u) {
+  return u.rol === 'admin' || u.is_staff === true || u.is_superuser === true;
 }
 
 async function manejarLogin() {
   if (!validarLogin()) { shakeError(); return; }
   setLoading(true);
-  alertaError.classList.add('hidden');
+  alertaError?.classList.add('hidden');
+
+  const nombreUsuario = inputUsuario.value.trim();
+  const contrasena    = inputContrasena.value;
 
   try {
-    // ── Intento 1: endpoint propio de LUMIKA (tabla usuario) ──
-    const res = await fetch(`${API_URL}/usuarios/login/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nombre_usuario: inputUsuario.value.trim(),
-        contrasena:     inputContrasena.value
-      })
-    });
-    const data = await res.json();
+    // ── Intento 1: usuario LUMIKA (/api/usuarios/login/) ──
+    const { ok, data } = await login(nombreUsuario, contrasena);
 
-    if (res.ok) {
-      localStorage.setItem('token', data.token);
+    if (ok) {
+      localStorage.setItem('token',   data.token);
       localStorage.setItem('usuario', JSON.stringify(data.usuario));
 
+      // Admin LUMIKA (rol = 'admin') → dashboard
       if (esAdmin(data.usuario)) {
-        window.location.href = '../../admin/dashboard/dashboard.html';
+        window.location.href = '/admin/dashboard/dashboard.html';
       } else {
-        window.location.href = '../../buscador/inicio/inicio.html';
+        window.location.href = '/buscador/inicio/inicio.html';
       }
       return;
     }
 
-    // ── Intento 2: credenciales de Django superuser / staff ───
-    // Si el usuario no existe en la tabla `usuario` de LUMIKA,
-    // puede ser un superusuario creado con manage.py createsuperuser.
-    const resAdmin = await fetch(`${API_URL}/usuarios/login-admin/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nombre_usuario: inputUsuario.value.trim(),
-        contrasena:     inputContrasena.value
-      })
-    });
+    // ── Intento 2: Django superuser (/api/usuarios/login-admin/) ──
+    // Solo se intenta si el primer login falló con credenciales incorrectas
+    // (no si falló por otro motivo como servidor caído)
+    const { ok: okAdmin, data: dataAdmin } = await loginAdmin(nombreUsuario, contrasena)
+      .catch(() => ({ ok: false, data: {} }));
 
-    if (resAdmin.ok) {
-      const dataAdmin = await resAdmin.json();
-      localStorage.setItem('token', dataAdmin.token);
-      localStorage.setItem('usuario', JSON.stringify(dataAdmin.usuario));
-      window.location.href = '../../admin/dashboard/dashboard.html';
+    if (okAdmin) {
+      // loginAdmin ya guarda token y usuario en localStorage
+      window.location.href = '/admin/dashboard/dashboard.html';
       return;
     }
 
     // ── Ambos fallaron: mostrar error ─────────────────────
-    // Preferimos el mensaje del intento 2 si el 1ro devolvió
-    // "no encontrado" (el usuario podría ser admin de Django).
-    let mensajeError = 'Usuario o contraseña incorrectos';
-    if (res.status === 401) {
-      try {
-        const dataAdmin2 = await resAdmin.json().catch(() => ({}));
-        mensajeError = dataAdmin2.error || mensajeError;
-      } catch (_) { /* usar mensaje por defecto */ }
-    } else {
-      mensajeError = data.error || mensajeError;
-    }
-
-    alertaTexto.textContent = mensajeError;
-    alertaError.classList.remove('hidden');
-    inputUsuario.classList.add('input--error');
-    inputContrasena.classList.add('input--error');
+    if (alertaTexto) alertaTexto.textContent = data.error || 'Usuario o contraseña incorrectos';
+    alertaError?.classList.remove('hidden');
+    inputUsuario?.classList.add('input--error');
+    inputContrasena?.classList.add('input--error');
     shakeError();
 
   } catch {
-    alertaTexto.textContent = 'No se pudo conectar al servidor. Verifica que el backend esté corriendo.';
-    alertaError.classList.remove('hidden');
+    if (alertaTexto) alertaTexto.textContent = 'No se pudo conectar al servidor.';
+    alertaError?.classList.remove('hidden');
     shakeError();
   } finally {
     setLoading(false);
   }
 }
 
-// ── 7. REGISTRO ────────────────────────────────────────────
+// ── REGISTRO ──────────────────────────────────────────────
 const btnRegistro      = document.getElementById('btn-registro');
 const inputNombre      = document.getElementById('reg-nombre');
 const inputCorreo      = document.getElementById('reg-correo');
@@ -223,74 +183,61 @@ const alertaRegTexto   = document.getElementById('alerta-reg-texto');
 const alertaRegSuccess = document.getElementById('alerta-reg-success');
 
 function validarRegistro() {
-  let valido = true;
+  let ok = true;
   [inputNombre, inputCorreo, inputRegUsuario, inputRegPass, inputRegPass2].forEach(input => {
-    if (!input.value.trim()) {
-      input.classList.add('input--error');
-      valido = false;
-    } else {
-      input.classList.remove('input--error');
-    }
+    if (!input?.value.trim()) { input?.classList.add('input--error'); ok = false; }
+    else input?.classList.remove('input--error');
   });
-  if (valido && inputRegPass.value !== inputRegPass2.value) {
-    inputRegPass2.classList.add('input--error');
-    alertaRegTexto.textContent = 'Las contraseñas no coinciden';
-    alertaRegError.classList.remove('hidden');
-    shakeError();
-    return false;
+  if (ok && inputRegPass?.value !== inputRegPass2?.value) {
+    inputRegPass2?.classList.add('input--error');
+    if (alertaRegTexto) alertaRegTexto.textContent = 'Las contraseñas no coinciden';
+    alertaRegError?.classList.remove('hidden');
+    shakeError(); return false;
   }
-  return valido;
+  return ok;
 }
 
 async function manejarRegistro() {
-  alertaRegError.classList.add('hidden');
-  alertaRegSuccess.classList.add('hidden');
+  alertaRegError?.classList.add('hidden');
+  alertaRegSuccess?.classList.add('hidden');
 
   if (!validarRegistro()) {
-    if (alertaRegError.classList.contains('hidden')) {
-      alertaRegTexto.textContent = 'Completa todos los campos';
-      alertaRegError.classList.remove('hidden');
+    if (alertaRegError?.classList.contains('hidden')) {
+      if (alertaRegTexto) alertaRegTexto.textContent = 'Completa todos los campos';
+      alertaRegError?.classList.remove('hidden');
     }
-    shakeError();
-    return;
+    shakeError(); return;
   }
 
-  btnRegistro.disabled = true;
-  btnRegistro.textContent = 'Creando cuenta...';
+  if (btnRegistro) { btnRegistro.disabled = true; btnRegistro.textContent = 'Creando cuenta...'; }
 
   try {
-    const res = await fetch(`${API_URL}/usuarios/registro/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nombre_completo: inputNombre.value.trim(),
-        correo:          inputCorreo.value.trim(),
-        nombre_usuario:  inputRegUsuario.value.trim(),
-        contrasena:      inputRegPass.value,
-        acepto_terminos: true,
-        rol:             'usuario',
-        estatus_cuenta:  'activo'
-      })
+    const { ok, data } = await registro({
+      nombre_completo: inputNombre.value.trim(),
+      correo:          inputCorreo.value.trim(),
+      nombre_usuario:  inputRegUsuario.value.trim(),
+      contrasena:      inputRegPass.value,
+      acepto_terminos: true,
+      rol:             'usuario',
+      estatus_cuenta:  'activo',
     });
-    const data = await res.json();
 
-    if (res.ok) {
-      alertaRegSuccess.classList.remove('hidden');
+    if (ok) {
+      alertaRegSuccess?.classList.remove('hidden');
       setTimeout(() => iniciarSesion(), 2000);
     } else {
-      const msg = Object.values(data).flat().join(' ');
-      alertaRegTexto.textContent = msg || 'Error al crear la cuenta';
-      alertaRegError.classList.remove('hidden');
+      const msg = typeof data === 'object' ? Object.values(data).flat().join(' ') : 'Error al crear la cuenta';
+      if (alertaRegTexto) alertaRegTexto.textContent = msg;
+      alertaRegError?.classList.remove('hidden');
       shakeError();
     }
   } catch {
-    alertaRegTexto.textContent = 'No se pudo conectar al servidor.';
-    alertaRegError.classList.remove('hidden');
+    if (alertaRegTexto) alertaRegTexto.textContent = 'No se pudo conectar al servidor.';
+    alertaRegError?.classList.remove('hidden');
     shakeError();
   } finally {
-    btnRegistro.disabled = false;
-    btnRegistro.textContent = 'Crear cuenta';
+    if (btnRegistro) { btnRegistro.disabled = false; btnRegistro.textContent = 'Crear cuenta'; }
   }
 }
 
-if (btnRegistro) btnRegistro.addEventListener('click', manejarRegistro);
+btnRegistro?.addEventListener('click', manejarRegistro);

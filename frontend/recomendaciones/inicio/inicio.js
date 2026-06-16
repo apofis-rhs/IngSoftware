@@ -1,10 +1,10 @@
 // recomendaciones: inicio - logica especifica
-import { buscarArticulos } from '../../assets/js/api.js';
-import { getRutaImagen }   from '../../assets/js/imagenes.js';
+import { buscarArticulos } from '/assets/js/api.js';
+import { getRutaImagen }   from '/assets/js/imagenes.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (!localStorage.getItem('token')) {
-    window.location.href = '../../auth/login/login.html';
+    window.location.href = '/auth/login/login.html';
     return;
   }
 

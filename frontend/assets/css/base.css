@@ -261,3 +261,81 @@ small { font-size: var(--text-sm); color: var(--color-text-muted); }
   .hide-desktop      { display: none !important; }
   .navbar__hamburger { display: none; }
 }
+
+/* ── ANIMACIONES GLOBALES LUMIKA ──────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+@keyframes popIn {
+  from { transform: scale(0.6); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+@keyframes pulseGlow {
+  0%   { box-shadow: 0 0 0 0 rgba(186,196,35,0.45); }
+  70%  { box-shadow: 0 0 0 12px rgba(186,196,35,0); }
+  100% { box-shadow: 0 0 0 0 rgba(186,196,35,0); }
+}
+
+.fade-in-up  { animation: fadeUp 0.5s ease forwards; }
+.fade-in     { animation: fadeIn 0.4s ease forwards; }
+.anim-delay-1 { animation-delay: 0.1s; opacity: 0; }
+.anim-delay-2 { animation-delay: 0.2s; opacity: 0; }
+.anim-delay-3 { animation-delay: 0.3s; opacity: 0; }
+.anim-delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+/* Dot flotante reutilizable */
+.dot-float {
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  position: absolute;
+  pointer-events: none;
+  animation: float 3s ease-in-out infinite;
+}
+.dot-float--primary { background: var(--color-primary); }
+.dot-float--success { background: var(--color-success); }
+
+/* Toast global */
+.lumika-toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-success); color: #fff;
+  padding: 10px 22px; border-radius: var(--radius-full);
+  z-index: 9999; font-size: var(--text-base); font-weight: var(--font-bold);
+  animation: fadeUp 0.3s ease;
+  white-space: nowrap;
+}
+
+/* ── BOTÓN CARGAR MÁS ─────────────────────────────────── */
+.btn-cargar-mas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  max-width: 320px;
+  margin: var(--space-5) auto 0;
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-bg-white);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.btn-cargar-mas:hover {
+  border-color: var(--color-primary-dark);
+  color: var(--color-text-primary);
+  background: var(--color-primary-light);
+  transform: translateY(-1px);
+}

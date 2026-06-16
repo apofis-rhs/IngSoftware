@@ -5,24 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LUMIKA — Gestión de Productos</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="../../assets/css/variables.css">
-  <link rel="stylesheet" href="../../assets/css/base.css">
-  <link rel="stylesheet" href="../../assets/css/components.css">
-  <link rel="stylesheet" href="./gestionar-productos.css">
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/admin/gestionar-productos/gestionar-productos.css">
+  <link rel="stylesheet" href="/admin/dashboard/dashboard.css">
 </head>
 <body>
 
   <nav class="navbar admin-navbar-bg">
-    <a class="navbar__logo" href="../dashboard/dashboard.html">
-      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
+    <a class="navbar__logo" href="/admin/dashboard/dashboard.html">
+      <img class="navbar__logo-img" src="/assets/img/logo.png" alt="LUMIKA">
       <span class="navbar__logo-text">LUMIKA</span>
       <span class="navbar__badge-admin">Admin</span>
     </a>
     <div class="navbar__links hide-mobile">
-      <a href="../dashboard/dashboard.html" class="navbar__link"><i class="fa-solid fa-chart-pie"></i> Panel</a>
-      <a href="../agregar-producto/agregar-producto.html" class="navbar__link"><i class="fa-solid fa-plus"></i> Agregar</a>
-      <a href="./gestionar-productos.html" class="navbar__link navbar__link--active"><i class="fa-solid fa-boxes-stacked"></i> Gestionar</a>
-      <a href="../../auth/login/login.html" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+      <a href="/admin/dashboard/dashboard.html" class="navbar__link"><i class="fa-solid fa-chart-pie"></i> Panel</a>
+      <a href="/admin/agregar-producto/agregar-producto.html" class="navbar__link"><i class="fa-solid fa-plus"></i> Agregar</a>
+      <a href="/admin/gestionar-productos/gestionar-productos.html" class="navbar__link navbar__link--active"><i class="fa-solid fa-boxes-stacked"></i> Gestionar</a>
+      <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
     </div>
     <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
       <span></span><span></span>
@@ -30,65 +31,74 @@
   </nav>
 
   <div class="nav-drawer" id="nav-drawer">
-    <a href="../dashboard/dashboard.html" class="nav-drawer__link"><i class="fa-solid fa-chart-pie"></i> Panel Administrador</a>
-    <a href="../agregar-producto/agregar-producto.html" class="nav-drawer__link"><i class="fa-solid fa-plus"></i> Agregar Producto</a>
-    <a href="./gestionar-productos.html" class="nav-drawer__link nav-drawer__link--active"><i class="fa-solid fa-boxes-stacked"></i> Gestionar Productos</a>
+    <a href="/admin/dashboard/dashboard.html" class="nav-drawer__link"><i class="fa-solid fa-chart-pie"></i> Panel</a>
+    <a href="/admin/agregar-producto/agregar-producto.html" class="nav-drawer__link"><i class="fa-solid fa-plus"></i> Agregar</a>
+    <a href="/admin/gestionar-productos/gestionar-productos.html" class="nav-drawer__link nav-drawer__link--active"><i class="fa-solid fa-boxes-stacked"></i> Gestionar</a>
     <div class="nav-drawer__divider"></div>
-    <a href="../../auth/login/login.html" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+    <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
   </div>
 
   <main class="page-wrapper">
+
+    <!-- Encabezado con tabs Producto / Artículo -->
     <div class="admin-view-header">
-      <h2 class="text-bold"><i class="fa-solid fa-arrow-left btn-back-icon" onclick="window.history.back()"></i> Gestión de productos</h2>
-      <a href="../agregar-producto/agregar-producto.html" class="btn-add-circle"><i class="fa-solid fa-plus"></i></a>
+      <h2 class="text-bold">
+        <i class="fa-solid fa-arrow-left btn-back-icon" onclick="window.history.back()" style="cursor:pointer"></i>
+        Gestión de <span id="tipo-actual">Productos</span>
+      </h2>
+      <a href="/admin/agregar-producto/agregar-producto.html" class="btn-add-circle" title="Agregar nuevo">
+        <i class="fa-solid fa-plus"></i>
+      </a>
     </div>
 
-    <div class="search-container" style="margin: var(--space-4) 0 var(--space-6);">
-      <input type="text" class="admin-search-input" placeholder="Buscar producto...">
+    <!-- Selector Productos / Artículos -->
+    <div class="gestionar-tabs">
+      <button class="gestionar-tab active" id="tab-productos" onclick="cambiarTab('productos')">
+        <i class="fa-solid fa-box"></i> Productos
+      </button>
+      <button class="gestionar-tab" id="tab-articulos" onclick="cambiarTab('articulos')">
+        <i class="fa-solid fa-leaf"></i> Artículos
+      </button>
     </div>
 
-    <div class="admin-product-list" id="lista-productos">
-      <div class="product-item-card">
-        <div class="product-item-card__info">
-          <span class="status-indicator status-indicator--red"></span>
-          <span class="product-item-card__name">Head & Shoulders</span>
-        </div>
-        <div class="product-item-card__actions">
-          <button class="btn-action-trigger btn-action-trigger--edit" title="Editar"><i class="fa-solid fa-pen"></i></button>
-          <button class="btn-action-trigger btn-action-trigger--delete" title="Eliminar"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-      </div>
-
-      <div class="product-item-card">
-        <div class="product-item-card__info">
-          <span class="status-indicator status-indicator--green"></span>
-          <span class="product-item-card__name">Love Beauty Planet</span>
-        </div>
-        <div class="product-item-card__actions">
-          <button class="btn-action-trigger btn-action-trigger--edit" title="Editar"><i class="fa-solid fa-pen"></i></button>
-          <button class="btn-action-trigger btn-action-trigger--delete" title="Eliminar"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-      </div>
+    <!-- Buscador -->
+    <div style="margin: var(--space-4) 0 var(--space-4)">
+      <input type="text" class="admin-search-input" id="input-buscar" placeholder="Buscar...">
     </div>
 
-    <div style="margin-top: var(--space-8);">
-      <a href="../dashboard/dashboard.html" class="btn-admin-back-footer">
+    <!-- Contador -->
+    <p id="total-items" class="text-muted" style="font-size:var(--text-sm);margin-bottom:var(--space-3)"></p>
+
+    <!-- Loader -->
+    <div id="loader" style="text-align:center;padding:var(--space-8);color:var(--color-text-muted)">
+      <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem"></i>
+      <p style="margin-top:var(--space-2)">Cargando...</p>
+    </div>
+
+    <!-- Lista dinámica -->
+    <div class="admin-product-list hidden" id="lista-items"></div>
+
+    <div style="margin-top:var(--space-8)">
+      <a href="/admin/dashboard/dashboard.html" class="btn-admin-back-footer">
         <i class="fa-solid fa-arrow-left"></i> Regresar
       </a>
     </div>
   </main>
 
-  <script>
-    const hamburger = document.getElementById('hamburger');
-    const navDrawer = document.getElementById('nav-drawer');
-    if (hamburger) {
-      hamburger.addEventListener('click', () => navDrawer.classList.toggle('open'));
-      document.addEventListener('click', (e) => {
-        if (!hamburger.contains(e.target) && !navDrawer.contains(e.target)) {
-          navDrawer.classList.remove('open');
-        }
-      });
-    }
-  </script>
+  <!-- Modal confirmar eliminación -->
+  <div class="modal-overlay" id="delete-modal">
+    <div class="modal-box">
+      <i class="fa-solid fa-triangle-exclamation" style="font-size:2rem;color:var(--color-secondary-dark);margin-bottom:var(--space-3)"></i>
+      <h3>¿Eliminar este elemento?</h3>
+      <p id="modal-nombre-item" style="color:var(--color-text-muted);margin:var(--space-2) 0 var(--space-4);font-size:var(--text-sm)"></p>
+      <p style="color:var(--color-text-muted);font-size:var(--text-sm);margin-bottom:var(--space-4)">Esta acción no se puede deshacer.</p>
+      <div class="modal-buttons">
+        <button class="btn-modal btn-modal--yes" id="btn-confirmar-eliminar">Eliminar</button>
+        <button class="btn-modal btn-modal--no"  id="btn-cancelar-eliminar">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/admin/gestionar-productos/gestionar-productos.js"></script>
 </body>
 </html>

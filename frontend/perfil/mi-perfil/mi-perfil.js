@@ -1,73 +1,68 @@
-// mi-perfil.js
-
-// IMPORTANTE: Comenté la importación de la API para pruebas en Live Server
-// import { obtenerPerfil, eliminarCuenta, estaLogueado } from "../../assets/js/api.js";
+// perfil/mi-perfil.js
+import { obtenerPerfil, eliminarCuenta, estaLogueado } from '/assets/js/api.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-  // ── CARGAR PERFIL (SIMULADO PARA LIVE SERVER) ────────────────────────
-  function cargarPerfilSimulado() {
-    // Datos falsos para probar la interfaz
-    const data = {
-      nombre_completo: "Rebeca Hernández",
-      nombre_usuario: "rebeca.hs"
-    };
+  if (!estaLogueado()) { window.location.href = '/auth/login/login.html'; return; }
 
-    document.getElementById("perfil-nombre").textContent  = data.nombre_completo || data.nombre_usuario;
-    document.getElementById("perfil-usuario").textContent = "@" + data.nombre_usuario;
-
-    const iniciales = (data.nombre_completo || data.nombre_usuario || "?")
-      .split(" ").map(p => p[0]).join("").substring(0, 2).toUpperCase();
-    document.getElementById("avatar-iniciales").textContent = iniciales;
-  }
-
-  cargarPerfilSimulado();
-
-  // ── LÓGICA DEL MODAL DE ELIMINAR CUENTA ──────────────────────
-  const btnAbrirModal = document.getElementById("btn-eliminar");
-  const modalEliminar = document.getElementById("modal-eliminar");
-  const btnCancelar = document.getElementById("btn-cancelar-eliminar");
-  const btnConfirmar = document.getElementById("btn-confirmar-eliminar");
-  const textoEliminar = document.getElementById("texto-eliminar");
-  const loadingEliminar = document.getElementById("loading-eliminar");
-
-  // Abrir Modal
-  btnAbrirModal.addEventListener("click", (e) => {
-    e.preventDefault();
-    modalEliminar.classList.add("active");
+  // Nav
+  const hamburger = document.getElementById('hamburger');
+  const navDrawer = document.getElementById('nav-drawer');
+  hamburger?.addEventListener('click', () => navDrawer?.classList.toggle('open'));
+  document.addEventListener('click', e => {
+    if (!hamburger?.contains(e.target) && !navDrawer?.contains(e.target))
+      navDrawer?.classList.remove('open');
+  });
+  ['btn-cerrar-sesion','btn-cerrar-sesion-mobile'].forEach(id => {
+    document.getElementById(id)?.addEventListener('click', e => {
+      e.preventDefault();
+      localStorage.removeItem('token'); localStorage.removeItem('usuario');
+      window.location.href = '/auth/login/login.html';
+    });
   });
 
-  // Cerrar Modal al dar clic en Cancelar
-  btnCancelar.addEventListener("click", () => {
-    modalEliminar.classList.remove("active");
-  });
+  // ── Cargar perfil desde la BD ─────────────────────────────
+  try {
+    const { ok, data } = await obtenerPerfil();
+    if (ok) {
+      const nombre = data.nombre_completo || data.nombre || data.nombre_usuario || 'Usuario';
+      const usuario = data.nombre_usuario || '';
 
-  // Cerrar Modal si dan clic en el fondo oscuro
-  modalEliminar.addEventListener("click", (e) => {
-    if (e.target === modalEliminar) {
-      modalEliminar.classList.remove("active");
+      const elNombre  = document.getElementById('perfil-nombre');
+      const elUsuario = document.getElementById('perfil-usuario');
+      const elIniciales = document.getElementById('avatar-iniciales');
+
+      if (elNombre)    elNombre.textContent  = nombre;
+      if (elUsuario)   elUsuario.textContent = '@' + usuario;
+      if (elIniciales) elIniciales.textContent = nombre.split(' ').map(p => p[0]).join('').substring(0, 2).toUpperCase();
+
+      // Guardar en localStorage por si otros módulos lo necesitan
+      localStorage.setItem('usuario', JSON.stringify(data));
     }
+  } catch (err) { console.error('Error cargando perfil:', err); }
+
+  // ── Modal eliminar cuenta ─────────────────────────────────
+  const btnAbrir    = document.getElementById('btn-eliminar');
+  const modal       = document.getElementById('modal-eliminar');
+  const btnCancelar = document.getElementById('btn-cancelar-eliminar');
+  const btnConfirmar = document.getElementById('btn-confirmar-eliminar');
+  const textoEl     = document.getElementById('texto-eliminar');
+  const loadingEl   = document.getElementById('loading-eliminar');
+
+  btnAbrir?.addEventListener('click', e => { e.preventDefault(); modal?.classList.add('active'); });
+  btnCancelar?.addEventListener('click', () => modal?.classList.remove('active'));
+  modal?.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('active'); });
+
+  btnConfirmar?.addEventListener('click', async () => {
+    if (btnConfirmar) btnConfirmar.disabled = true;
+    textoEl?.classList.add('hidden');
+    loadingEl?.classList.remove('hidden');
+    if (btnCancelar) btnCancelar.style.pointerEvents = 'none';
+
+    // Usa eliminarCuenta de api.js
+    await eliminarCuenta().catch(() => {});
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
+    window.location.href = '/auth/login/login.html';
   });
-
-  // Acción de Eliminar (Simulada para Live Server)
-  btnConfirmar.addEventListener("click", () => {
-    
-    // Cambiamos el estado del botón a "Cargando..."
-    btnConfirmar.disabled = true;
-    textoEliminar.classList.add("hidden");
-    loadingEliminar.classList.remove("hidden");
-    btnCancelar.style.pointerEvents = "none"; // Desactivar cancelar mientras carga
-
-    // Simulamos que el servidor está borrando la cuenta (1.5 segundos)
-    setTimeout(() => {
-      // Limpiamos los tokens locales (simulación)
-      localStorage.removeItem("token");
-      localStorage.removeItem("usuario");
-      
-      // Redirigimos al Login
-      window.location.href = "../../auth/login/login.html";
-    }, 1500);
-
-  });
-
 });

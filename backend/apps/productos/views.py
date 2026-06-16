@@ -11,12 +11,27 @@ from .serializers import ProductoListSerializer, ProductoDetalleSerializer, Prod
 
 
 def _get_usuario(request):
+    """
+    Decodifica el token Bearer.
+    Soporta tokens normales (base64 de id_usuario)
+    y tokens de Django admin (base64 de 'django-{id}') → rol admin.
+    """
     from apps.usuarios.models import Usuario
     auth = request.headers.get('Authorization', '')
     if not auth.startswith('Bearer '):
         return None
     try:
-        uid = int(base64.b64decode(auth[7:].encode()).decode())
+        decoded = base64.b64decode(auth[7:].encode()).decode()
+
+        # Token de Django admin
+        if decoded.startswith('django-'):
+            class _AdminProxy:
+                rol = 'admin'
+                estatus_cuenta = 'activo'
+                id_usuario = None
+            return _AdminProxy()
+
+        uid = int(decoded)
         return Usuario.objects.get(id_usuario=uid, estatus_cuenta='activo')
     except Exception:
         return None
@@ -138,7 +153,6 @@ def _guardar_clasificacion(id_producto, resultado, producto_obj):
     producto_obj.estado_evaluacion = resultado["estado_evaluacion"]
     producto_obj.save()
 
-    # producto_criterio no tiene modelo Django; se maneja con SQL directo
     with connection.cursor() as cur:
         cur.execute("DELETE FROM producto_criterio WHERE id_producto = %s", [id_producto])
         for c in resultado["criterios"]:
@@ -212,7 +226,8 @@ def detalle_producto(request, id_producto):
 
     if request.method == 'GET':
         usuario = _get_usuario(request)
-        if usuario:
+        # Guardar consulta solo si es usuario real (no admin proxy ni anónimo)
+        if usuario and hasattr(usuario, 'id_usuario') and usuario.id_usuario is not None:
             from apps.usuarios.models import Consulta
             Consulta.objects.create(id_usuario=usuario, id_producto=producto)
         return Response(ProductoDetalleSerializer(producto).data)
@@ -280,3 +295,66 @@ def clasificar_producto(request, id_producto):
     _guardar_clasificacion(id_producto, resultado, producto_obj)
     producto_obj.refresh_from_db()
     return Response(ProductoDetalleSerializer(producto_obj).data)
+
+
+@api_view(['GET'])
+def listar_subcategorias(request):
+    from .models import Subcategoria
+    from .serializers import SubcategoriaSerializer
+    subs = Subcategoria.objects.select_related('id_categoria').all().order_by('id_categoria', 'nombre_subcategoria')
+    data = [
+        {
+            'id_subcategoria':   s.id_subcategoria,
+            'nombre_subcategoria': s.nombre_subcategoria,
+            'id_categoria':      s.id_categoria_id,
+            'nombre_categoria':  s.id_categoria.nombre_categoria,
+        }
+        for s in subs
+    ]
+    return Response(data)
+
+
+@api_view(['GET', 'POST'])
+def gestionar_articulos(request):
+    """Lista todos los artículos (GET) o crea uno nuevo (POST). Solo admin."""
+    from apps.articulos.models import Articulo
+    from apps.articulos.serializers import ArticuloListSerializer, ArticuloDetalleSerializer
+
+    usuario = _get_usuario(request)
+    if not usuario or usuario.rol != 'admin':
+        return Response({'error': 'No autorizado'}, status=status.HTTP_401_UNAUTHORIZED)
+
+    if request.method == 'GET':
+        articulos = Articulo.objects.all().order_by('nombre_articulo')
+        return Response(ArticuloListSerializer(articulos, many=True).data)
+
+    # POST — crear artículo
+    nombre          = request.data.get('nombre_articulo', '').strip()
+    impacto         = request.data.get('impacto_ambiental', '').strip()
+    id_subcategoria = request.data.get('id_subcategoria')
+
+    if not nombre:
+        return Response({'error': 'nombre_articulo es requerido'}, status=status.HTTP_400_BAD_REQUEST)
+
+    articulo = Articulo.objects.create(
+        nombre_articulo=nombre,
+        impacto_ambiental=impacto or 'Sin información',
+        id_subcategoria_id=id_subcategoria or None,
+    )
+    return Response(ArticuloListSerializer(articulo).data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['DELETE'])
+def eliminar_articulo(request, id_articulo):
+    """Elimina un artículo. Solo admin."""
+    from apps.articulos.models import Articulo
+
+    usuario = _get_usuario(request)
+    if not usuario or usuario.rol != 'admin':
+        return Response({'error': 'No autorizado'}, status=status.HTTP_401_UNAUTHORIZED)
+
+    try:
+        Articulo.objects.get(id_articulo=id_articulo).delete()
+        return Response({'mensaje': 'Artículo eliminado'})
+    except Articulo.DoesNotExist:
+        return Response({'error': 'Artículo no encontrado'}, status=status.HTTP_404_NOT_FOUND)

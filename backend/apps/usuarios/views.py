@@ -10,11 +10,28 @@ from .serializers import UsuarioSerializer, ConsultaSerializer, FavoritoSerializ
 
 
 def _get_usuario(request):
+    """
+    Decodifica el token Bearer y devuelve el Usuario LUMIKA.
+    Soporta tokens normales (base64 del id_usuario)
+    y tokens de Django admin (base64 de 'django-{id}' → rol admin).
+    """
     auth = request.headers.get('Authorization', '')
     if not auth.startswith('Bearer '):
         return None
     try:
-        uid = int(base64.b64decode(auth[7:].encode()).decode())
+        decoded = base64.b64decode(auth[7:].encode()).decode()
+
+        # Token de Django admin: 'django-{django_user_id}'
+        if decoded.startswith('django-'):
+            # Creamos un objeto anónimo con rol admin para las validaciones
+            class _AdminProxy:
+                rol = 'admin'
+                estatus_cuenta = 'activo'
+                id_usuario = None
+            return _AdminProxy()
+
+        # Token normal: entero = id_usuario
+        uid = int(decoded)
         return Usuario.objects.get(id_usuario=uid, estatus_cuenta='activo')
     except Exception:
         return None
@@ -69,6 +86,51 @@ def login(request):
     return Response({'token': token, 'usuario': UsuarioSerializer(usuario).data})
 
 
+@api_view(['POST'])
+def login_admin(request):
+    """
+    Autentica contra el sistema de usuarios nativo de Django (auth_user).
+    Solo permite acceso si el usuario tiene is_staff o is_superuser = True.
+    """
+    nombre_usuario = request.data.get('nombre_usuario', '').strip()
+    contrasena = request.data.get('contrasena', '')
+
+    if not nombre_usuario or not contrasena:
+        return Response(
+            {'error': 'nombre_usuario y contrasena son requeridos'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    django_user = authenticate(username=nombre_usuario, password=contrasena)
+
+    if django_user is None:
+        return Response(
+            {'error': 'Credenciales incorrectas'},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    if not (django_user.is_staff or django_user.is_superuser):
+        return Response(
+            {'error': 'El usuario no tiene permisos de administrador'},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
+    token = base64.b64encode(f'django-{django_user.id}'.encode()).decode()
+
+    usuario_data = {
+        'id_usuario':      django_user.id,
+        'nombre_usuario':  django_user.username,
+        'nombre_completo': f'{django_user.first_name} {django_user.last_name}'.strip() or django_user.username,
+        'correo':          django_user.email,
+        'rol':             'admin',
+        'is_staff':        django_user.is_staff,
+        'is_superuser':    django_user.is_superuser,
+        'estatus_cuenta':  'activo',
+    }
+
+    return Response({'token': token, 'usuario': usuario_data})
+
+
 @api_view(['GET', 'PUT', 'DELETE'])
 def perfil(request):
     usuario = _get_usuario(request)
@@ -118,7 +180,7 @@ def cambiar_contrasena(request):
 @api_view(['GET'])
 def historial(request):
     usuario = _get_usuario(request)
-    if not usuario:
+    if not usuario or not hasattr(usuario, 'id_usuario') or usuario.id_usuario is None:
         return Response({'error': 'No autorizado'}, status=status.HTTP_401_UNAUTHORIZED)
     consultas = Consulta.objects.filter(id_usuario=usuario).order_by('-fecha_consulta')
     return Response(ConsultaSerializer(consultas, many=True).data)
@@ -127,11 +189,11 @@ def historial(request):
 @api_view(['GET', 'POST', 'DELETE'])
 def favoritos(request):
     usuario = _get_usuario(request)
-    if not usuario:
+    if not usuario or not hasattr(usuario, 'id_usuario') or usuario.id_usuario is None:
         return Response({'error': 'No autorizado'}, status=status.HTTP_401_UNAUTHORIZED)
 
     if request.method == 'GET':
-        favs = Favorito.objects.filter(id_usuario=usuario)
+        favs = Favorito.objects.filter(id_usuario=usuario).select_related('id_producto')
         return Response(FavoritoSerializer(favs, many=True).data)
 
     id_producto = request.data.get('id_producto')
@@ -153,49 +215,3 @@ def favoritos(request):
         id_usuario_id=usuario.id_usuario, id_producto_id=id_producto
     ).delete()
     return Response({'mensaje': 'Favorito eliminado'})
-
-@api_view(['POST'])
-def login_admin(request):
-    """
-    Autentica contra el sistema de usuarios nativo de Django (auth_user).
-    Solo permite el acceso si el usuario tiene is_staff o is_superuser = True.
-    """
-    nombre_usuario = request.data.get('nombre_usuario', '').strip()
-    contrasena = request.data.get('contrasena', '')
- 
-    if not nombre_usuario or not contrasena:
-        return Response(
-            {'error': 'nombre_usuario y contrasena son requeridos'},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
- 
-    # django.contrib.auth.authenticate verifica contra auth_user
-    django_user = authenticate(username=nombre_usuario, password=contrasena)
- 
-    if django_user is None:
-        return Response(
-            {'error': 'Credenciales incorrectas o usuario no encontrado en Django admin'},
-            status=status.HTTP_401_UNAUTHORIZED,
-        )
- 
-    if not (django_user.is_staff or django_user.is_superuser):
-        return Response(
-            {'error': 'El usuario no tiene permisos de administrador'},
-            status=status.HTTP_403_FORBIDDEN,
-        )
- 
-    # Generamos un token simple basado en el ID del usuario de Django
-    token = base64.b64encode(f'django-{django_user.id}'.encode()).decode()
- 
-    usuario_data = {
-        'id_usuario':       django_user.id,
-        'nombre_usuario':   django_user.username,
-        'nombre_completo':  f'{django_user.first_name} {django_user.last_name}'.strip() or django_user.username,
-        'correo':           django_user.email,
-        'rol':              'admin',
-        'is_staff':         django_user.is_staff,
-        'is_superuser':     django_user.is_superuser,
-        'estatus_cuenta':   'activo',
-    }
- 
-    return Response({'token': token, 'usuario': usuario_data})

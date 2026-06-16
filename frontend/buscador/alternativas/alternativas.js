@@ -1,5 +1,5 @@
 // buscador: alternativas - logica especifica
-import { obtenerArticulo, obtenerAlternativasArticulo } from '../../assets/js/api.js';
+import { obtenerArticulo, obtenerAlternativasArticulo } from '/assets/js/api.js';
 
 const loader = document.querySelector('#loader');
 const grid = document.querySelector('#grid-alternativas');
@@ -13,7 +13,7 @@ let alternativasSeleccionadas = new Set();
 document.addEventListener('DOMContentLoaded', async () => {
   // Redirige si no hay token
   if (!localStorage.getItem('token')) {
-    window.location.href = '../../auth/login/login.html';
+    window.location.href = '/auth/login/login.html';
     return;
   }
 
@@ -96,7 +96,7 @@ function pintarAlternativas(lista) {
             <h3 class="text-h3" style="margin-bottom:var(--space-1)">${alt.nombre_articulo}</h3>
             <p class="text-muted">${precio}</p>
           </div>
-          <a href="../detalle-producto/detalle-producto.html?id=${alt.id_articulo}"
+          <a href="/buscador/detalle-producto/detalle-producto.html?id=${alt.id_articulo}"
              class="btn btn--secondary"
              onclick="event.stopPropagation()">
             Ver

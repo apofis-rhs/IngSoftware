@@ -5,24 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LUMIKA — Panel Administrador</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="../../assets/css/variables.css">
-  <link rel="stylesheet" href="../../assets/css/base.css">
-  <link rel="stylesheet" href="../../assets/css/components.css">
-  <link rel="stylesheet" href="./dashboard.css">
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/admin/dashboard/dashboard.css">
 </head>
 <body>
 
   <nav class="navbar admin-navbar-bg">
-    <a class="navbar__logo" href="./dashboard.html">
-      <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
+    <a class="navbar__logo" href="/admin/dashboard/dashboard.html">
+      <img class="navbar__logo-img" src="/assets/img/logo.png" alt="LUMIKA">
       <span class="navbar__logo-text">LUMIKA</span>
       <span class="navbar__badge-admin">Admin</span>
     </a>
     <div class="navbar__links hide-mobile">
-      <a href="./dashboard.html" class="navbar__link navbar__link--active"><i class="fa-solid fa-chart-pie"></i> Panel</a>
-      <a href="../agregar-producto/agregar-producto.html" class="navbar__link"><i class="fa-solid fa-plus"></i> Agregar</a>
-      <a href="../gestionar-productos/gestionar-productos.html" class="navbar__link"><i class="fa-solid fa-boxes-stacked"></i> Gestionar</a>
-      <a href="../../auth/login/login.html" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+      <a href="/admin/dashboard/dashboard.html" class="navbar__link navbar__link--active">
+        <i class="fa-solid fa-chart-pie"></i> Panel
+      </a>
+      <a href="/admin/agregar-producto/agregar-producto.html" class="navbar__link">
+        <i class="fa-solid fa-plus"></i> Agregar
+      </a>
+      <a href="/admin/gestionar-productos/gestionar-productos.html" class="navbar__link">
+        <i class="fa-solid fa-boxes-stacked"></i> Gestionar
+      </a>
+      <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger">
+        <i class="fa-solid fa-right-from-bracket"></i> Salir
+      </a>
     </div>
     <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
       <span></span><span></span>
@@ -30,58 +38,78 @@
   </nav>
 
   <div class="nav-drawer" id="nav-drawer">
-    <a href="./dashboard.html" class="nav-drawer__link nav-drawer__link--active"><i class="fa-solid fa-chart-pie"></i> Panel Administrador</a>
-    <a href="../agregar-producto/agregar-producto.html" class="nav-drawer__link"><i class="fa-solid fa-plus"></i> Agregar Producto</a>
-    <a href="../gestionar-productos/gestionar-productos.html" class="nav-drawer__link"><i class="fa-solid fa-pen"></i> Editar Producto</a>
-    <a href="../gestionar-productos/gestionar-productos.html" class="nav-drawer__link"><i class="fa-solid fa-magnifying-glass"></i> Visualizar Producto</a>
-    <a href="../gestionar-productos/gestionar-productos.html" class="nav-drawer__link"><i class="fa-solid fa-trash"></i> Eliminar Producto</a>
+    <div class="nav-drawer__header">
+      <span class="nav-drawer__title">LUMIKA Admin</span>
+      <span id="admin-nombre-mobile" class="nav-drawer__usuario"></span>
+    </div>
+    <a href="/admin/dashboard/dashboard.html" class="nav-drawer__link nav-drawer__link--active">
+      <i class="fa-solid fa-chart-pie"></i> Panel
+    </a>
+    <a href="/admin/agregar-producto/agregar-producto.html" class="nav-drawer__link">
+      <i class="fa-solid fa-plus"></i> Agregar Producto
+    </a>
+    <a href="/admin/gestionar-productos/gestionar-productos.html" class="nav-drawer__link">
+      <i class="fa-solid fa-boxes-stacked"></i> Gestionar Productos
+    </a>
     <div class="nav-drawer__divider"></div>
-    <a href="../../auth/login/login.html" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+    <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger">
+      <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+    </a>
   </div>
 
   <main class="page-wrapper">
+
+    <!-- Puntos decorativos (igual que inicio.html) -->
+    <span class="dot dot-admin-1" aria-hidden="true"></span>
+    <span class="dot dot-admin-2" aria-hidden="true"></span>
+
     <div class="admin-header-block">
-      <h2 class="text-center text-bold" style="margin-bottom: var(--space-6); font-size: 22px;">Panel de administración</h2>
+      <h2 class="admin-page-title">
+        Bienvenido, <span id="admin-nombre">Admin</span>
+      </h2>
+      <p class="admin-page-sub">Aquí tienes el resumen del catálogo LUMIKA</p>
     </div>
 
+    <!-- KPI Cards con colores del design system -->
     <div class="admin-kpi-grid">
       <div class="kpi-card kpi-card--yellow">
-        <span class="kpi-card__number">124</span>
+        <i class="fa-solid fa-box kpi-card__icon"></i>
+        <span class="kpi-card__number" id="metric-total">—</span>
         <span class="kpi-card__label">Productos</span>
       </div>
       <div class="kpi-card kpi-card--green">
-        <span class="kpi-card__number">89</span>
+        <i class="fa-solid fa-circle-check kpi-card__icon"></i>
+        <span class="kpi-card__number" id="metric-verdes">—</span>
         <span class="kpi-card__label">En verde</span>
       </div>
+      <div class="kpi-card kpi-card--amber">
+        <i class="fa-solid fa-triangle-exclamation kpi-card__icon"></i>
+        <span class="kpi-card__number" id="metric-amarillos">—</span>
+        <span class="kpi-card__label">En amarillo</span>
+      </div>
       <div class="kpi-card kpi-card--red">
-        <span class="kpi-card__number">21</span>
+        <i class="fa-solid fa-circle-xmark kpi-card__icon"></i>
+        <span class="kpi-card__number" id="metric-rojos">—</span>
         <span class="kpi-card__label">En rojo</span>
       </div>
       <div class="kpi-card kpi-card--gray">
-        <span class="kpi-card__number">14</span>
+        <i class="fa-solid fa-question kpi-card__icon"></i>
+        <span class="kpi-card__number" id="metric-sin-info">—</span>
         <span class="kpi-card__label">Sin info</span>
       </div>
     </div>
 
-    <div style="margin-top: var(--space-8);">
-      <a href="../gestionar-productos/gestionar-productos.html" class="btn-admin-action">
-        Gestionar productos
+    <div class="admin-actions">
+      <a href="/admin/gestionar-productos/gestionar-productos.html" class="btn btn--primary btn-admin-action">
+        <i class="fa-solid fa-boxes-stacked"></i> Gestionar productos
+      </a>
+      <a href="/admin/agregar-producto/agregar-producto.html" class="btn btn--secondary btn-admin-action">
+        <i class="fa-solid fa-plus"></i> Agregar producto
       </a>
     </div>
+
   </main>
 
-  <script>
-    // Menú hamburguesa responsivo
-    const hamburger = document.getElementById('hamburger');
-    const navDrawer = document.getElementById('nav-drawer');
-    if (hamburger) {
-      hamburger.addEventListener('click', () => navDrawer.classList.toggle('open'));
-      document.addEventListener('click', (e) => {
-        if (!hamburger.contains(e.target) && !navDrawer.contains(e.target)) {
-          navDrawer.classList.remove('open');
-        }
-      });
-    }
-  </script>
+  <script type="module" src="/admin/dashboard/dashboard.js"></script>
 </body>
 </html>

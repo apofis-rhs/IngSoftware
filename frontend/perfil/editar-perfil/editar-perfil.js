@@ -1,73 +1,82 @@
-// editar-perfil.js
-
-// IMPORTANTE: Comenté la importación de la API para que no de errores mientras pruebas en Live Server
-// import { obtenerPerfil, editarPerfil, estaLogueado } from "../../assets/js/api.js";
+// perfil/editar-perfil.js
+import { obtenerPerfil, editarPerfil, estaLogueado } from '/assets/js/api.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-  const formView = document.getElementById("form-view");
-  const successView = document.getElementById("success-view");
-  const btnGuardar = document.getElementById("btnGuardar");
-  const divMensaje = document.getElementById("mensaje");
+  if (!estaLogueado()) { window.location.href = '/auth/login/login.html'; return; }
 
-  const inputNombre = document.getElementById("nombre");
-  const inputUsuario = document.getElementById("usuario");
-  const inputCorreo = document.getElementById("correo");
+  // Nav
+  const hamburger = document.getElementById('hamburger');
+  const navDrawer = document.getElementById('nav-drawer');
+  hamburger?.addEventListener('click', () => navDrawer?.classList.toggle('open'));
+  document.addEventListener('click', e => {
+    if (!hamburger?.contains(e.target) && !navDrawer?.contains(e.target))
+      navDrawer?.classList.remove('open');
+  });
+  ['btn-cerrar-sesion','btn-cerrar-sesion-mobile'].forEach(id => {
+    document.getElementById(id)?.addEventListener('click', e => {
+      e.preventDefault();
+      localStorage.removeItem('token'); localStorage.removeItem('usuario');
+      window.location.href = '/auth/login/login.html';
+    });
+  });
 
-  /* // ── 1. CARGAR DATOS AL INICIAR (Comentado para pruebas sin servidor) ──
+  const formView    = document.getElementById('form-view');
+  const successView = document.getElementById('success-view');
+  const btnGuardar  = document.getElementById('btnGuardar');
+  const divMensaje  = document.getElementById('mensaje');
+  const inputNombre  = document.getElementById('nombre');
+  const inputUsuario = document.getElementById('usuario');
+  const inputCorreo  = document.getElementById('correo');
+
+  // ── Cargar datos actuales desde la BD ────────────────────
   try {
     const { ok, data } = await obtenerPerfil();
     if (ok) {
-      inputNombre.value = data.nombre_completo || data.nombre || "";
-      inputUsuario.value = data.nombre_usuario || "";
-      inputCorreo.value = data.correo || "";
+      if (inputNombre)  inputNombre.value  = data.nombre_completo || data.nombre || '';
+      if (inputUsuario) inputUsuario.value = data.nombre_usuario  || '';
+      if (inputCorreo)  inputCorreo.value  = data.correo          || '';
     }
-  } catch (error) {
-    console.error("Error al cargar perfil:", error);
-    mostrarError("No se pudo cargar la información del perfil.");
-  }
-  */
+  } catch (err) { console.error('Error cargando perfil:', err); }
 
-  // ── 2. GUARDAR CAMBIOS (Simulado para Live Server) ───────────────────
-  btnGuardar.addEventListener("click", (e) => {
+  // ── Guardar cambios en la BD ──────────────────────────────
+  btnGuardar?.addEventListener('click', async e => {
     e.preventDefault();
+    if (divMensaje) divMensaje.innerHTML = '';
 
-    // Limpiar alertas previas
-    divMensaje.innerHTML = "";
-
-    // Validar campos vacíos
-    if (!inputNombre.value.trim() || !inputUsuario.value.trim() || !inputCorreo.value.trim()) {
-      mostrarError("Por favor, completa todos los campos.");
+    if (!inputNombre?.value.trim() || !inputUsuario?.value.trim() || !inputCorreo?.value.trim()) {
+      mostrarError('Por favor, completa todos los campos.');
       return;
     }
 
-    // Cambiar estado visual del botón (Cargando...)
-    const textoOriginal = btnGuardar.innerHTML;
-    btnGuardar.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando...`;
+    const textoOrig = btnGuardar.innerHTML;
+    btnGuardar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
     btnGuardar.disabled = true;
 
-    // SIMULACIÓN: Esperamos 1 segundo para fingir que el servidor procesó los datos
-    setTimeout(() => {
-      
-      // Ocultar formulario y mostrar la tarjeta de éxito
-      formView.style.display = "none";
-      successView.style.display = "flex";
+    try {
+      // Usa editarPerfil de api.js
+      const { ok, data } = await editarPerfil({
+        nombre_completo: inputNombre.value.trim(),
+        nombre_usuario:  inputUsuario.value.trim(),
+        correo:          inputCorreo.value.trim(),
+      });
 
-      // Si necesitas que el botón vuelva a la normalidad en caso de que alguien lo regrese a display block:
-      // btnGuardar.innerHTML = textoOriginal;
-      // btnGuardar.disabled = false;
-
-    }, 1000); // 1000 milisegundos = 1 segundo de espera
+      if (ok) {
+        localStorage.setItem('usuario', JSON.stringify(data));
+        if (formView)    formView.style.display    = 'none';
+        if (successView) successView.style.display = 'flex';
+      } else {
+        const msg = typeof data === 'object' ? Object.values(data).flat().join(' ') : 'Error al guardar.';
+        mostrarError(msg);
+      }
+    } catch { mostrarError('Error de conexión.'); }
+    finally  { btnGuardar.innerHTML = textoOrig; btnGuardar.disabled = false; }
   });
 
-  // Función auxiliar para imprimir errores en pantalla
   function mostrarError(texto) {
-    divMensaje.innerHTML = `<div class="alerta alerta--error" style="margin-top:16px;">${texto}</div>`;
-    
-    // Ocultar alerta después de 3 segundos
-    setTimeout(() => {
-      divMensaje.innerHTML = "";
-    }, 3000);
+    if (divMensaje) {
+      divMensaje.innerHTML = `<div class="alerta alerta--error" style="margin-top:16px">${texto}</div>`;
+      setTimeout(() => { if (divMensaje) divMensaje.innerHTML = ''; }, 3000);
+    }
   }
-
 });

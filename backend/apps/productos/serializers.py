@@ -33,6 +33,7 @@ class ProductoListSerializer(serializers.ModelSerializer):
         fields = [
             'id_producto', 'nombre_producto', 'precio_min', 'precio_max',
             'color_semaforo', 'estado_evaluacion', 'id_subcategoria',
+            'imagen',
         ]
 
 
@@ -70,6 +71,7 @@ class ProductoDetalleSerializer(serializers.ModelSerializer):
             'id_producto', 'nombre_producto', 'precio_min', 'precio_max',
             'color_semaforo', 'razon_clasificacion', 'estado_evaluacion',
             'id_subcategoria', 'subcategoria',
+            'imagen', 'ingredientes',
             'ventajas', 'desventajas', 'caracteristicas', 'criterios',
         ]
 
@@ -77,4 +79,14 @@ class ProductoDetalleSerializer(serializers.ModelSerializer):
 class ProductoAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = Producto
-        fields = '__all__'
+        # Solo los campos reales de la tabla producto en PostgreSQL
+        fields = [
+            'id_producto', 'nombre_producto',
+            'precio_min', 'precio_max',
+            'color_semaforo', 'razon_clasificacion', 'estado_evaluacion',
+            'id_subcategoria', 'imagen', 'ingredientes',
+        ]
+        extra_kwargs = {
+            'id_subcategoria': {'required': True},
+            'nombre_producto': {'required': True},
+        }
