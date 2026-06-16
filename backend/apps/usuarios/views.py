@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import Usuario, Consulta, Favorito
+from .models import Usuario, Consulta, ConsultaArticulo, Favorito
 from .serializers import UsuarioSerializer, ConsultaSerializer, FavoritoSerializer
 
 
@@ -193,25 +193,33 @@ def favoritos(request):
         return Response({'error': 'No autorizado'}, status=status.HTTP_401_UNAUTHORIZED)
 
     if request.method == 'GET':
-        favs = Favorito.objects.filter(id_usuario=usuario).select_related('id_producto')
+        favs = Favorito.objects.filter(id_usuario=usuario).select_related('id_producto', 'id_articulo')
         return Response(FavoritoSerializer(favs, many=True).data)
 
     id_producto = request.data.get('id_producto')
-    if not id_producto:
-        return Response(
-            {'error': 'id_producto es requerido'},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+    id_articulo = request.data.get('id_articulo')
+
+    if not id_producto and not id_articulo:
+        return Response({'error': 'id_producto o id_articulo requerido'}, status=status.HTTP_400_BAD_REQUEST)
 
     if request.method == 'POST':
-        fav, created = Favorito.objects.get_or_create(
-            id_usuario_id=usuario.id_usuario,
-            id_producto_id=id_producto,
-        )
+        if id_producto:
+            fav, created = Favorito.objects.get_or_create(
+                id_usuario_id=usuario.id_usuario,
+                id_producto_id=id_producto,
+                id_articulo=None,
+            )
+        else:
+            fav, created = Favorito.objects.get_or_create(
+                id_usuario_id=usuario.id_usuario,
+                id_articulo_id=id_articulo,
+                id_producto=None,
+            )
         code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
         return Response(FavoritoSerializer(fav).data, status=code)
 
-    Favorito.objects.filter(
-        id_usuario_id=usuario.id_usuario, id_producto_id=id_producto
-    ).delete()
+    if id_producto:
+        Favorito.objects.filter(id_usuario_id=usuario.id_usuario, id_producto_id=id_producto).delete()
+    else:
+        Favorito.objects.filter(id_usuario_id=usuario.id_usuario, id_articulo_id=id_articulo).delete()
     return Response({'mensaje': 'Favorito eliminado'})

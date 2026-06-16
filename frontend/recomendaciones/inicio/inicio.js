@@ -1,12 +1,10 @@
-import { obtenerRecomendaciones } from '/assets/js/api.js';
-import { getRutaImagen }          from '/assets/js/imagenes.js';
+import { obtenerRecomendaciones, obtenerFavoritosArticulo, agregarFavoritoArticulo, eliminarFavoritoArticulo } from '/assets/js/api.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (!localStorage.getItem('token')) {
     window.location.href = '/auth/login/login.html?sesion=expirada'; return;
   }
 
-  // Nav
   const hamburger = document.getElementById('hamburger');
   const navDrawer  = document.getElementById('nav-drawer');
   hamburger?.addEventListener('click', () => navDrawer?.classList.toggle('open'));
@@ -26,32 +24,72 @@ document.addEventListener('DOMContentLoaded', async () => {
   const seccionRecomendados = document.getElementById('grid-recomendados');
   const seccionPopulares    = document.getElementById('grid-populares');
 
+  // Cargar IDs de artículos ya favoritos
+  let favIds = new Set();
+  try {
+    const { ok, data } = await obtenerFavoritosArticulo();
+    if (ok && Array.isArray(data)) data.forEach(f => favIds.add(String(f.id_articulo_id)));
+  } catch(_) {}
+
+  const COLORES = { verde:'var(--color-semaforo-verde)', amarillo:'var(--color-semaforo-amarillo)', rojo:'var(--color-semaforo-rojo)' };
+
   function pintarCard(articulo, contenedor) {
-    const tieneImagen = !!articulo.id_subcategoria;
+    const color    = articulo.estado_evaluacion === 'insuficiente' ? 'gris' : (articulo.color_semaforo || 'gris');
+    const dotColor = COLORES[color] || '#ccc';
+    const precio   = articulo.precio_estimado ? `$${parseFloat(articulo.precio_estimado).toFixed(2)}` : '';
+    const esFav    = favIds.has(String(articulo.id_articulo));
+
     const card = document.createElement('article');
     card.className = 'product-card-grid recomendacion-card fade-in-up';
-    card.style.cursor = 'pointer';
+    card.style.cssText = 'cursor:pointer;position:relative';
     card.innerHTML = `
+      <button class="btn-fav-card" data-id="${articulo.id_articulo}"
+              style="position:absolute;top:8px;right:8px;z-index:2;
+                     background:rgba(255,255,255,0.9);border:none;border-radius:50%;
+                     width:32px;height:32px;cursor:pointer;display:flex;align-items:center;
+                     justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.15)">
+        <i class="${esFav ? 'fa-solid' : 'fa-regular'} fa-star"
+           style="color:${esFav ? 'var(--color-primary-dark)' : 'var(--color-text-muted)'}"></i>
+      </button>
       <div class="product-card-grid__img"
            style="background:var(--color-bg-page);display:flex;align-items:center;
-                  justify-content:center;border-radius:var(--radius-md);overflow:hidden">
-        ${tieneImagen
-          ? `<img src="${getRutaImagen(articulo)}" alt="${articulo.nombre_articulo}"
-                  style="width:100%;height:100%;object-fit:cover"
-                  onerror="this.parentElement.innerHTML='<i class=\\'fa-solid fa-leaf\\' style=\\'font-size:2rem;color:var(--color-success)\\'></i>'">`
-          : `<i class="fa-solid fa-leaf" style="font-size:2rem;color:var(--color-success)"></i>`}
+                  justify-content:center;border-radius:var(--radius-md)">
+        <div style="width:56px;height:56px;border-radius:50%;background:${dotColor};
+                    box-shadow:0 0 0 8px ${dotColor}25"></div>
       </div>
       <div class="product-card-grid__info">
         <h3 class="product-card-grid__name">${articulo.nombre_articulo}</h3>
-        <p class="product-card-grid__price" style="font-size:0.8rem;color:var(--color-text-muted)">
-          ${articulo.impacto_ambiental
-            ? articulo.impacto_ambiental.substring(0, 70) + (articulo.impacto_ambiental.length > 70 ? '…' : '')
-            : 'Alternativa sostenible'}
-        </p>
+        ${precio ? `<p class="product-card-grid__price" style="font-size:0.8rem">${precio}</p>` : ''}
       </div>`;
-    card.addEventListener('click', () => {
+
+    card.addEventListener('click', e => {
+      if (e.target.closest('.btn-fav-card')) return;
       window.location.href = `/recomendaciones/detalle-articulo/detalle-articulo.html?id=${articulo.id_articulo}`;
     });
+
+    card.querySelector('.btn-fav-card').addEventListener('click', async e => {
+      e.stopPropagation();
+      const btn  = e.currentTarget;
+      const icon = btn.querySelector('i');
+      const id   = String(articulo.id_articulo);
+
+      try {
+        if (favIds.has(id)) {
+          await eliminarFavoritoArticulo(id);
+          favIds.delete(id);
+          icon.className = 'fa-regular fa-star';
+          icon.style.color = 'var(--color-text-muted)';
+          toast('Eliminado de favoritos');
+        } else {
+          await agregarFavoritoArticulo(id);
+          favIds.add(id);
+          icon.className = 'fa-solid fa-star';
+          icon.style.color = 'var(--color-primary-dark)';
+          toast('⭐ Agregado a favoritos');
+        }
+      } catch(err) { console.error('Error favorito:', err); }
+    });
+
     contenedor.appendChild(card);
   }
 
@@ -59,38 +97,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (seccionPopulares)    seccionPopulares.innerHTML    = '<p class="text-muted">Cargando...</p>';
 
   try {
-    // Endpoint con algoritmo basado en historial
     const { ok, data } = await obtenerRecomendaciones();
-
     if (!ok) throw new Error('Error del servidor');
 
-    // ── Recomendados (basados en historial del usuario) ──────────
     if (seccionRecomendados) {
       seccionRecomendados.innerHTML = '';
-      if (data.recomendados?.length) {
-        data.recomendados.forEach(a => pintarCard(a, seccionRecomendados));
-      } else {
-        seccionRecomendados.innerHTML = '<p class="text-muted">Explora artículos para recibir recomendaciones personalizadas.</p>';
-      }
+      data.recomendados?.length
+        ? data.recomendados.forEach(a => pintarCard(a, seccionRecomendados))
+        : (seccionRecomendados.innerHTML = '<p class="text-muted">Explora artículos para recibir recomendaciones.</p>');
     }
-
-    // ── Más populares (más consultados globalmente) ──────────────
     if (seccionPopulares) {
       seccionPopulares.innerHTML = '';
-      if (data.populares?.length) {
-        data.populares.forEach(a => pintarCard(a, seccionPopulares));
-      } else {
-        seccionPopulares.innerHTML = '<p class="text-muted">Sin datos de popularidad aún.</p>';
-      }
+      data.populares?.length
+        ? data.populares.forEach(a => pintarCard(a, seccionPopulares))
+        : (seccionPopulares.innerHTML = '<p class="text-muted">Sin datos de popularidad aún.</p>');
     }
-
   } catch (err) {
-    console.error('Error cargando recomendaciones:', err);
+    console.error(err);
     if (seccionRecomendados) seccionRecomendados.innerHTML = '<p class="text-muted">Error de conexión.</p>';
     if (seccionPopulares)    seccionPopulares.innerHTML    = '<p class="text-muted">Error de conexión.</p>';
   }
 
-  // Búsqueda → Enter (mínimo 3 chars)
   inputRecomendacion?.addEventListener('keypress', e => {
     if (e.key !== 'Enter') return;
     const texto = inputRecomendacion.value.trim();
@@ -98,3 +125,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.location.href = `/recomendaciones/resultados/resultados.html?q=${encodeURIComponent(texto)}`;
   });
 });
+
+function toast(msg) {
+  const t = document.createElement('div');
+  t.className = 'lumika-toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}

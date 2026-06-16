@@ -53,14 +53,18 @@ class ConsultaArticulo(models.Model):
 
 class Favorito(models.Model):
     id_favorito = models.AutoField(primary_key=True)
-    id_usuario = models.ForeignKey(
+    id_usuario  = models.ForeignKey(
         Usuario, on_delete=models.DO_NOTHING, db_column='id_usuario'
     )
     id_producto = models.ForeignKey(
-        'productos.Producto', on_delete=models.DO_NOTHING, db_column='id_producto'
+        'productos.Producto', on_delete=models.DO_NOTHING,
+        db_column='id_producto', null=True, blank=True
+    )
+    id_articulo = models.ForeignKey(
+        'articulos.Articulo', on_delete=models.DO_NOTHING,
+        db_column='id_articulo', null=True, blank=True
     )
 
     class Meta:
         managed = False
         db_table = 'favorito'
-        unique_together = [['id_usuario', 'id_producto']]

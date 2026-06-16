@@ -132,6 +132,30 @@ export async function agregarFavorito(idProducto) {
   return { ok: res.ok, data: await res.json() };
 }
 
+export async function obtenerFavoritosArticulo() {
+  const res = await fetch(`${API_URL}/usuarios/favoritos/`, { headers: authHeaders() });
+  const data = await res.json();
+  return { ok: res.ok, data: Array.isArray(data) ? data.filter(f => f.es_articulo) : [] };
+}
+
+export async function agregarFavoritoArticulo(idArticulo) {
+  const res = await fetch(`${API_URL}/usuarios/favoritos/`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({ id_articulo: idArticulo })
+  });
+  return { ok: res.ok, data: await res.json() };
+}
+
+export async function eliminarFavoritoArticulo(idArticulo) {
+  const res = await fetch(`${API_URL}/usuarios/favoritos/`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+    body: JSON.stringify({ id_articulo: idArticulo })
+  });
+  return { ok: res.ok };
+}
+
 // Manda: { id_producto }
 // Regresa: { mensaje: 'Favorito eliminado' }
 export async function eliminarFavorito(idProducto) {
