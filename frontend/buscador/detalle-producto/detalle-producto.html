@@ -26,7 +26,7 @@
       <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
     </div>
     <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
-      <span></span><span></span>
+      <span></span><span></span><span></span>
     </button>
   </nav>
 
@@ -42,90 +42,87 @@
 
   <main class="page-wrapper">
 
-    <!-- Loader -->
     <div id="loader" class="text-center" style="padding:var(--space-8)">
       <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem;color:var(--color-text-muted)"></i>
       <p class="text-muted" style="margin-top:var(--space-3)">Cargando producto...</p>
     </div>
 
-    <!-- Contenido principal -->
     <div id="contenido-producto" class="hidden">
 
-      <!-- Imagen + semáforo -->
-      <div class="detalle-hero">
-        <div class="detalle-hero__img-wrap">
-          <img id="imagen-producto" src="/assets/images/placeholder.svg" alt="Producto"
-               class="detalle-hero__img">
+      <div class="producto-hero-card">
+        
+        <div class="producto-hero__imagen-container">
+          <div class="semaforo-halo" id="semaforo-dot"></div>
+          <img id="imagen-producto" src="/assets/images/placeholder.svg" alt="Producto" class="producto-hero__img">
         </div>
-        <div class="detalle-hero__semaforo">
-          <div class="semaforo-dot" id="semaforo-dot"
-               style="width:56px;height:56px;border-radius:50%;margin:0 auto var(--space-2)"></div>
-          <p id="estado-evaluacion" class="text-bold text-center" style="font-size:var(--text-md)"></p>
+
+        <div class="producto-hero__info">
+          <p id="estado-evaluacion" class="producto-hero__etiqueta"></p>
+          <h1 id="nombre-producto" class="producto-hero__titulo"></h1>
+          <p id="precio" class="producto-hero__precio"></p>
+
+          <div class="producto-hero__acciones">
+            <button class="btn-pill-secundario" id="btn-favorito" title="Guardar Favorito">
+              <i class="fa-regular fa-star"></i>
+            </button>
+            <button class="btn-pill btn-pill--primary" id="btn-alternativas">
+              <i class="fa-solid fa-arrows-left-right"></i> Ver alternativas ecológicas
+            </button>
+          </div>
         </div>
+
       </div>
 
-      <!-- Nombre + precio -->
-      <div style="margin-bottom:var(--space-4)">
-        <h1 id="nombre-producto" class="text-h1" style="margin-bottom:var(--space-1)"></h1>
-        <p id="precio" class="text-bold" style="font-size:var(--text-lg);color:var(--color-text-secondary)"></p>
-      </div>
-
-      <!-- Botones acción -->
-      <div style="display:flex;gap:var(--space-3);margin-bottom:var(--space-6)">
-        <button class="btn btn--secondary" id="btn-favorito" style="flex:1">
-          <i class="fa-regular fa-star"></i> Guardar
-        </button>
-        <button class="btn btn--primary" id="btn-alternativas" style="flex:1">
-          <i class="fa-solid fa-arrows-left-right"></i> Ver alternativas
-        </button>
-      </div>
-
-      <!-- Descripción (razón de clasificación) -->
-      <div class="card fade-in-up" style="margin-bottom:var(--space-4)" id="card-descripcion">
-        <h3 class="text-h3" style="margin-bottom:var(--space-2)">
-          <i class="fa-solid fa-circle-info" style="color:var(--color-primary-dark);margin-right:6px"></i>
-          Descripción
+      <div class="info-card info-card--full fade-in-up" id="card-descripcion">
+        <h3 class="info-card__titulo">
+          <i class="fa-solid fa-circle-info info-card__icono"></i>
+          Razón de la clasificación
         </h3>
-        <p id="explicacion-semaforo" style="font-size:var(--text-base);line-height:1.7;color:var(--color-text-secondary)"></p>
+        <p id="explicacion-semaforo" class="info-card__texto"></p>
       </div>
 
-      <!-- Ingredientes desde BD -->
-      <div class="card fade-in-up anim-delay-1" style="margin-bottom:var(--space-4)" id="card-ingredientes">
-        <h3 class="text-h3" style="margin-bottom:var(--space-2)">
-          <i class="fa-solid fa-flask" style="color:var(--color-success);margin-right:6px"></i>
-          Ingredientes
-        </h3>
-        <div id="lista-ingredientes"></div>
+      <!-- GRID INTELIGENTE (Se adapta automáticamente) -->
+      <div class="grid-tarjetas-dinamico">
+        
+        <!-- Ventajas ecológicas -->
+        <div class="info-card info-card--ventajas fade-in-up anim-delay-1" id="card-ventajas">
+          <h3 class="info-card__titulo text-verde">
+            <i class="fa-solid fa-leaf info-card__icono"></i> Ventajas Ecológicas
+          </h3>
+          <div id="lista-ventajas" class="info-card__lista"></div>
+        </div>
+
+        <!-- Desventajas -->
+        <div class="info-card info-card--desventajas fade-in-up anim-delay-2" id="card-desventajas">
+          <h3 class="info-card__titulo text-rojo">
+            <i class="fa-solid fa-triangle-exclamation info-card__icono"></i> Desventajas
+          </h3>
+          <div id="lista-desventajas" class="info-card__lista"></div>
+        </div>
+
+        <!-- Ingredientes -->
+        <div class="info-card fade-in-up anim-delay-3" id="card-ingredientes">
+          <h3 class="info-card__titulo">
+            <i class="fa-solid fa-flask info-card__icono text-verde"></i> Componentes
+          </h3>
+          <div id="lista-ingredientes" class="info-card__lista"></div>
+        </div>
+
+        <!-- Características (NUEVA TARJETA) -->
+        <div class="info-card fade-in-up anim-delay-4" id="card-caracteristicas">
+          <h3 class="info-card__titulo">
+            <i class="fa-solid fa-list info-card__icono text-verde"></i> Características
+          </h3>
+          <div id="lista-caracteristicas" class="info-card__lista"></div>
+        </div>
+
+
       </div>
 
-      <!-- Criterios ambientales (si los tiene) -->
-      <div class="card fade-in-up anim-delay-2" style="margin-bottom:var(--space-4)" id="card-criterios">
-        <h3 class="text-h3" style="margin-bottom:var(--space-2)">
-          <i class="fa-solid fa-leaf" style="color:var(--color-success);margin-right:6px"></i>
-          Criterios ambientales
-        </h3>
-        <div id="lista-criterios"></div>
-      </div>
+      <button class="btn-flotante-regresar" id="btn-regresar">
+        <i class="fa-solid fa-arrow-left"></i> Volver a resultados
+      </button>
 
-      <!-- Ventajas -->
-      <div class="card fade-in-up anim-delay-3" style="margin-bottom:var(--space-4)" id="card-ventajas">
-        <h3 class="text-h3" style="margin-bottom:var(--space-2);color:var(--color-success)">
-          <i class="fa-solid fa-thumbs-up" style="margin-right:6px"></i>
-          Ventajas
-        </h3>
-        <div id="lista-ventajas"></div>
-      </div>
-
-      <!-- Desventajas -->
-      <div class="card fade-in-up anim-delay-4" style="margin-bottom:var(--space-8)" id="card-desventajas">
-        <h3 class="text-h3" style="margin-bottom:var(--space-2);color:var(--color-error)">
-          <i class="fa-solid fa-thumbs-down" style="margin-right:6px"></i>
-          Desventajas
-        </h3>
-        <div id="lista-desventajas"></div>
-      </div>
-
-      <button class="btn-regresar" id="btn-regresar">Regresar</button>
     </div>
 
   </main>

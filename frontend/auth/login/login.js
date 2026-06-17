@@ -205,7 +205,7 @@ async function manejarLogin() {
       localStorage.setItem('usuario', JSON.stringify(data.usuario));
       window.location.href = esAdmin(data.usuario)
         ? '/admin/dashboard/dashboard.html'
-        : '/buscador/inicio/inicio.html';
+        : '/inicio/inicio.html';
       return;
     }
 
@@ -291,7 +291,7 @@ async function manejarRegistro() {
         if (okL) {
           localStorage.setItem('token',   d.token);
           localStorage.setItem('usuario', JSON.stringify(d.usuario));
-          window.location.href = '/buscador/inicio/inicio.html';
+          window.location.href = '/inicio/inicio.html';
         } else {
           iniciarSesion();
         }

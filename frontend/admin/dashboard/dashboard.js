@@ -7,12 +7,27 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (!token || !esAdmin) {
     window.location.href = '/auth/login/login.html'; return;
+
+  // ✨ NUEVO: Saludo Inteligente por hora ✨
+  const greetingEl = document.getElementById('time-greeting');
+  if (greetingEl) {
+    const hora = new Date().getHours();
+    if (hora < 12) {
+      greetingEl.textContent = '¡Buenos días!';
+    } else if (hora < 19) {
+      greetingEl.textContent = '¡Buenas tardes!';
+    } else {
+      greetingEl.textContent = '¡Buenas noches!';
+    }
+  }
   }
 
   const elNombre = document.getElementById('admin-nombre');
   if (elNombre) elNombre.textContent = usuario.nombre_usuario || usuario.username || 'Admin';
   const elNombreMobile = document.getElementById('admin-nombre-mobile');
   if (elNombreMobile) elNombreMobile.textContent = usuario.nombre_usuario || usuario.username || 'Admin';
+
+
 
   ['btn-cerrar-sesion','btn-cerrar-sesion-mobile'].forEach(id => {
     document.getElementById(id)?.addEventListener('click', e => {

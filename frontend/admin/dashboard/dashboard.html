@@ -57,55 +57,59 @@
     </a>
   </div>
 
-  <main class="page-wrapper">
+  <main class="page-wrapper" style="padding-top: 0;"> 
+    <header class="admin-hero-banner">
+      <div class="admin-header-block">
+        <span class="admin-page-greeting" id="time-greeting">¡Hola!</span>
+        <h2 class="admin-page-title">
+          Bienvenido, <span id="admin-nombre">Admin</span> ✨
+        </h2>
+        <p class="admin-page-sub">Aquí tienes el panorama del catálogo</p>
+      </div>
+    </header>
 
-    <!-- Puntos decorativos (igual que inicio.html) -->
-    <span class="dot dot-admin-1" aria-hidden="true"></span>
-    <span class="dot dot-admin-2" aria-hidden="true"></span>
-
-    <div class="admin-header-block">
-      <h2 class="admin-page-title">
-        Bienvenido, <span id="admin-nombre">Admin</span>
-      </h2>
-      <p class="admin-page-sub">Aquí tienes el resumen del catálogo LUMIKA</p>
+    <div class="admin-kpi-wrapper">
+      <div class="admin-kpi-grid">
+        <div class="kpi-card kpi-card--yellow">
+          <i class="fa-solid fa-boxes-stacked kpi-card__icon"></i>
+          <span class="kpi-card__number" id="metric-total">—</span>
+          <span class="kpi-card__label">Total Productos</span>
+        </div>
+        <div class="kpi-card kpi-card--green">
+          <i class="fa-solid fa-leaf kpi-card__icon"></i>
+          <span class="kpi-card__number" id="metric-verdes">—</span>
+          <span class="kpi-card__label">Recomendados</span>
+        </div>
+        <div class="kpi-card kpi-card--amber">
+          <i class="fa-solid fa-triangle-exclamation kpi-card__icon"></i>
+          <span class="kpi-card__number" id="metric-amarillos">—</span>
+          <span class="kpi-card__label">Con Precaución</span>
+        </div>
+        <div class="kpi-card kpi-card--red">
+          <i class="fa-solid fa-ban kpi-card__icon"></i>
+          <span class="kpi-card__number" id="metric-rojos">—</span>
+          <span class="kpi-card__label">No Recomendados</span>
+        </div>
+        <div class="kpi-card kpi-card--gray">
+          <i class="fa-solid fa-magnifying-glass-chart kpi-card__icon"></i>
+          <span class="kpi-card__number" id="metric-sin-info">—</span>
+          <span class="kpi-card__label">Pendientes Info</span>
+        </div>
+      </div>
     </div>
 
-    <!-- KPI Cards con colores del design system -->
-    <div class="admin-kpi-grid">
-      <div class="kpi-card kpi-card--yellow">
-        <i class="fa-solid fa-box kpi-card__icon"></i>
-        <span class="kpi-card__number" id="metric-total">—</span>
-        <span class="kpi-card__label">Productos</span>
+    <div class="admin-actions-container">
+      <h3 class="admin-actions-title">¿Qué deseas hacer hoy?</h3>
+      <div class="admin-actions">
+        <a href="/admin/gestionar-productos/gestionar-productos.html" class="btn-admin-action btn--primary">
+          <i class="fa-solid fa-table-list"></i>
+          <span>Gestionar Catálogo</span>
+        </a>
+        <a href="/admin/agregar-producto/agregar-producto.html" class="btn-admin-action btn--secondary">
+          <i class="fa-solid fa-circle-plus"></i>
+          <span>Agregar Nuevo Registro</span>
+        </a>
       </div>
-      <div class="kpi-card kpi-card--green">
-        <i class="fa-solid fa-circle-check kpi-card__icon"></i>
-        <span class="kpi-card__number" id="metric-verdes">—</span>
-        <span class="kpi-card__label">En verde</span>
-      </div>
-      <div class="kpi-card kpi-card--amber">
-        <i class="fa-solid fa-triangle-exclamation kpi-card__icon"></i>
-        <span class="kpi-card__number" id="metric-amarillos">—</span>
-        <span class="kpi-card__label">En amarillo</span>
-      </div>
-      <div class="kpi-card kpi-card--red">
-        <i class="fa-solid fa-circle-xmark kpi-card__icon"></i>
-        <span class="kpi-card__number" id="metric-rojos">—</span>
-        <span class="kpi-card__label">En rojo</span>
-      </div>
-      <div class="kpi-card kpi-card--gray">
-        <i class="fa-solid fa-question kpi-card__icon"></i>
-        <span class="kpi-card__number" id="metric-sin-info">—</span>
-        <span class="kpi-card__label">Sin info</span>
-      </div>
-    </div>
-
-    <div class="admin-actions">
-      <a href="/admin/gestionar-productos/gestionar-productos.html" class="btn btn--primary btn-admin-action">
-        <i class="fa-solid fa-boxes-stacked"></i> Gestionar productos
-      </a>
-      <a href="/admin/agregar-producto/agregar-producto.html" class="btn btn--secondary btn-admin-action">
-        <i class="fa-solid fa-plus"></i> Agregar producto
-      </a>
     </div>
 
   </main>

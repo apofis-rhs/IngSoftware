@@ -33,7 +33,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const loader   = document.getElementById('loader');
   const contenido = document.getElementById('contenido-producto');
 
-  // ── Llamada al backend ────────────────────────────────
+  // ── Llamadas al backend en paralelo ──────────────────
+  const favPromise = obtenerFavoritos().catch(() => null);
   let ok, data;
   try {
     const res = await obtenerProducto(id);
@@ -80,93 +81,120 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Descripción
   setText('explicacion-semaforo', data.razon_clasificacion || 'Sin descripción disponible.');
 
+ // ── Rellenar Tarjetas Dinámicas ──────────────────────
+
   // Ingredientes
   try {
     const listaIng = document.getElementById('lista-ingredientes');
-    if (listaIng) {
+    const cardIng = document.getElementById('card-ingredientes');
+    if (listaIng && cardIng) {
       if (data.ingredientes?.trim()) {
-        listaIng.innerHTML = `<p style="font-size:var(--text-base);line-height:1.8;color:var(--color-text-secondary)">${data.ingredientes}</p>`;
-      } else if (data.caracteristicas?.length) {
-        listaIng.innerHTML = data.caracteristicas.map(c =>
-          `<div style="padding:6px 0;border-bottom:1px solid var(--color-border);font-size:var(--text-base)">
-             <i class="fa-solid fa-circle-dot" style="color:var(--color-success);margin-right:8px;font-size:0.7rem"></i>${c.descripcion}
-           </div>`
-        ).join('');
+        listaIng.innerHTML = `<p style="font-size:1rem;line-height:1.5;color:var(--color-text-secondary)">${data.ingredientes}</p>`;
       } else {
-        document.getElementById('card-ingredientes')?.classList.add('hidden');
+        cardIng.classList.add('hidden');
       }
     }
   } catch(e) { console.warn('ingredientes error:', e); }
 
-  // Criterios
+  // Características
   try {
-    const listaCrit = document.getElementById('lista-criterios');
-    if (listaCrit && data.criterios?.length) {
-      const cols  = { cumple:'var(--color-success)', parcial:'var(--color-primary-dark)', 'no cumple':'var(--color-error)' };
-      const icons = { cumple:'fa-check', parcial:'fa-minus', 'no cumple':'fa-xmark' };
-      listaCrit.innerHTML = data.criterios.map(c => `
-        <div style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) 0;border-bottom:1px solid var(--color-border)">
-          <i class="fa-solid ${icons[c.resultado]||'fa-question'}" style="color:${cols[c.resultado]||'#999'};width:16px;flex-shrink:0"></i>
-          <span style="flex:1;font-size:var(--text-base)">${c.nombre_criterio}</span>
-          <span style="font-size:var(--text-sm);color:${cols[c.resultado]||'#999'};font-weight:600;text-transform:capitalize">${c.resultado}</span>
-        </div>`
-      ).join('');
-    } else if (listaCrit !== null) {
-      document.getElementById('card-criterios')?.classList.add('hidden');
+    const listaCarac = document.getElementById('lista-caracteristicas');
+    const cardCarac = document.getElementById('card-caracteristicas');
+    if (listaCarac && cardCarac) {
+      if (data.caracteristicas?.length) {
+        listaCarac.innerHTML = data.caracteristicas.map(c =>
+          `<div><i class="fa-solid fa-circle-dot" style="color:var(--color-success);font-size:0.6rem;margin-top:6px;"></i><span>${c.descripcion}</span></div>`
+        ).join('');
+      } else {
+        cardCarac.classList.add('hidden');
+      }
     }
-  } catch(e) { console.warn('criterios error:', e); }
+  } catch(e) { console.warn('caracteristicas error:', e); }
 
-  // Ventajas
+  // Ventajas Ecológicas
   try {
     const listaVent = document.getElementById('lista-ventajas');
-    if (listaVent && data.ventajas?.length) {
-      listaVent.innerHTML = data.ventajas.map(v =>
-        `<div style="display:flex;gap:var(--space-2);padding:var(--space-2) 0">
-           <i class="fa-solid fa-leaf" style="color:var(--color-success);margin-top:3px;flex-shrink:0"></i>
-           <span style="font-size:var(--text-base)">${v.descripcion}</span>
-         </div>`
-      ).join('');
-    } else {
-      document.getElementById('card-ventajas')?.classList.add('hidden');
+    const cardVent = document.getElementById('card-ventajas');
+    if (listaVent && cardVent) {
+      if (data.ventajas?.length) {
+        listaVent.innerHTML = data.ventajas.map(v =>
+          `<div><i class="fa-solid fa-leaf" style="color:var(--color-success);margin-top:4px;"></i><span>${v.descripcion}</span></div>`
+        ).join('');
+      } else {
+        cardVent.classList.add('hidden');
+      }
     }
   } catch(e) { console.warn('ventajas error:', e); }
 
-  // Desventajas
+  // ── Desventajas / Limitaciones Dinámicas ──────────────────────
   try {
     const listaDes = document.getElementById('lista-desventajas');
-    if (listaDes && data.desventajas?.length) {
-      listaDes.innerHTML = data.desventajas.map(d =>
-        `<div style="display:flex;gap:var(--space-2);padding:var(--space-2) 0">
-           <i class="fa-solid fa-triangle-exclamation" style="color:var(--color-error);margin-top:3px;flex-shrink:0"></i>
-           <span style="font-size:var(--text-base)">${d.descripcion}</span>
-         </div>`
-      ).join('');
-    } else {
-      document.getElementById('card-desventajas')?.classList.add('hidden');
+    const cardDes = document.getElementById('card-desventajas');
+    
+    if (listaDes && cardDes) {
+      if (data.desventajas?.length) {
+        // Evaluamos si el producto es estrictamente verde
+        const esProductoVerde = data.estado_evaluacion !== 'insuficiente' && data.color_semaforo === 'verde';
+        
+        // Target al elemento del título dentro de esta tarjeta
+        const tituloCard = cardDes.querySelector('.info-card__titulo');
+        
+        if (tituloCard) {
+          if (esProductoVerde) {
+            // Si es verde, cambiamos el texto a "Limitaciones" y la clase a amarillo
+            tituloCard.className = 'info-card__titulo text-amarillo';
+            tituloCard.innerHTML = `<i class="fa-solid fa-triangle-exclamation info-card__icono"></i> Limitaciones`;
+          } else {
+            // Si es de cualquier otro color, se mantiene como "Desventajas" en rojo
+            tituloCard.className = 'info-card__titulo text-rojo';
+            tituloCard.innerHTML = `<i class="fa-solid fa-triangle-exclamation info-card__icono"></i> Desventajas`;
+          }
+        }
+
+        // Definimos el color del ícono de cada elemento de la lista
+        const colorIcono = esProductoVerde ? '#d39e00' : 'var(--color-error)';
+
+        // Renderizamos la lista aplicando el color dinámico en los íconos
+        listaDes.innerHTML = data.desventajas.map(d =>
+          `<div>
+            <i class="fa-solid fa-triangle-exclamation" style="color:${colorIcono}; margin-top:4px;"></i>
+            <span>${d.descripcion}</span>
+          </div>`
+        ).join('');
+        
+        // Nos aseguramos de que la tarjeta sea visible si tiene elementos
+        cardDes.classList.remove('hidden');
+        
+      } else {
+        // Si no tiene ningún registro, ocultamos la tarjeta por completo
+        cardDes.classList.add('hidden');
+      }
     }
   } catch(e) { console.warn('desventajas error:', e); }
+
 
   // ── Mostrar contenido ─────────────────────────────────
   loader?.classList.add('hidden');
   contenido?.classList.remove('hidden');
 
   // ── Botones ───────────────────────────────────────────
-  document.getElementById('btn-regresar')?.addEventListener('click', () => window.history.back());
+  document.getElementById('btn-regresar')?.addEventListener('click', irAtras);
   document.getElementById('btn-alternativas')?.addEventListener('click', () => {
     window.location.href = `/buscador/alternativas/alternativas.html?id=${id}`;
   });
 
   // ── Favorito ──────────────────────────────────────────
-  try { await setupFavorito(id); } catch(e) { console.warn('favorito error:', e); }
+  const favRes = await favPromise;
+  try { await setupFavorito(id, favRes); } catch(e) { console.warn('favorito error:', e); }
 });
 
-async function setupFavorito(id) {
+async function setupFavorito(id, preloadedFavs) {
   const btn = document.getElementById('btn-favorito');
   if (!btn) return;
 
   let esFav = false;
   try {
-    const { ok, data } = await obtenerFavoritos();
+    const { ok, data } = preloadedFavs || await obtenerFavoritos();
     if (ok && Array.isArray(data)) {
       esFav = data.some(f => String(f.id_producto_id ?? f.id_producto) === String(id));
       actualizarFav(btn, esFav);
@@ -221,4 +249,13 @@ function toast(msg) {
     document.body.appendChild(t);
     setTimeout(() => t.remove(), 2500);
   } catch(_) {}
+}
+
+function irAtras() {
+  const prev = document.referrer;
+  if (!prev || prev.includes('/auth/')) {
+    window.location.href = '/inicio/inicio.html';
+  } else {
+    window.history.back();
+  }
 }

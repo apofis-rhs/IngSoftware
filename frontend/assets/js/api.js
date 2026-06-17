@@ -230,6 +230,18 @@ export async function buscarArticulos(texto) {
   return { ok: res.ok, data: await res.json() };
 }
 
+export async function buscarArticulosFiltrado(texto = '', opciones = {}) {
+  const params = new URLSearchParams();
+  if (texto) params.set('q', texto);
+  const subs = opciones.subcategorias;
+  const sub  = opciones.subcategoria;
+  if (subs?.length)          params.set('subcategoria', Array.isArray(subs) ? subs.join(',') : subs);
+  else if (sub)              params.set('subcategoria', sub);
+  else if (opciones.categoria) params.set('categoria', opciones.categoria);
+  const res = await fetch(`${API_URL}/articulos/buscar/?${params}`, { headers: authHeaders() });
+  return { ok: res.ok, data: await res.json() };
+}
+
 export async function obtenerArticulo(idArticulo) {
   const res = await fetch(`${API_URL}/articulos/${idArticulo}/`, {
     headers: authHeaders()
@@ -239,6 +251,13 @@ export async function obtenerArticulo(idArticulo) {
 
 export async function obtenerAlternativasArticulo(idArticulo) {
   const res = await fetch(`${API_URL}/articulos/${idArticulo}/alternativas/`, {
+    headers: authHeaders()
+  });
+  return { ok: res.ok, data: await res.json() };
+}
+
+export async function compararArticulos(ids) {
+  const res = await fetch(`${API_URL}/articulos/comparar/?ids=${ids.join(',')}`, {
     headers: authHeaders()
   });
   return { ok: res.ok, data: await res.json() };
@@ -375,9 +394,14 @@ export async function listarCategorias() {
 // opciones = { categoria, orden } (además de texto)
 export async function buscarProductosFiltrado(texto = '', opciones = {}) {
   const params = new URLSearchParams();
-  if (texto)            params.set('q', texto);
-  if (opciones.categoria) params.set('categoria', opciones.categoria);
-  if (opciones.orden)   params.set('orden', opciones.orden);
+  if (texto) params.set('q', texto);
+  // subcategorias acepta string único o array de IDs
+  const subs = opciones.subcategorias;
+  const sub  = opciones.subcategoria;
+  if (subs?.length)      params.set('subcategoria', Array.isArray(subs) ? subs.join(',') : subs);
+  else if (sub)          params.set('subcategoria', sub);
+  else if (opciones.categoria) params.set('categoria', opciones.categoria);
+  if (opciones.orden)    params.set('orden', opciones.orden);
   const res = await fetch(`${API_URL}/productos/buscar/?${params}`, { headers: authHeaders() });
   return { ok: res.ok, data: await res.json() };
 }

@@ -1,108 +1,199 @@
-// recomendaciones: resultados - logica especifica
-import { buscarArticulos, logout } from '/assets/js/api.js';
-import { getRutaImagen }           from '/assets/js/imagenes.js';
+import { buscarArticulosFiltrado, listarSubcategorias } from '/assets/js/api.js';
 
-// ── NAVBAR ────────────────────────────────────────────────────
-const hamburger = document.getElementById('hamburger');
-const navDrawer  = document.getElementById('nav-drawer');
-if (hamburger && navDrawer) {
-  hamburger.addEventListener('click', () => navDrawer.classList.toggle('open'));
-  document.addEventListener('click', (e) => {
-    if (!hamburger.contains(e.target) && !navDrawer.contains(e.target)) navDrawer.classList.remove('open');
-  });
-  window.addEventListener('resize', () => { if (window.innerWidth >= 769) navDrawer.classList.remove('open'); });
-}
-['btn-cerrar-sesion', 'btn-cerrar-sesion-mobile'].forEach(id => {
-  const btn = document.getElementById(id);
-  if (btn) btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    localStorage.removeItem('token'); localStorage.removeItem('usuario');
-    window.location.href = '/auth/login/login.html';
-  });
-});
+const POR_PAGINA = 15;
+let todosResultados      = [];
+let visibles             = POR_PAGINA;
+let todasSubcats         = [];
+let subcatsSeleccionadas = new Set();
+
+const urlParams  = new URLSearchParams(window.location.search);
+const catActual  = urlParams.get('categoria')  || '';
+const catNombre  = urlParams.get('cat_nombre') || '';
+const qInicial   = urlParams.get('q')          || '';
+
+const subcatInicial = urlParams.get('subcategoria') || '';
+if (subcatInicial) subcatsSeleccionadas.add(String(subcatInicial));
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (!localStorage.getItem('token')) {
-    window.location.href = '/auth/login/login.html';
-    return;
+    window.location.href = '/auth/login/login.html'; return;
   }
 
-  const inputRecomendacion = document.getElementById('input-recomendacion');
-  const listaResultados    = document.getElementById('lista-resultados');
-  const contadorResultados = document.getElementById('resultado-count');
+  const hamburger = document.getElementById('hamburger');
+  const navDrawer  = document.getElementById('nav-drawer');
+  hamburger?.addEventListener('click', () => navDrawer?.classList.toggle('open'));
+  document.addEventListener('click', e => {
+    if (!hamburger?.contains(e.target) && !navDrawer?.contains(e.target))
+      navDrawer?.classList.remove('open');
+  });
+  ['btn-cerrar-sesion','btn-cerrar-sesion-mobile'].forEach(id => {
+    document.getElementById(id)?.addEventListener('click', e => {
+      e.preventDefault();
+      localStorage.removeItem('token'); localStorage.removeItem('usuario');
+      window.location.href = '/auth/login/login.html';
+    });
+  });
 
-  const params = new URLSearchParams(window.location.search);
-  const q = params.get('q') || '';
-  if (inputRecomendacion) inputRecomendacion.value = q;
+  const inputBusqueda     = document.getElementById('input-busqueda');
+  const listaResultados   = document.getElementById('lista-resultados');
+  const tituloResultados  = document.getElementById('titulo-resultados');
+  const filtrosContenedor = document.getElementById('filtros-activos');
 
-  if (q) {
-    await ejecutarBusqueda(q, listaResultados, contadorResultados);
-  } else {
-    if (listaResultados) listaResultados.innerHTML = '<p class="text-muted">Escribe algo para buscar.</p>';
-  }
+  let qActual = qInicial;
+  if (inputBusqueda) inputBusqueda.value = qActual;
 
-  if (inputRecomendacion) {
-    inputRecomendacion.addEventListener('keypress', async (e) => {
-      if (e.key !== 'Enter') return;
-      const texto = inputRecomendacion.value.trim();
-      if (!texto) return;
-      const url = new URL(window.location);
-      url.searchParams.set('q', texto);
-      window.history.pushState({}, '', url);
-      await ejecutarBusqueda(texto, listaResultados, contadorResultados);
+  const [, subcatsRes] = await Promise.all([
+    ejecutarBusqueda(),
+    listarSubcategorias().catch(() => ({ ok: false, data: [] })),
+  ]);
+
+  if (subcatsRes.ok) todasSubcats = subcatsRes.data;
+  renderFiltros();
+
+  // ── Render zona de filtros ───────────────────────────
+  function renderFiltros() {
+    if (!filtrosContenedor) return;
+
+    const subcatsDeCategoria = todasSubcats.filter(
+      s => String(s.id_categoria) === String(catActual)
+    );
+
+    let html = '';
+
+    if (catNombre) {
+      html += `
+        <div class="filtros-fila">
+          <span class="filtro-chip filtro-chip--cat">
+            <i class="fa-solid fa-tag"></i> ${catNombre}
+            <button class="filtro-chip__x" id="btn-cambiar-cat" title="Volver a categorías">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </span>
+        </div>`;
+    }
+
+    if (subcatsDeCategoria.length) {
+      const pills = subcatsDeCategoria.map(s => {
+        const activa = subcatsSeleccionadas.has(String(s.id_subcategoria));
+        return `
+          <button class="subcat-pill ${activa ? 'subcat-pill--active' : ''}"
+                  data-id="${s.id_subcategoria}"
+                  data-nombre="${s.nombre_subcategoria}">
+            ${s.nombre_subcategoria}
+          </button>`;
+      }).join('');
+
+      html += `
+        <div class="filtros-fila filtros-fila--subcats">
+          <span class="filtros-label">Subcategorías:</span>
+          <div class="subcat-pills-row">${pills}</div>
+        </div>`;
+    }
+
+    filtrosContenedor.innerHTML = html;
+
+    filtrosContenedor.querySelector('#btn-cambiar-cat')?.addEventListener('click', () => {
+      window.location.href = '/recomendaciones/inicio/inicio.html';
+    });
+
+    filtrosContenedor.querySelectorAll('.subcat-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = String(btn.dataset.id);
+        if (subcatsSeleccionadas.has(id)) {
+          subcatsSeleccionadas.delete(id);
+        } else {
+          subcatsSeleccionadas.add(id);
+        }
+        btn.classList.toggle('subcat-pill--active', subcatsSeleccionadas.has(id));
+        qActual = '';
+        if (inputBusqueda) inputBusqueda.value = '';
+        visibles = POR_PAGINA;
+        ejecutarBusqueda();
+      });
     });
   }
-});
 
-async function ejecutarBusqueda(q, listaResultados, contadorResultados) {
-  if (!listaResultados) return;
-  listaResultados.innerHTML = '<p class="text-muted">Buscando...</p>';
+  // ── Búsqueda ──────────────────────────────────────────
+  async function ejecutarBusqueda() {
+    if (listaResultados) listaResultados.innerHTML = '<p class="text-muted text-center">Buscando...</p>';
+    document.getElementById('btn-cargar-resultados')?.remove();
 
-  try {
-    const { ok, data } = await buscarArticulos(q);
+    try {
+      const opcs = subcatsSeleccionadas.size
+        ? { subcategorias: [...subcatsSeleccionadas] }
+        : { categoria: catActual };
 
-    if (!ok) {
-      if (data?.detail?.toLowerCase().includes('token')) { logout(); return; }
-      listaResultados.innerHTML = `<div class="alerta alerta--error">Error al buscar artículos</div>`;
-      return;
+      const { ok, data } = await buscarArticulosFiltrado(qActual, opcs);
+
+      if (!ok || !data?.length) {
+        if (tituloResultados) tituloResultados.textContent = 'Resultados (0)';
+        if (listaResultados) listaResultados.innerHTML =
+          `<div class="alerta alerta--warning">No encontramos resultados${qActual ? ` para "<strong>${qActual}</strong>"` : ''}.</div>`;
+        return;
+      }
+
+      todosResultados = data;
+      visibles = POR_PAGINA;
+      if (tituloResultados) tituloResultados.textContent = `Resultados (${data.length})`;
+      renderResultados();
+    } catch {
+      if (listaResultados) listaResultados.innerHTML = '<div class="alerta alerta--error">Error de conexión</div>';
     }
+  }
 
-    if (!data || data.length === 0) {
-      if (contadorResultados) contadorResultados.textContent = '0';
-      listaResultados.innerHTML = `<div class="alerta alerta--warning">No encontramos resultados para "<strong>${q}</strong>"</div>`;
-      return;
-    }
+  // ── Render lista ──────────────────────────────────────
+  function renderResultados() {
+    if (!listaResultados) return;
+    const slice = todosResultados.slice(0, visibles);
 
-    if (contadorResultados) contadorResultados.textContent = data.length;
-
-    listaResultados.innerHTML = data.map(a => {
-      const color  = a.color_semaforo || 'gris';
-      const imgSrc = getRutaImagen(a);
-      const precio = a.precio_min != null ? `$${a.precio_min} - $${a.precio_max}` : 'Precio no disponible';
+    listaResultados.innerHTML = slice.map(a => {
+      // Si no tiene semáforo, por defecto es gris
+      const color = a.estado_evaluacion === 'insuficiente' ? 'gris' : (a.color_semaforo || 'gris');
       return `
-        <article class="resultado-card" data-id="${a.id_articulo}"
-                 style="cursor:pointer; display:flex; align-items:center; gap:var(--space-3)">
-          <img src="${imgSrc}"
-               alt="${a.nombre_articulo}"
-               style="width:52px; height:52px; object-fit:cover; border-radius:var(--radius-sm); flex-shrink:0;"
-               onerror="this.src='/assets/images/placeholder.svg'">
-          <div class="resultado-card__dot semaforo-${color}" style="flex-shrink:0"></div>
-          <div class="resultado-card__content" style="flex:1">
-            <h3 class="resultado-card__title">${a.nombre_articulo}</h3>
-            <p class="resultado-card__price">${precio}</p>
+        <div class="resultado-card-modern fade-in-up" data-id="${a.id_articulo}">
+          <div class="resultado-card__luz bg-${color}"></div>
+          <div class="resultado-card__info">
+            <h3 class="resultado-card__titulo">${a.nombre_articulo}</h3>
+            <span class="resultado-card__etiqueta text-${color}">Semáforo ${color.charAt(0).toUpperCase() + color.slice(1)}</span>
           </div>
-        </article>
-      `;
+          <div class="resultado-card__flecha">
+            <i class="fa-solid fa-arrow-right"></i>
+          </div>
+        </div>`;
     }).join('');
 
-    listaResultados.querySelectorAll('.resultado-card').forEach(el => {
+    listaResultados.querySelectorAll('.resultado-card-modern').forEach(el => {
       el.addEventListener('click', () => {
         window.location.href = `/recomendaciones/detalle-articulo/detalle-articulo.html?id=${el.dataset.id}`;
       });
     });
 
-  } catch (err) {
-    console.error('Error en búsqueda:', err);
-    listaResultados.innerHTML = `<div class="alerta alerta--error">Error de conexión al servidor</div>`;
+    document.getElementById('btn-cargar-resultados')?.remove();
+    if (todosResultados.length > visibles) {
+      const btn = document.createElement('button');
+      btn.id = 'btn-cargar-resultados';
+      btn.className = 'btn-cargar-mas';
+      btn.innerHTML = `<i class="fa-solid fa-chevron-down"></i> Cargar más (${todosResultados.length - visibles} restantes)`;
+      btn.addEventListener('click', () => { visibles += POR_PAGINA; renderResultados(); });
+      listaResultados.after(btn);
+    }
+  }
+
+  inputBusqueda?.addEventListener('keypress', e => {
+    if (e.key !== 'Enter') return;
+    qActual = inputBusqueda.value.trim();
+    visibles = POR_PAGINA;
+    ejecutarBusqueda();
+  });
+
+  document.getElementById('btn-regresar')?.addEventListener('click', irAtras);
+});
+
+function irAtras() {
+  const prev = document.referrer;
+  if (!prev || prev.includes('/auth/')) {
+    window.location.href = '/inicio/inicio.html';
+  } else {
+    window.history.back();
   }
 }

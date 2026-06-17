@@ -12,28 +12,50 @@
 </head>
 <body>
 
-  <!-- NAVBAR sin login -->
-  <nav class="navbar">
+  <!-- NAVBAR SIN LOGIN -->
+  <nav class="navbar" id="navbar-landing">
     <a class="navbar__logo" href="#">
       <img class="navbar__logo-img" src="../assets/img/logo.png" alt="LUMIKA">
       <span class="navbar__logo-text">LUMIKA</span>
     </a>
   </nav>
 
+  <!-- NAVBAR CON LOGIN -->
+  <nav class="navbar hidden" id="navbar-hub">
+    <a class="navbar__logo" href="/inicio/inicio.html">
+      <img class="navbar__logo-img" src="../assets/img/logo.png" alt="LUMIKA">
+      <span class="navbar__logo-text">LUMIKA</span>
+    </a>
+    <div class="navbar__links hide-mobile">
+      <a href="/inicio/inicio.html" class="navbar__link navbar__link--active"><i class="fa-solid fa-house"></i> Inicio</a>
+      <a href="/perfil/mi-perfil/mi-perfil.html" class="navbar__link"><i class="fa-regular fa-user"></i> Perfil</a>
+      <a href="/buscador/inicio/inicio.html" class="navbar__link"><i class="fa-solid fa-magnifying-glass"></i> Búsqueda</a>
+      <a href="/recomendaciones/inicio/inicio.html" class="navbar__link"><i class="fa-solid fa-leaf"></i> Recomendaciones</a>
+      <a href="/perfil/favoritos/favoritos.html" class="navbar__link"><i class="fa-regular fa-star"></i> Mis Favoritos</a>
+      <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+    </div>
+    <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
 
+  <div class="nav-drawer" id="nav-drawer">
+    <a href="/inicio/inicio.html" class="nav-drawer__link"><i class="fa-solid fa-house"></i> Inicio</a>
+    <a href="/perfil/mi-perfil/mi-perfil.html" class="nav-drawer__link"><i class="fa-regular fa-user"></i> Perfil</a>
+    <a href="/buscador/inicio/inicio.html" class="nav-drawer__link"><i class="fa-solid fa-magnifying-glass"></i> Búsqueda</a>
+    <a href="/recomendaciones/inicio/inicio.html" class="nav-drawer__link"><i class="fa-solid fa-leaf"></i> Recomendaciones</a>
+    <a href="/perfil/favoritos/favoritos.html" class="nav-drawer__link"><i class="fa-regular fa-star"></i> Mis Favoritos</a>
+    <div class="nav-drawer__divider"></div>
+    <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+  </div>
 
-
-  <div class="page-wrapper">
-
+  <!-- LANDING — sin login -->
+  <div class="page-wrapper" id="landing-section">
     <span class="dot dot-1" aria-hidden="true"></span>
     <span class="dot dot-2" aria-hidden="true"></span>
-
-    
     <div class="hero-inner">
-
       <div class="hero-left">
         <h1 class="hero-title">
-          
           <span class="hero-line-1">Cuídate tú,</span><br>
           <span class="hero-line-2">cuida al planeta.</span>
         </h1>
@@ -43,14 +65,36 @@
           Porque cuidar tu piel no debería costarle nada al planeta.
         </p>
       </div>
-
       <div class="hero-right">
         <button class="btn btn-success" id="btn-login">Iniciar sesión</button>
         <button class="btn btn-danger" id="btn-registro">Registrarse</button>
       </div>
-
     </div>
+  </div>
 
+  <!-- HUB — con login -->
+  <div class="page-wrapper hidden" id="hub-section">
+    <span class="dot dot-1" aria-hidden="true"></span>
+    <span class="dot dot-2" aria-hidden="true"></span>
+    <div class="hub-inner">
+      <p class="hub-greeting" id="hub-greeting">¡Hola!</p>
+      <h1 class="hub-title">¿Qué quieres explorar hoy?</h1>
+      <p class="hub-subtitle">Elige un módulo para comenzar</p>
+      <div class="hub-grid">
+        <a href="/buscador/inicio/inicio.html" class="hub-card hub-card--buscador">
+          <div class="hub-card__icon" aria-hidden="true">🔍</div>
+          <h2 class="hub-card__title">Módulo Buscador</h2>
+          <p class="hub-card__desc">Busca, compara y descubre los mejores productos para tu rutina de cuidado personal</p>
+          <span class="hub-card__cta">Explorar productos <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a href="/recomendaciones/inicio/inicio.html" class="hub-card hub-card--recomendaciones">
+          <div class="hub-card__icon" aria-hidden="true">🌿</div>
+          <h2 class="hub-card__title">Módulo Recomendaciones</h2>
+          <p class="hub-card__desc">Artículos sustentables</p>
+          <span class="hub-card__cta">Ver recomendaciones <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+      </div>
+    </div>
   </div>
 
   <script type="module" src="./inicio.js"></script>

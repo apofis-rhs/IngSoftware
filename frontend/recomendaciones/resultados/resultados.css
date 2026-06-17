@@ -1,56 +1,54 @@
-/* recomendaciones: resultados - estilos especificos */
 /* ============================================================
-   LUMIKA — Recomendaciones / Resultados
-   Solo estilos propios de esta pantalla
+   LUMIKA — Resultados (Diseño Creativo y Moderno)
    ============================================================ */
 
-.recomendaciones-page {
-  max-width: 760px;
+/* ── Fondo Orgánico ────────────────────────────────── */
+.page-wrapper {
+  position: relative;
   width: 100%;
+  max-width: 900px;
   margin: 0 auto;
-  padding-top: var(--space-3);
-  padding-bottom: var(--space-10);
+  padding: 40px 24px 80px;
+  background: radial-gradient(circle at 50% 0%, rgba(175, 204, 54, 0.05) 0%, transparent 70%);
 }
 
-/* Encabezado (ya consistente con inicio) */
-.recomendaciones-hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-4);
+.dot {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  position: absolute;
+  animation: float 4s ease-in-out infinite;
+  filter: blur(12px);
+  opacity: 0.4;
+  z-index: -1;
+}
+.dot-1 { background-color: var(--color-primary); top: 5%; left: 5%; animation-delay: 0s; }
+.dot-2 { background-color: var(--color-success); top: 15%; right: 5%; animation-delay: 1.5s; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-15px) scale(1.05); }
 }
 
-.recomendaciones-title {
-  font-size: var(--text-2xl);
-  font-weight: var(--font-bold);
-  line-height: var(--leading-tight);
-  color: var(--color-text-primary);
-  text-align: center;
-}
-
-/* Buscador */
-.recomendaciones-search {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.recomendaciones-search__bar {
-  width: 100%;
-  max-width: 640px;
-  min-height: 42px;
-  border-radius: var(--radius-full);
-  background-color: var(--color-bg-page);
-  border: 1.5px solid var(--color-border);
-  padding: 0 var(--space-6);
+/* ── Buscador Glassmorphism ────────────────────────── */
+.search-bar {
   display: flex;
   align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 2px solid #ffffff;
+  border-radius: 50px;
+  padding: 0 24px;
+  min-height: 56px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.recomendaciones-search__bar:focus-within {
-  border-color: var(--color-border-focus);
-  background-color: var(--color-bg-white);
+.search-bar:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(255, 212, 96, 0.25), 0 10px 25px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
 }
 
 .search-bar input {
@@ -58,123 +56,250 @@
   border: none;
   outline: none;
   background: transparent;
-  font-size: var(--text-sm);
+  font-size: 1.1rem;
   color: var(--color-text-primary);
 }
 
-.search-bar input::placeholder {
+/* ── Zona de Filtros (Panel Creativo) ──────────────── */
+.filtros-activos {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.filtros-fila--subcats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 1);
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+}
+
+.filtros-label {
+  font-size: 0.95rem;
   color: var(--color-text-muted);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* Filtros (chips) */
-.resultados-filtros {
+.subcat-pills-row {
   display: flex;
-  gap: var(--space-2);
-  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.chip {
-  padding: 6px 16px;
-  border-radius: 999px;
-  border: 1.5px solid var(--color-border);
-  background-color: var(--color-bg-white);
-  font-size: var(--text-sm);
-  cursor: pointer;
-  transition: background-color var(--transition-fast),
-              border-color var(--transition-fast),
-              color var(--transition-fast);
-}
-
-.chip--active {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
-  color: #ffffff;
-}
-
-/* Layout principal: recientes + resultados */
-.resultados-layout {
-  display: grid;
-  grid-template-columns: 1.1fr 1.9fr;
-  column-gap: var(--space-6);
-  row-gap: var(--space-4);
-}
-
-.resultados-subtitle {
-  font-size: var(--text-md);
-  font-weight: var(--font-bold);
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-2);
-}
-
-/* Recientes */
-.resultados-recientes__lista {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: var(--text-sm);
+/* ── Pill de subcategoría (Burbujas Coloridas) ─────── */
+button.subcat-pill {
+  appearance: none;
+  font-family: var(--font-family);
+  padding: 8px 20px;
+  border-radius: 50px;
+  border: none;
+  background: #ffffff;
   color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* Lista de resultados */
-.resultados-lista {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
+button.subcat-pill:hover {
+  transform: translateY(-3px);
+  color: var(--color-primary-dark);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
 }
 
-/* Cards de resultados (horizontales tipo pastilla) */
-.resultado-card {
+button.subcat-pill--active {
+  background: var(--color-primary);
+  color: #111; /* Texto oscuro para contrastar con amarillo/verde claro */
+  font-weight: 800;
+  box-shadow: 0 6px 20px rgba(255, 212, 96, 0.5);
+  transform: translateY(-2px);
+}
+
+/* ── Chip de categoría padre ───────────────────────── */
+.filtro-chip--cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 50px;
+  background: rgba(255, 212, 96, 0.2);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-primary);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.filtro-chip__x {
+  background: rgba(0,0,0,0.05);
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
-  padding: var(--space-3) var(--space-4);
-  background-color: #f4f4f4;
-  border-radius: 999px;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.resultado-card__dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 999px;
-  margin-right: var(--space-3);
+.filtro-chip__x:hover {
+  background: var(--color-danger);
+  color: white;
 }
 
-.resultado-card__content {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.resultado-card__title {
-  font-size: var(--text-sm);
-  font-weight: var(--font-bold);
+/* ── Resultados (Tarjetas Flotantes) ───────────────── */
+#titulo-resultados {
+  font-size: 1.2rem;
   color: var(--color-text-primary);
+  margin-top: 16px;
+  padding-left: 8px;
 }
 
-.resultado-card__price {
-  font-size: var(--text-xs);
-  color: var(--color-text-secondary);
+.resultado-card-modern {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid #ffffff;
+  border-radius: 24px;
+  padding: 20px 24px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* Semáforos: usan variables globales */
-.semaforo-verde    { background-color: var(--color-semaforo-verde); }
-.semaforo-amarillo { background-color: var(--color-semaforo-amarillo); }
-.semaforo-rojo     { background-color: var(--color-semaforo-rojo); }
-.semaforo-gris     { background-color: var(--color-semaforo-gris); }
-
-/* Botón regresar */
-.resultados-back {
-  margin-top: var(--space-6);
+.resultado-card-modern:hover {
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.05);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .recomendaciones-page {
-    max-width: 100%;
-    padding-left: var(--space-5);
-    padding-right: var(--space-5);
-  }
+/* Orbe de color del semáforo */
+.resultado-card__luz {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+}
+.resultado-card__luz::after {
+  content: '';
+  position: absolute;
+  top: -5px; left: -5px; right: -5px; bottom: -5px;
+  border-radius: 50%;
+  opacity: 0.3;
+  background: inherit;
+  z-index: -1;
+  filter: blur(4px);
+}
 
-  .resultados-layout {
-    grid-template-columns: 1fr;
-  }
+.resultado-card__info {
+  flex: 1;
+  min-width: 0; /* Evita que el texto rompa la tarjeta */
+}
+
+.resultado-card__titulo {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resultado-card__etiqueta {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.resultado-card__flecha {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-bg-page);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  transition: all 0.3s ease;
+}
+
+.resultado-card-modern:hover .resultado-card__flecha {
+  background: var(--color-primary);
+  color: #111;
+  transform: translateX(4px);
+}
+
+/* Colores Dinámicos del Semáforo */
+.bg-verde { background-color: var(--color-success, #28a745); }
+.bg-amarillo { background-color: var(--color-primary, #ffc107); }
+.bg-rojo { background-color: var(--color-danger, #dc3545); }
+.bg-gris { background-color: #adb5bd; }
+
+.text-verde { color: var(--color-success, #28a745); }
+.text-amarillo { color: #d39e00; } /* Un amarillo más oscuro para lectura */
+.text-rojo { color: var(--color-danger, #dc3545); }
+.text-gris { color: #6c757d; }
+
+/* ── Botones Extra ─────────────────────────────────── */
+.btn-cargar-mas {
+  width: 100%;
+  padding: 16px;
+  border-radius: 20px;
+  border: 2px dashed var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: all 0.3s ease;
+}
+
+.btn-cargar-mas:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+  background: rgba(255, 212, 96, 0.1);
+}
+
+/* ── Botón Regresar (Color Restaurado) ─────────────────────────────────── */
+.btn-regresar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--color-primary); /* Le devolvemos su color vibrante */
+  color: #111111; /* Texto oscuro para contraste perfecto */
+  border: none; /* Quitamos el borde gris aburrido */
+  border-radius: 50px;
+  font-weight: 800;
+  cursor: pointer;
+  /* Sombra del mismo color para que parezca que brilla */
+  box-shadow: 0 4px 15px rgba(175, 204, 54, 0.4); 
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  margin-top: 32px;
+}
+
+.btn-regresar:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(175, 204, 54, 0.6); /* El brillo se expande */
+  background: var(--color-primary);
+}
+
+.btn-regresar:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(175, 204, 54, 0.3);
 }

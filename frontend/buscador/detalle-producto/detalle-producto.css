@@ -1,43 +1,286 @@
-/* detalle producto - estilos especificos */
-.semaforo-dot {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-/* ── HERO DE DETALLE ───────────────────────────────────── */
-.detalle-hero {
-  display: flex;
-  gap: var(--space-5);
-  align-items: center;
-  margin-bottom: var(--space-5);
+/* ============================================================
+   LUMIKA — Detalle Producto (Diseño Moderno y Creativo)
+   ============================================================ */
+
+/* ── Fondo de la Página ────────────────────────────────── */
+.page-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1000px; /* Un poco más ancho para las columnas */
+  margin: 0 auto;
+  padding: 40px 24px 100px;
+  background: radial-gradient(circle at 50% 0%, rgba(175, 204, 54, 0.05) 0%, transparent 70%);
 }
 
-.detalle-hero__img-wrap {
-  width: 130px;
-  height: 130px;
+/* ── CABECERA PRINCIPAL (Hero Card) ────────────────────── */
+.producto-hero-card {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 1);
+  border-radius: 40px; /* Bordes muy suaves */
+  padding: 40px;
+  margin-bottom: 40px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.04);
+}
+
+/* El Halo y la Imagen */
+.producto-hero__imagen-container {
+  position: relative;
+  width: 220px; /* Imagen grande */
+  height: 220px;
   flex-shrink: 0;
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  background: var(--color-bg-page);
-  border: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.detalle-hero__img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
+/* Este es el círculo de color gigante detrás de la imagen */
+.semaforo-halo {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 50%;
+  opacity: 0.25; /* Transparencia para que parezca luz */
+  filter: blur(25px); /* Desenfoque extremo */
+  z-index: 0;
+  transition: all 0.5s ease;
 }
 
-.detalle-hero__img:hover { transform: scale(1.05); }
+.producto-hero__img {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  border-radius: 20px;
+  z-index: 1; /* Para que quede encima de la luz */
+  background: #ffffff;
+  padding: 10px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.05);
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
 
-.detalle-hero__semaforo { flex: 1; }
+.producto-hero__imagen-container:hover .producto-hero__img {
+  transform: scale(1.08) translateY(-10px); /* Efecto de levitación */
+}
 
-@media (max-width: 480px) {
-  .detalle-hero {
+/* Textos de la Cabecera */
+.producto-hero__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left; /* Forzamos la alineación a la izquierda */
+  align-items: flex-start; /* Evita que los botones se estiren o centren */
+}
+
+.producto-hero__etiqueta {
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  color: var(--color-text-muted);
+}
+
+.producto-hero__titulo {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--color-text-primary);
+  line-height: 1.1;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+.producto-hero__precio {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  margin-bottom: 32px;
+}
+
+/* Botones de Cabecera */
+.producto-hero__acciones {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; /* Si la pantalla es chica, el botón negro baja de renglón sin encimarse */
+  gap: 16px;
+}
+
+/* Nuevo botón de Favoritos tipo Píldora */
+.btn-pill-secundario {
+  padding: 14px 24px;
+  border-radius: 50px;
+  border: 2px solid rgba(0,0,0,0.08);
+  background: #ffffff;
+  color: var(--color-text-primary);
+  font-weight: 800;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.btn-pill-secundario:hover {
+  background: var(--color-bg-page);
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+}
+
+/* Botón principal negro */
+.btn-pill {
+  padding: 14px 28px;
+  border-radius: 50px;
+  border: none;
+  font-weight: 800;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.btn-pill--primary {
+  background: #111111; 
+  color: #ffffff;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.btn-pill--primary:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 25px rgba(0,0,0,0.25);
+  background: var(--color-primary); 
+  color: #111;
+}
+
+/* Hacemos que el halo de luz sea un poquito más intenso */
+.semaforo-halo {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 50%;
+  opacity: 0.45; /* Aumentamos la opacidad para que se note más el color */
+  filter: blur(30px); 
+  z-index: 0;
+  transition: all 0.5s ease;
+}
+
+/* ── GRID Y TARJETAS DE INFORMACIÓN (Glassmorphism) ───── */
+/* ── GRID INTELIGENTE Y TARJETAS ───────────────────────── */
+.info-card--full {
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.grid-tarjetas-dinamico {
+  display: grid;
+  /* Magia pura: crea columnas automáticas que no bajan de 320px */
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+  /* IMPORTANTE: Evita que las tarjetas se estiren a lo alto y se vean deformes */
+  align-items: start; 
+}
+
+.info-card {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 1);
+  border-radius: 32px;
+  padding: 32px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+  transition: transform 0.3s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* Colores sutiles para ventajas y desventajas */
+.info-card--ventajas {
+  background: rgba(40, 167, 69, 0.03);
+  border-color: rgba(40, 167, 69, 0.1);
+}
+.info-card--desventajas {
+  background: rgba(220, 53, 69, 0.03);
+  border-color: rgba(220, 53, 69, 0.1);
+}
+
+.info-card__titulo {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.info-card__icono { font-size: 1.4rem; }
+
+.info-card__texto {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+/* Estilo para las listas (ventajas, desventajas, ingredientes) */
+.info-card__lista div {
+  padding: 12px 0;
+  border-bottom: 1px dashed rgba(0,0,0,0.08);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.info-card__lista div:last-child { border-bottom: none; }
+
+/* ── BOTÓN FLOTANTE REGRESAR ───────────────────────────── */
+.btn-flotante-regresar {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: var(--color-primary);
+  color: #111;
+  border: none;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(175, 204, 54, 0.4);
+  margin-top: 24px;
+  transition: all 0.3s ease;
+}
+
+.btn-flotante-regresar:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(175, 204, 54, 0.6);
+}
+
+/* ── COLORES UTILITARIOS ───────────────────────────────── */
+.text-verde { color: var(--color-success, #28a745); }
+.text-rojo { color: var(--color-danger, #dc3545); }
+
+/* ── RESPONSIVE ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .producto-hero-card {
     flex-direction: column;
-    align-items: center;
     text-align: center;
+    padding: 32px 24px;
   }
+  
+  .producto-hero__acciones { justify-content: center; }
+  
+  .grid-dos-columnas { grid-template-columns: 1fr; }
+  
+  .producto-hero__titulo { font-size: 2rem; }
 }

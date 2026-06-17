@@ -93,7 +93,12 @@ small { font-size: var(--text-sm); color: var(--color-text-muted); }
 }
 
 .navbar__link:hover { background-color: rgba(0,0,0,0.07); }
-.navbar__link--active { font-weight: var(--font-bold); }
+.navbar__link--active {
+  font-weight: var(--font-bold);
+  background-color: rgba(0,0,0,0.13);
+  border-radius: var(--radius-md);
+  padding: var(--space-1) var(--space-3);
+}
 .navbar__link--danger { color: var(--color-error); }
 
 /* Botones navbar (sin login) */

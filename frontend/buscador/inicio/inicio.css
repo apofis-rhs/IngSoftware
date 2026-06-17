@@ -1,6 +1,180 @@
-/* buscador: inicio - estilos especificos */
-@media (max-width: 600px) {
-    .product-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+/* ── Grid categorías (La cuadrícula) ───────────────────────────────── */
+.mod-cats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 cuadros grandes por fila en PC */
+  gap: 32px; /* Mayor separación para que respiren mejor */
+}
+
+/* ── Card de categoría (Diseño Orgánico y CUADRADO) ───────────────── */
+button.cat-card,
+.cat-card {
+  appearance: none;
+  font-family: var(--font-family);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  
+  /* EL TRUCO: Fuerza a que siempre sea un cuadrado perfecto */
+  aspect-ratio: 1 / 1; 
+  
+  padding: 24px;
+  gap: 16px;
+  
+  /* Visual Creativo: Glassmorphism */
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 32px; /* Bordes redondos más suaves para cuadros grandes */
+  border: 1px solid rgba(255, 255, 255, 1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  
+  position: relative;
+  overflow: hidden; 
+  cursor: pointer;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  z-index: 1;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* El resplandor de color en el fondo */
+button.cat-card::before,
+.cat-card::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  right: -20%;
+  width: 150px; /* Orbe más grande para cuadro más grande */
+  height: 150px;
+  background: var(--cat-color, var(--color-primary));
+  border-radius: 50%;
+  opacity: 0.15; 
+  filter: blur(30px); 
+  z-index: -1; 
+  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+button.cat-card:hover,
+.cat-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: var(--cat-color, var(--color-primary)); 
+}
+
+button.cat-card:hover::before,
+.cat-card:hover::before {
+  transform: scale(1.6) translate(-10%, 10%);
+  opacity: 0.25;
+}
+
+button.cat-card:active,
+.cat-card:active {
+  transform: translateY(-2px) scale(0.98);
+}
+
+.cat-card__emoji {
+  font-size: 4rem; /* Emojis gigantes para llenar el cuadro */
+  line-height: 1;
+  transition: transform 0.3s ease;
+  margin-bottom: 8px;
+}
+
+.cat-card:hover .cat-card__emoji {
+  transform: scale(1.15) rotate(-5deg); 
+}
+
+.cat-card__name {
+  font-size: 1.15rem; /* Letra más grande y legible */
+  font-weight: 800;
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* ── Flecha en cards de categoría ─────────────────── */
+.cat-card__arrow {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+  transition: transform 0.3s ease;
+}
+
+.cat-card:hover .cat-card__arrow {
+  transform: translateX(6px); 
+  color: var(--cat-color, var(--color-primary));
+}
+
+/* ── Subcategoría: adaptaciones menores ─────────────────── */
+.subcat-card,
+button.subcat-card {
+  aspect-ratio: 1 / 1; /* También cuadradas */
+  padding: 16px;
+  border-radius: 24px;
+}
+
+/* ── Responsive para pantallas más pequeñas ─────────────────── */
+@media (max-width: 900px) {
+  .mod-cats-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 cuadros grandes por fila en tablet/teléfono horizontal */
+    gap: 24px;
+  }
+  .cat-card__emoji { font-size: 3.5rem; }
+}
+
+@media (max-width: 480px) {
+  .mod-cats-grid {
+    grid-template-columns: repeat(2, 1fr); /* Mantiene 2 cuadros por fila en móviles */
+    gap: 16px;
+  }
+  .cat-card__emoji { font-size: 2.8rem; }
+  .cat-card__name { font-size: 0.95rem; }
+}
+/* ── Botón volver a categorías ────────────────────────── */
+/* ── Botón volver a categorías ────────────────────────── */
+.btn-volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--color-primary); /* Color vibrante */
+  border: none; /* Quitamos el borde para un look más limpio */
+  border-radius: 50px;
+  font-size: 0.95rem;
+  font-weight: 800; /* Texto más grueso para contrastar */
+  color: #111111;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(175, 204, 54, 0.4); /* Sombra luminosa */
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.btn-volver:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(175, 204, 54, 0.6); /* El brillo se expande */
+}
+
+.btn-volver:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(175, 204, 54, 0.3);
+}
+
+/* ── Cabecera de navegación (Título y Botón Volver) ────────────────────────── */
+.mod-nav-header {
+  display: flex;
+  align-items: center; /* Alinea el botón y el texto al mismo nivel horizontalmente */
+  gap: 20px; /* Separación entre el botón y el título */
+  margin-top: 40px; /* Le da bastante aire para separarlo del buscador de arriba */
+  margin-bottom: 32px; /* Lo separa de las tarjetas de abajo */
+  flex-wrap: wrap; /* Si la pantalla es muy pequeña (celular), los acomoda bonito sin romper el diseño */
+}
+
+.mod-cats-title {
+  font-size: 2.2rem; /* Hacemos el título más grande para que tenga jerarquía */
+  font-weight: 900;
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.2;
 }

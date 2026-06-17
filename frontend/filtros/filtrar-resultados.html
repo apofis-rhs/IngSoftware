@@ -1,15 +1,134 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUMIKA</title>
-  <link rel="stylesheet" href="../assets/css/variables.css">
-  <link rel="stylesheet" href="../assets/css/base.css">
-  <link rel="stylesheet" href="../assets/css/components.css">
-  <link rel="stylesheet" href="./filtrar-resultados.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtrar Resultados</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- CSS globales de Lumika -->
+    <link rel="stylesheet" href="/assets/css/variables.css">
+    <link rel="stylesheet" href="/assets/css/base.css">
+    <link rel="stylesheet" href="/assets/css/components.css">
+
+    <!-- CSS de esta pantalla -->
+    <link rel="stylesheet" href="filtrar-resultados.css">
 </head>
 <body>
-  <script type="module" src="./filtrar-resultados.js"></script>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a class="navbar__logo" href="/inicio/inicio.html">
+            <img class="navbar__logo-img" src="/assets/img/logo.png" alt="LUMIKA">
+            <span class="navbar__logo-text">LUMIKA</span>
+        </a>
+
+        <div class="navbar__links hide-mobile">
+            <a href="/inicio/inicio.html" class="navbar__link">
+                <i class="fa-solid fa-house"></i> Inicio
+            </a>
+
+            <a href="/perfil/mi-perfil/mi-perfil.html" class="navbar__link">
+                <i class="fa-regular fa-user"></i> Perfil
+            </a>
+
+            <a href="/buscador/inicio/inicio.html" class="navbar__link navbar__link--active">
+                <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
+            </a>
+
+            <a href="/recomendaciones/inicio/inicio.html" class="navbar__link">
+                <i class="fa-solid fa-leaf"></i> Recomendaciones
+            </a>
+
+            <a href="/perfil/favoritos/favoritos.html" class="navbar__link">
+                <i class="fa-regular fa-star"></i> Mis Favoritos
+            </a>
+
+            <a href="#" class="navbar__link navbar__link--danger">
+                <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+            </a>
+        </div>
+    </nav>
+
+    <main class="page-wrapper">
+
+        <div class="overlay">
+
+            <div class="filter-modal">
+
+                <h2>Filtrar Resultados</h2>
+
+                <div class="filter-group">
+                    <label>Semáforo</label>
+
+                    <div class="filter-options">
+                        <button class="filter-pill active">Rojo</button>
+                        <button class="filter-pill">Amarillo</button>
+                        <button class="filter-pill">Verde</button>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>Categoría</label>
+
+                    <div class="filter-options">
+                        <button class="filter-pill active">Capilar</button>
+                        <button class="filter-pill">Corporal</button>
+                        <button class="filter-pill">Facial</button>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>Subcategoría</label>
+
+                    <div class="filter-options">
+                        <button class="filter-pill active">Champú</button>
+                        <button class="filter-pill">Acondicionador</button>
+                        <button class="filter-pill">Tintes</button>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>Rango de Precio</label>
+
+                    <input
+                        type="range"
+                        min="10"
+                        max="800"
+                        value="400"
+                        class="price-slider"
+                    >
+
+                    <div class="price-values">
+                        <span>$10</span>
+                        <span>$800</span>
+                    </div>
+                </div>
+
+                <div class="filter-actions">
+                    <button class="btn-apply">
+                        Aplicar Filtro
+                    </button>
+
+                    <button class="btn-clear">
+                        Limpiar Filtro
+                    </button>
+                </div>
+
+                <div class="filter-back">
+                    <button class="btn-back">
+                        ← Regresar
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="filtrar-resultados.js"></script>
+
 </body>
 </html>

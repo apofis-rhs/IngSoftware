@@ -49,6 +49,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const textoEl     = document.getElementById('texto-eliminar');
   const loadingEl   = document.getElementById('loading-eliminar');
 
+  document.getElementById('btn-regresar')?.addEventListener('click', irAtras);
+
   btnAbrir?.addEventListener('click', e => { e.preventDefault(); modal?.classList.add('active'); });
   btnCancelar?.addEventListener('click', () => modal?.classList.remove('active'));
   modal?.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('active'); });
@@ -66,3 +68,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.location.href = '/auth/login/login.html';
   });
 });
+
+function irAtras() {
+  const prev = document.referrer;
+  if (!prev || prev.includes('/auth/')) {
+    window.location.href = '/inicio/inicio.html';
+  } else {
+    window.history.back();
+  }
+}

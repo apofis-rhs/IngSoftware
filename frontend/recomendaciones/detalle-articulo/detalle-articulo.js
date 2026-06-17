@@ -1,170 +1,257 @@
-// recomendaciones: detalle-articulo - logica especifica
-import { obtenerArticulo, agregarFavorito, eliminarFavorito, logout } from '/assets/js/api.js';
+import { obtenerArticulo, obtenerFavoritos, agregarFavorito, eliminarFavorito } from '/assets/js/api.js';
 
-// ── NAVBAR: hamburguesa + drawer ──────────────────────────────
-const hamburger = document.getElementById('hamburger');
-const navDrawer  = document.getElementById('nav-drawer');
-
-if (hamburger && navDrawer) {
-  hamburger.addEventListener('click', () => navDrawer.classList.toggle('open'));
-  document.addEventListener('click', (e) => {
-    if (!hamburger.contains(e.target) && !navDrawer.contains(e.target)) {
-      navDrawer.classList.remove('open');
-    }
-  });
-  window.addEventListener('resize', () => {
-    if (window.innerWidth >= 769) navDrawer.classList.remove('open');
-  });
-}
-
-// ── Cerrar sesión ─────────────────────────────────────────────
-['btn-cerrar-sesion', 'btn-cerrar-sesion-mobile'].forEach(id => {
-  const btn = document.getElementById(id);
-  if (btn) {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      localStorage.removeItem('token');
-      localStorage.removeItem('usuario');
-      window.location.href = '/auth/login/login.html';
-    });
-  }
-});
-
-// ── Lógica principal ──────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
+
   if (!localStorage.getItem('token')) {
-    window.location.href = '/auth/login/login.html';
-    return;
+    window.location.href = '/auth/login/login.html'; return;
   }
 
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-
-  if (!id) {
-    mostrarError('No se especificó ID del artículo');
-    return;
-  }
-
-  await cargarArticulo(id);
-  setupEventos(id);
-});
-
-async function cargarArticulo(id) {
+  // ── Nav ───────────────────────────────────────────────
   try {
-    const { ok, data } = await obtenerArticulo(id);
+    const hamburger = document.getElementById('hamburger');
+    const navDrawer  = document.getElementById('nav-drawer');
+    hamburger?.addEventListener('click', () => navDrawer?.classList.toggle('open'));
+    document.addEventListener('click', e => {
+      if (!hamburger?.contains(e.target) && !navDrawer?.contains(e.target))
+        navDrawer?.classList.remove('open');
+    });
+    ['btn-cerrar-sesion','btn-cerrar-sesion-mobile'].forEach(id => {
+      document.getElementById(id)?.addEventListener('click', e => {
+        e.preventDefault();
+        localStorage.removeItem('token'); localStorage.removeItem('usuario');
+        window.location.href = '/auth/login/login.html';
+      });
+    });
+  } catch(navErr) { console.warn('Nav error:', navErr); }
 
-    if (!ok) {
-      mostrarError(data?.mensaje || 'Artículo no encontrado');
-      return;
-    }
+  // ── ID del artículo ───────────────────────────────────
+  const id = new URLSearchParams(window.location.search).get('id');
+  if (!id) { mostrarError('No se especificó ID del artículo'); return; }
 
-    // Nombre
-    const elNombre = document.getElementById('nombre-articulo') || document.querySelector('.detalle-header__title');
-    if (elNombre) elNombre.textContent = data.nombre_articulo;
+  const loader    = document.getElementById('loader');
+  const contenido = document.getElementById('contenido-articulo');
 
-    // Precio
-    const elPrecio = document.getElementById('precio');
-    if (elPrecio) {
-      elPrecio.textContent = data.precio_min != null
-        ? `$${data.precio_min} - $${data.precio_max}`
-        : 'Precio no disponible';
-    }
+  // ── Llamadas al backend ───────────────────────────────
+  const favPromise = obtenerFavoritos().catch(() => null);
+  let ok, data;
+  try {
+    const res = await obtenerArticulo(id);
+    ok   = res.ok;
+    data = res.data;
+  } catch (fetchErr) {
+    console.error('Fetch error:', fetchErr);
+    mostrarError('No se pudo conectar al servidor.');
+    return;
+  }
 
-    // Semáforo
-    const color = data.color_semaforo || 'gris';
+  if (!ok) {
+    mostrarError(data?.error || data?.mensaje || 'Artículo no encontrado');
+    return;
+  }
+
+  // ── Rellenar la Vista ─────────────────────────────────
+  try { document.title = `LUMIKA — ${data.nombre_articulo}`; } catch(_){}
+
+  // Semáforo y Círculo Visual
+  try {
+    const color = data.estado_evaluacion === 'insuficiente' ? 'gris' : (data.color_semaforo || 'gris');
+    
+    // Halo de luz
     const elDot = document.getElementById('semaforo-dot');
     if (elDot) elDot.style.background = `var(--color-semaforo-${color})`;
+    
+    // Círculo gigante principal
+    const elCirculo = document.getElementById('circulo-semaforo');
+    if (elCirculo) elCirculo.style.backgroundColor = `var(--color-semaforo-${color})`;
 
-    const elEstado = document.getElementById('estado-evaluacion');
-    if (elEstado) {
-      const estados = {
-        'aprobado': 'Aprobado',
-        'precaucion': 'Usar con precaución',
-        'no_recomendado': 'No recomendado',
-        'insuficiente': 'Datos insuficientes'
-      };
-      elEstado.textContent = estados[data.estado_evaluacion] || data.estado_evaluacion || '';
-    }
+    const ETIQUETAS = { verde:'Recomendado ✓', amarillo:'Usar con precaución ⚠', rojo:'No recomendado ✗', gris:'Sin datos suficientes' };
+    setText('estado-evaluacion', ETIQUETAS[color] || '');
+  } catch(e) { console.warn('semaforo error:', e); }
 
-    // Descripción / explicación
-    const elExplicacion = document.getElementById('explicacion-semaforo') || document.getElementById('descripcion');
-    if (elExplicacion) elExplicacion.textContent = data.razon_clasificacion || data.explicacion_semaforo || '';
+  // Nombre y precio
+  setText('nombre-articulo', data.nombre_articulo || '');
+  setText('precio', data.precio_min != null ? `$${data.precio_min} – $${data.precio_max}` : 'Precio no disponible');
 
-    // Alternativas (lista previa si el backend las incluye)
-    if (data.alternativas && data.alternativas.length) {
-      const listaAlt = document.getElementById('lista-alternativas');
-      if (listaAlt) {
-        listaAlt.innerHTML = data.alternativas.map(alt => `
-          <div class="list-item" style="cursor:pointer" onclick="window.location.href='/recomendaciones/detalle-articulo/detalle-articulo.html?id=${alt.id_articulo}'">
-            <div class="list-item__dot" style="background:var(--color-semaforo-${alt.color_semaforo || 'gris'})"></div>
-            <span class="list-item__text">${alt.nombre_articulo}</span>
-          </div>
-        `).join('');
+  // Razón de la clasificación
+  setText('explicacion-semaforo', data.razon_clasificacion || data.explicacion_semaforo || 'Sin descripción disponible.');
+
+  // ── Tarjetas Dinámicas ────────────────────────────────
+
+  // Características
+  try {
+    const listaCarac = document.getElementById('lista-caracteristicas');
+    const cardCarac = document.getElementById('card-caracteristicas');
+    if (listaCarac && cardCarac) {
+      if (data.caracteristicas?.length) {
+        listaCarac.innerHTML = data.caracteristicas.map(c =>
+          `<div><i class="fa-solid fa-circle-dot" style="color:var(--color-success);font-size:0.6rem;margin-top:6px;"></i><span>${c.descripcion}</span></div>`
+        ).join('');
+      } else {
+        cardCarac.classList.add('hidden');
       }
     }
+  } catch(e) { console.warn('caracteristicas error:', e); }
 
-    // Mostrar contenido, ocultar loader
-    const loader    = document.getElementById('loader');
-    const contenido = document.getElementById('contenido-articulo') || document.getElementById('contenido-producto');
-    if (loader)    loader.classList.add('hidden');
-    if (contenido) contenido.classList.remove('hidden');
+  // Componentes (opcional si la tabla artículo lo provee)
+  try {
+    const listaIng = document.getElementById('lista-ingredientes');
+    const cardIng = document.getElementById('card-ingredientes');
+    if (listaIng && cardIng) {
+      if (data.ingredientes?.trim() || data.componentes?.trim()) {
+        const txt = data.ingredientes || data.componentes;
+        listaIng.innerHTML = `<p style="font-size:1rem;line-height:1.5;color:var(--color-text-secondary)">${txt}</p>`;
+      } else {
+        cardIng.classList.add('hidden');
+      }
+    }
+  } catch(e) { console.warn('ingredientes/componentes error:', e); }
 
-  } catch (err) {
-    console.error('Error cargando artículo:', err);
-    mostrarError(`Error de conexión: ${err.message}`);
-  }
-}
+  // Ventajas Ecológicas
+  try {
+    const listaVent = document.getElementById('lista-ventajas');
+    const cardVent = document.getElementById('card-ventajas');
+    if (listaVent && cardVent) {
+      if (data.ventajas?.length) {
+        listaVent.innerHTML = data.ventajas.map(v =>
+          `<div><i class="fa-solid fa-leaf" style="color:var(--color-success);margin-top:4px;"></i><span>${v.descripcion}</span></div>`
+        ).join('');
+      } else {
+        cardVent.classList.add('hidden');
+      }
+    }
+  } catch(e) { console.warn('ventajas error:', e); }
 
-function setupEventos(id) {
-  // Volver
-  const btnVolver = document.getElementById('btn-volver-resultados');
-  if (btnVolver) btnVolver.addEventListener('click', () => window.history.back());
-
-  // Ver alternativas
-  const btnVerAlternativas = document.getElementById('btn-ver-alternativas');
-  if (btnVerAlternativas) {
-    btnVerAlternativas.addEventListener('click', () => {
-      window.location.href = `../alternativas/alternativas.html?id=${id}`;
-    });
-  }
-
-  // Favorito
-  let esFavorito = false;
-  const btnFavorito  = document.getElementById('btn-favorito');
-  const iconStar     = document.getElementById('icon-star');
-
-  function actualizarEstrella(activo) {
-    esFavorito = activo;
-    [btnFavorito?.querySelector('i'), iconStar].forEach(icon => {
-      if (!icon) return;
-      icon.classList.toggle('fa-regular', !activo);
-      icon.classList.toggle('fa-solid',   activo);
-      icon.classList.toggle('text-warning', activo);
-    });
-  }
-
-  if (btnFavorito) {
-    btnFavorito.addEventListener('click', async () => {
-      try {
-        if (esFavorito) {
-          await eliminarFavorito(id);
-          actualizarEstrella(false);
-        } else {
-          await agregarFavorito(id);
-          actualizarEstrella(true);
+  // Desventajas / Limitaciones Dinámicas
+  try {
+    const listaDes = document.getElementById('lista-desventajas');
+    const cardDes = document.getElementById('card-desventajas');
+    
+    if (listaDes && cardDes) {
+      if (data.desventajas?.length) {
+        const esArticuloVerde = data.estado_evaluacion !== 'insuficiente' && data.color_semaforo === 'verde';
+        const tituloCard = cardDes.querySelector('.info-card__titulo');
+        
+        if (tituloCard) {
+          if (esArticuloVerde) {
+            tituloCard.className = 'info-card__titulo text-amarillo';
+            tituloCard.innerHTML = `<i class="fa-solid fa-triangle-exclamation info-card__icono"></i> Limitaciones`;
+          } else {
+            tituloCard.className = 'info-card__titulo text-rojo';
+            tituloCard.innerHTML = `<i class="fa-solid fa-triangle-exclamation info-card__icono"></i> Desventajas`;
+          }
         }
-      } catch (err) {
-        console.error('Error actualizando favorito:', err);
-      }
-    });
-  }
 
-  if (iconStar) {
-    iconStar.addEventListener('click', () => btnFavorito?.click());
-  }
+        const colorIcono = esArticuloVerde ? '#d39e00' : 'var(--color-error)';
+
+        listaDes.innerHTML = data.desventajas.map(d =>
+          `<div>
+            <i class="fa-solid fa-triangle-exclamation" style="color:${colorIcono}; margin-top:4px;"></i>
+            <span>${d.descripcion}</span>
+          </div>`
+        ).join('');
+        
+        cardDes.classList.remove('hidden');
+      } else {
+        cardDes.classList.add('hidden');
+      }
+    }
+  } catch(e) { console.warn('desventajas error:', e); }
+
+  // Descripción general del artículo
+  try {
+    const cardDesc = document.getElementById('card-descripcion-articulo');
+    const textoDesc = document.getElementById('texto-descripcion-articulo');
+    if (cardDesc && textoDesc) {
+      if (data.descripcion?.trim()) {
+        textoDesc.textContent = data.descripcion;
+      } else {
+        cardDesc.classList.add('hidden');
+      }
+    }
+  } catch(e) { console.warn('descripcion general error:', e); }
+
+  // ── Mostrar contenido ─────────────────────────────────
+  loader?.classList.add('hidden');
+  contenido?.classList.remove('hidden');
+
+  // ── Botones ───────────────────────────────────────────
+  document.getElementById('btn-regresar')?.addEventListener('click', irAtras);
+  document.getElementById('btn-alternativas')?.addEventListener('click', () => {
+    window.location.href = `/recomendaciones/alternativas/alternativas.html?id=${id}`;
+  });
+
+  // ── Favorito ──────────────────────────────────────────
+  const favRes = await favPromise;
+  try { await setupFavorito(id, favRes); } catch(e) { console.warn('favorito error:', e); }
+});
+
+async function setupFavorito(id, preloadedFavs) {
+  const btn = document.getElementById('btn-favorito');
+  if (!btn) return;
+
+  let esFav = false;
+  try {
+    const { ok, data } = preloadedFavs || await obtenerFavoritos();
+    if (ok && Array.isArray(data)) {
+      esFav = data.some(f => String(f.id_articulo ?? f.id_producto) === String(id));
+      actualizarFav(btn, esFav);
+    }
+  } catch (_) {}
+
+  btn.addEventListener('click', async () => {
+    try {
+      if (esFav) { await eliminarFavorito(id); esFav = false; }
+      else       { await agregarFavorito(id);  esFav = true;  }
+      actualizarFav(btn, esFav);
+      toast(esFav ? '⭐ Agregado a favoritos' : 'Eliminado de favoritos');
+    } catch (err) { console.error('favorito click error:', err); }
+  });
 }
 
-function mostrarError(mensaje) {
-  const loader = document.getElementById('loader');
-  if (loader) loader.innerHTML = `<div class="alerta alerta--error">${mensaje}</div>`;
+function actualizarFav(btn, activo) {
+  if (!btn) return;
+  btn.innerHTML = `<i class="${activo ? 'fa-solid' : 'fa-regular'} fa-star"></i> ${activo ? 'Guardado' : 'Guardar'}`;
+  btn.style.background  = activo ? 'var(--color-primary)' : '';
+  btn.style.borderColor = activo ? 'var(--color-primary-dark)' : '';
+}
+
+function setText(id, texto) {
+  try {
+    const el = document.getElementById(id);
+    if (el) el.textContent = texto ?? '';
+  } catch(e) { console.warn(`setText(${id}) error:`, e); }
+}
+
+function mostrarError(msg) {
+  try {
+    const loader = document.getElementById('loader');
+    if (loader) {
+      loader.innerHTML = `<div class="alerta alerta--error" style="margin:var(--space-4)">${msg}</div>`;
+    } else {
+      const div = document.createElement('div');
+      div.className = 'alerta alerta--error';
+      div.style.cssText = 'margin:40px 20px;';
+      div.textContent = msg;
+      document.body.appendChild(div);
+    }
+  } catch(e) { console.error('mostrarError fallback:', msg, e); }
+}
+
+function toast(msg) {
+  try {
+    const t = document.createElement('div');
+    t.className = 'lumika-toast';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2500);
+  } catch(_) {}
+}
+
+function irAtras() {
+  const prev = document.referrer;
+  if (!prev || prev.includes('/auth/')) {
+    window.location.href = '/recomendaciones/inicio/inicio.html';
+  } else {
+    window.history.back();
+  }
 }

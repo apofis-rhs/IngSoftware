@@ -4,124 +4,85 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LUMIKA — Recomendaciones</title>
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <!-- CSS globales del proyecto -->
   <link rel="stylesheet" href="/assets/css/variables.css">
   <link rel="stylesheet" href="/assets/css/base.css">
   <link rel="stylesheet" href="/assets/css/components.css">
-
-  <!-- CSS propio de esta pantalla -->
-  <link rel="stylesheet" href="/recomendaciones/inicio/inicio.css">
+  <link rel="stylesheet" href="/recomendaciones/inicio/inicio.css?v=4">
 </head>
-
-
 <body>
-
-  <!-- NAVBAR CON LOGIN -->
-<nav class="navbar">
-  <!-- Logo -->
-    <a href="/buscador/inicio/inicio.html" class="navbar__logo">
+  <nav class="navbar">
+    <a href="/inicio/inicio.html" class="navbar__logo">
       <img class="navbar__logo-img" src="/assets/img/logo.png" alt="LUMIKA">
       <span class="navbar__logo-text">LUMIKA</span>
     </a>
-
-  <!-- Links desktop -->
-  <div class="navbar__links hide-mobile">
-    <a href="/buscador/inicio/inicio.html" class="navbar__link">
-      <i class="fa-solid fa-house"></i> Inicio
-    </a>
-    <a href="/perfil/mi-perfil/mi-perfil.html" class="navbar__link">
-      <i class="fa-regular fa-user"></i> Perfil
-    </a>
-    <a href="/buscador/inicio/inicio.html" class="navbar__link">
-      <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
-    </a>
-    <a href="/recomendaciones/inicio/inicio.html" class="navbar__link navbar__link--active">
-      <i class="fa-solid fa-plus"></i> Recomendaciones
-    </a>
-    <a href="/perfil/favoritos/favoritos.html" class="navbar__link">
-      <i class="fa-regular fa-star"></i> Mis Favoritos
-    </a>
-    <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger">
-      <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
-    </a>
-  </div>
-
-  <!-- Hamburguesa móvil -->
-  <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
-</nav>
-
-  <!-- DRAWER MÓVIL -->
-  <div class="nav-drawer" id="nav-drawer">
-    <a href="/buscador/inicio/inicio.html" class="nav-drawer__link">
-      <i class="fa-solid fa-house"></i> Inicio
-    </a>
-
-    <a href="/perfil/mi-perfil/mi-perfil.html" class="nav-drawer__link">
-      <i class="fa-regular fa-user"></i> Perfil
-    </a>
-
-    <a href="/buscador/inicio/inicio.html" class="nav-drawer__link">
-      <i class="fa-solid fa-magnifying-glass"></i> Búsqueda
-    </a>
-
-    <a href="/recomendaciones/inicio/inicio.html" class="nav-drawer__link">
-      <i class="fa-solid fa-plus"></i> Recomendaciones
-    </a>
-
-    <a href="/perfil/favoritos/favoritos.html" class="nav-drawer__link">
-      <i class="fa-regular fa-star"></i> Mis Favoritos
-    </a>
-
-    <div class="nav-drawer__divider"></div>
-
-    <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger">
-      <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
-    </a>
-  </div>
-
-  <!-- CONTENIDO PRINCIPAL -->
-  <main class="page-wrapper recomendaciones-page">
-
-    <section class="recomendaciones-hero">
-  <h1 class="recomendaciones-title">Recomendaciones</h1>
-
-  <form class="recomendaciones-search" id="form-recomendaciones">
-    <div class="search-bar recomendaciones-search__bar">
-      <i class="fa-solid fa-magnifying-glass"></i>
-      <input 
-        type="text" 
-        id="input-recomendacion" 
-        placeholder="Recomendar productos..."
-        autocomplete="off"
-      >
+    <div class="navbar__links hide-mobile">
+      <a href="/inicio/inicio.html" class="navbar__link"><i class="fa-solid fa-house"></i> Inicio</a>
+      <a href="/perfil/mi-perfil/mi-perfil.html" class="navbar__link"><i class="fa-regular fa-user"></i> Perfil</a>
+      <a href="/buscador/inicio/inicio.html" class="navbar__link"><i class="fa-solid fa-magnifying-glass"></i> Búsqueda</a>
+      <a href="/recomendaciones/inicio/inicio.html" class="navbar__link navbar__link--active"><i class="fa-solid fa-leaf"></i> Recomendaciones</a>
+      <a href="/perfil/favoritos/favoritos.html" class="navbar__link"><i class="fa-regular fa-star"></i> Mis Favoritos</a>
+      <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
     </div>
-  </form>
-</section>
+    <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
 
-    <section class="recomendaciones-section">
-      <h2 class="recomendaciones-section__title">Recomendados</h2>
-      <div class="product-grid recomendaciones-grid" id="grid-recomendados">
-        <p class="text-muted">Cargando...</p>
-      </div>
-    </section>
+  <div class="nav-drawer" id="nav-drawer">
+    <a href="/inicio/inicio.html" class="nav-drawer__link"><i class="fa-solid fa-house"></i> Inicio</a>
+    <a href="/perfil/mi-perfil/mi-perfil.html" class="nav-drawer__link"><i class="fa-regular fa-user"></i> Perfil</a>
+    <a href="/buscador/inicio/inicio.html" class="nav-drawer__link"><i class="fa-solid fa-magnifying-glass"></i> Búsqueda</a>
+    <a href="/recomendaciones/inicio/inicio.html" class="nav-drawer__link"><i class="fa-solid fa-leaf"></i> Recomendaciones</a>
+    <a href="/perfil/favoritos/favoritos.html" class="nav-drawer__link"><i class="fa-regular fa-star"></i> Mis Favoritos</a>
+    <div class="nav-drawer__divider"></div>
+    <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+  </div>
 
-    <section class="recomendaciones-section">
-      <h2 class="recomendaciones-section__title">Más populares</h2>
-      <div class="product-grid recomendaciones-grid" id="grid-populares">
-        <p class="text-muted">Cargando...</p>
+  <main class="page-wrapper rec-page">
+
+    <!-- Barra de búsqueda -->
+    <div class="mod-search-wrap">
+      <div class="search-bar mod-search-bar">
+        <i class="fa-solid fa-magnifying-glass" style="color:var(--color-text-muted)"></i>
+        <input type="text" id="input-recomendacion" placeholder="Buscar artículo o tema..." autocomplete="off">
       </div>
-    </section>
+      <div id="resultados-vivos" class="sugerencias-dropdown"></div>
+    </div>
+
+    <!-- Header de navegación -->
+    <div class="mod-nav-header">
+      <button id="btn-volver" class="btn-volver hidden">
+        <i class="fa-solid fa-arrow-left"></i> Categorías
+      </button>
+      <h2 class="mod-cats-title" id="tit-seccion">Explorar por categoría</h2>
+    </div>
+
+    <!-- Vista de categorías -->
+    <div id="sec-categorias">
+      <div id="grid-categorias" class="mod-cats-grid">
+        <div class="cat-card-skeleton"></div>
+        <div class="cat-card-skeleton"></div>
+        <div class="cat-card-skeleton"></div>
+        <div class="cat-card-skeleton"></div>
+        <div class="cat-card-skeleton"></div>
+        <div class="cat-card-skeleton"></div>
+        <div class="cat-card-skeleton"></div>
+      </div>
+    </div>
+
+    <!-- Vista de subcategorías -->
+    <div id="sec-subcategorias" class="hidden">
+      <div id="grid-subcategorias" class="mod-cats-grid"></div>
+    </div>
+
+    <button class="btn-regresar" id="btn-regresar" style="margin-top:var(--space-8)">
+      Regresar
+    </button>
+
 
   </main>
 
   <script type="module" src="/recomendaciones/inicio/inicio.js"></script>
-
 </body>
 </html>

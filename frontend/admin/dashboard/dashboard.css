@@ -14,7 +14,7 @@
   font-weight: var(--font-bold);
 }
 
-/* ── PUNTOS DECORATIVOS (mismo estilo que inicio.html) ── */
+/* ── PUNTOS DECORATIVOS ── */
 .dot {
   width: 50px;
   height: 50px;
@@ -38,96 +38,221 @@
   50%      { transform: translateY(-10px); }
 }
 
-/* ── ENCABEZADO ── */
+/* ── TOP BANNER: BIENVENIDA EN GRANDE ── */
+.admin-hero-banner {
+  /* Truco para que mida el 100% de la pantalla */
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FFC133 100%);
+  /* Padding gigante abajo (180px) para darle aire al texto */
+  padding: 80px 20px 180px; 
+  text-align: center;
+  overflow: hidden;
+  border-radius: 0 0 40px 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  margin-top: -1px; 
+}
+
+/* Burbujas flotantes */
+.admin-hero-banner::before,
+.admin-hero-banner::after {
+  content: "";
+  position: absolute;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  z-index: 1;
+  animation: float 6s ease-in-out infinite;
+}
+.admin-hero-banner::before { width: 250px; height: 250px; top: -50px; left: -50px; }
+.admin-hero-banner::after { width: 150px; height: 150px; bottom: 10px; right: 5%; animation-delay: 2s; }
+
 .admin-header-block {
-  margin-bottom: var(--space-8);
-  animation: fadeUp 0.5s ease forwards;
+  position: relative;
+  z-index: 2;
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-.admin-page-title {
-  font-size: var(--text-2xl);
-  font-weight: var(--font-bold);
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-1);
-}
-.admin-page-sub {
-  color: var(--color-text-muted);
+
+.admin-page-greeting {
   font-size: var(--text-base);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--color-secondary-dark); 
+  font-weight: var(--font-bold);
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+.admin-page-title {
+  font-size: 3rem; 
+  font-weight: 900;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+.admin-page-sub {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: var(--text-lg);
+  font-weight: var(--font-medium);
 }
 
 /* ── KPI GRID ── */
+.admin-kpi-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
 .admin-kpi-grid {
+  /* Usamos GRID con 5 columnas exactas para forzar que estén en una sola línea */
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: var(--space-4);
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  /* Subimos las tarjetas 100px para que pisen el espacio amarillo */
+  margin-top: -100px; 
   margin-bottom: var(--space-10);
+  position: relative;
+  z-index: 10;
+}
+
+/* Responsive: Si la pantalla se hace pequeña, reacomodamos las columnas */
+@media (max-width: 1100px) {
+  .admin-kpi-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  .admin-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .admin-kpi-grid { grid-template-columns: 1fr; }
 }
 
 .kpi-card {
-  border-radius: var(--radius-xl);
-  padding: var(--space-6) var(--space-4);
+  width: 100%; 
+  border-radius: 24px;
+  padding: 30px 15px;
   text-align: center;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-2);
-  /* La animación se aplica desde JS */
+  justify-content: center;
+  gap: var(--space-3);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.kpi-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 5px;
+  background: rgba(255,255,255,0.3);
 }
 
 .kpi-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 25px 45px rgba(0,0,0,0.12);
 }
 
 .kpi-card__icon {
-  font-size: 1.6rem;
-  opacity: 0.7;
+  font-size: 3.5rem; 
+  opacity: 0.9;
+  margin-bottom: var(--space-2);
+  transition: transform 0.3s ease;
+}
+
+.kpi-card:hover .kpi-card__icon {
+  transform: scale(1.15) rotate(5deg);
 }
 
 .kpi-card__number {
-  font-size: 2.8rem;
-  font-weight: var(--font-bold);
+  font-size: 3.5rem;
+  font-weight: 900;
   line-height: 1;
   display: block;
 }
 
 .kpi-card__label {
   font-size: var(--text-sm);
-  font-weight: var(--font-medium);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.9;
 }
 
-/* Colores usando variables del design system */
-.kpi-card--yellow { background-color: var(--color-primary); color: var(--color-text-primary); }
-.kpi-card--green  { background-color: var(--color-success); color: #fff; }
-.kpi-card--amber  { background-color: var(--color-primary-dark); color: #fff; }
-.kpi-card--red    { background-color: var(--color-secondary-dark); color: #fff; }
-.kpi-card--gray   { background-color: var(--color-border); color: var(--color-text-secondary); }
+/* Colores de las tarjetas */
+.kpi-card--yellow { background: linear-gradient(135deg, var(--color-primary), #FFC133); color: var(--color-text-primary); }
+.kpi-card--green  { background: linear-gradient(135deg, var(--color-success), #8EAA22); color: #fff; }
+.kpi-card--amber  { background: linear-gradient(135deg, #FF9800, #F57C00); color: #fff; }
+.kpi-card--red    { background: linear-gradient(135deg, var(--color-secondary-dark), #B8005D); color: #fff; }
+.kpi-card--gray   { background: linear-gradient(135deg, #E0E0E0, #BDBDBD); color: var(--color-text-primary); }
 
-/* ── BOTONES DE ACCIÓN ── */
-.admin-actions {
-  display: flex;
-  gap: var(--space-4);
-  flex-wrap: wrap;
-  animation: fadeUp 0.6s ease forwards 0.3s;
+/* ── BOTONES DE ACCIÓN MODO "ACCESOS DIRECTOS" ── */
+.admin-actions-container {
+  max-width: 800px;
+  margin: 0 auto var(--space-10);
+  text-align: center;
+}
+
+.admin-actions-title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-5);
   opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.4s;
+}
+
+.admin-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-5);
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.5s;
 }
 
 .btn-admin-action {
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-4) var(--space-8);
-  border-radius: var(--radius-full);
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border-radius: 24px;
   font-weight: var(--font-bold);
-  font-size: var(--text-base);
+  font-size: var(--text-lg);
   text-decoration: none;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  background-color: var(--color-bg-white);
+  border: 2px solid transparent;
+  color: var(--color-text-primary);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.btn-admin-action i {
+  font-size: 2.5rem;
+  color: var(--color-primary);
+  transition: transform 0.3s ease;
+}
+
+.btn-admin-action.btn--secondary i {
+  color: var(--color-success);
 }
 
 .btn-admin-action:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  border-color: var(--color-primary);
+}
+
+.btn-admin-action:hover i {
+  transform: scale(1.1);
 }
 
 /* ── DRAWER ── */
@@ -272,7 +397,7 @@
 }
 .fade-in-up { animation: fadeUp 0.5s ease forwards; }
 
-/* SUCCESS MODAL agregar */
+/* SUCCESS MODAL */
 .success-modal {
   position: fixed; inset: 0;
   background: rgba(255,255,255,0.9);

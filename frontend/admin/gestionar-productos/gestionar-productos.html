@@ -9,15 +9,14 @@
   <link rel="stylesheet" href="/assets/css/base.css">
   <link rel="stylesheet" href="/assets/css/components.css">
   <link rel="stylesheet" href="/admin/gestionar-productos/gestionar-productos.css">
-  <link rel="stylesheet" href="/admin/dashboard/dashboard.css">
-</head>
+  </head>
 <body>
 
-  <nav class="navbar admin-navbar-bg">
+  <nav class="navbar" style="background-color: var(--color-bg-navbar)">
     <a class="navbar__logo" href="/admin/dashboard/dashboard.html">
       <img class="navbar__logo-img" src="/assets/img/logo.png" alt="LUMIKA">
       <span class="navbar__logo-text">LUMIKA</span>
-      <span class="navbar__badge-admin">Admin</span>
+      <span class="navbar__badge" style="background: var(--color-secondary-dark); color: white; font-size: 10px; padding: 2px 8px; border-radius: 20px; margin-left: 8px;">Admin</span>
     </a>
     <div class="navbar__links hide-mobile">
       <a href="/admin/dashboard/dashboard.html" class="navbar__link"><i class="fa-solid fa-chart-pie"></i> Panel</a>
@@ -38,63 +37,57 @@
     <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
   </div>
 
-  <main class="page-wrapper">
+  <main class="page-wrapper" style="padding-top: 0;">
 
-    <!-- Encabezado con tabs Producto / Artículo -->
-    <div class="admin-view-header">
-      <h2 class="text-bold">
-        <i class="fa-solid fa-arrow-left btn-back-icon" onclick="window.history.back()" style="cursor:pointer"></i>
-        Gestión de <span id="tipo-actual">Productos</span>
-      </h2>
-      <a href="/admin/agregar-producto/agregar-producto.html" class="btn-add-circle" title="Agregar nuevo">
-        <i class="fa-solid fa-plus"></i>
-      </a>
+    <header class="admin-compact-banner">
+      <i class="fa-solid fa-arrow-left btn-back-icon" onclick="window.location.href='/admin/dashboard/dashboard.html'" title="Regresar al panel"></i>
+      <h2>Gestión de <span id="tipo-actual">Productos</span></h2>
+    </header>
+
+    <div class="admin-controls-wrapper">
+      <div class="gestionar-tabs">
+        <button class="gestionar-tab active" id="tab-productos" onclick="cambiarTab('productos')">
+          <i class="fa-solid fa-box"></i> Productos
+        </button>
+        <button class="gestionar-tab" id="tab-articulos" onclick="cambiarTab('articulos')">
+          <i class="fa-solid fa-leaf"></i> Artículos
+        </button>
+      </div>
+
+      <div class="search-container">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" class="admin-search-input" id="input-buscar" placeholder="Busca por nombre o etiqueta...">
+      </div>
     </div>
 
-    <!-- Selector Productos / Artículos -->
-    <div class="gestionar-tabs">
-      <button class="gestionar-tab active" id="tab-productos" onclick="cambiarTab('productos')">
-        <i class="fa-solid fa-box"></i> Productos
-      </button>
-      <button class="gestionar-tab" id="tab-articulos" onclick="cambiarTab('articulos')">
-        <i class="fa-solid fa-leaf"></i> Artículos
-      </button>
+    <div style="text-align: center; margin-bottom: var(--space-4);">
+      <span id="total-items" style="background: rgba(0,0,0,0.05); padding: 6px 15px; border-radius: 20px; font-size: var(--text-sm); font-weight: bold; color: var(--color-text-secondary);"></span>
     </div>
 
-    <!-- Buscador -->
-    <div style="margin: var(--space-4) 0 var(--space-4)">
-      <input type="text" class="admin-search-input" id="input-buscar" placeholder="Buscar...">
+    <div id="loader" style="text-align:center; padding:var(--space-8); color:var(--color-text-muted)">
+      <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem; color: var(--color-primary)"></i>
+      <p style="margin-top:var(--space-2); font-weight: bold;">Cargando catálogo...</p>
     </div>
 
-    <!-- Contador -->
-    <p id="total-items" class="text-muted" style="font-size:var(--text-sm);margin-bottom:var(--space-3)"></p>
-
-    <!-- Loader -->
-    <div id="loader" style="text-align:center;padding:var(--space-8);color:var(--color-text-muted)">
-      <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem"></i>
-      <p style="margin-top:var(--space-2)">Cargando...</p>
-    </div>
-
-    <!-- Lista dinámica -->
     <div class="admin-product-list hidden" id="lista-items"></div>
 
-    <div style="margin-top:var(--space-8)">
-      <a href="/admin/dashboard/dashboard.html" class="btn-admin-back-footer">
-        <i class="fa-solid fa-arrow-left"></i> Regresar
-      </a>
-    </div>
+    <a href="/admin/agregar-producto/agregar-producto.html" class="btn-fab-add" title="Agregar nuevo">
+      <i class="fa-solid fa-plus"></i>
+    </a>
+
   </main>
 
-  <!-- Modal confirmar eliminación -->
   <div class="modal-overlay" id="delete-modal">
     <div class="modal-box">
-      <i class="fa-solid fa-triangle-exclamation" style="font-size:2rem;color:var(--color-secondary-dark);margin-bottom:var(--space-3)"></i>
-      <h3>¿Eliminar este elemento?</h3>
-      <p id="modal-nombre-item" style="color:var(--color-text-muted);margin:var(--space-2) 0 var(--space-4);font-size:var(--text-sm)"></p>
-      <p style="color:var(--color-text-muted);font-size:var(--text-sm);margin-bottom:var(--space-4)">Esta acción no se puede deshacer.</p>
-      <div class="modal-buttons">
-        <button class="btn-modal btn-modal--yes" id="btn-confirmar-eliminar">Eliminar</button>
-        <button class="btn-modal btn-modal--no"  id="btn-cancelar-eliminar">Cancelar</button>
+      <div style="width: 70px; height: 70px; background: rgba(226, 0, 116, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-4);">
+        <i class="fa-solid fa-trash-can" style="font-size:2rem; color:var(--color-secondary-dark);"></i>
+      </div>
+      <h3 style="font-size: 1.3rem; margin-bottom: 5px;">¿Eliminar elemento?</h3>
+      <p id="modal-nombre-item" style="color:var(--color-primary-dark); font-weight: bold; font-size: 1.1rem; margin-bottom: 10px;"></p>
+      <p style="color:var(--color-text-muted); font-size:var(--text-sm); margin-bottom:var(--space-6)">Esta acción es permanente y no se puede deshacer.</p>
+      <div style="display: flex; gap: 15px; justify-content: center;">
+        <button class="btn btn--secondary" id="btn-cancelar-eliminar" style="flex: 1; border-radius: 20px;">Cancelar</button>
+        <button class="btn btn--primary" id="btn-confirmar-eliminar" style="flex: 1; border-radius: 20px; background: var(--color-secondary-dark); color: white;">Eliminar</button>
       </div>
     </div>
   </div>

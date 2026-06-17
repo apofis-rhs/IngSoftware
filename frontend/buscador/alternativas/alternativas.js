@@ -28,105 +28,112 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnComparar      = document.getElementById('btn-ver-comparaciones');
   const productoOriginal = document.getElementById('producto-original');
 
-  const params   = new URLSearchParams(window.location.search);
+  const params     = new URLSearchParams(window.location.search);
   const idOriginal = params.get('id');
 
   if (!idOriginal) { mostrarError('Falta el ID del producto'); return; }
 
-  let seleccionadas = new Set();
-
   try {
-    // Llamar con obtenerProducto (productos, no artículos)
     const [resProd, resAlts] = await Promise.all([
       obtenerProducto(idOriginal),
-      obtenerAlternativasProducto(idOriginal)
+      obtenerAlternativasProducto(idOriginal),
     ]);
 
     if (!resProd.ok) { mostrarError('Producto no encontrado'); return; }
     const original = resProd.data;
+    const alts     = (resAlts.ok && Array.isArray(resAlts.data)) ? resAlts.data.slice(0, 3) : [];
 
-    // Si ya es verde
-    if (original.color_semaforo === 'verde' && original.estado_evaluacion !== 'insuficiente') {
-      if (productoOriginal) productoOriginal.innerHTML = `<strong>${original.nombre_producto}</strong> ya tiene semáforo verde. ¡Es la mejor opción!`;
-      loader?.classList.add('hidden');
-      grid.innerHTML = '<div class="alerta alerta--info">Este producto ya es la mejor alternativa disponible.</div>';
-      grid?.classList.remove('hidden');
-      return;
-    }
+    const colorOrig = original.estado_evaluacion === 'insuficiente' ? 'gris' : (original.color_semaforo || 'gris');
+    const esVerde   = colorOrig === 'verde';
 
-    // Sin alternativas
-    if (!resAlts.ok || !resAlts.data?.length) {
-      if (productoOriginal) productoOriginal.innerHTML = `No hay alternativas verdes para <strong>${original.nombre_producto}</strong> aún.`;
-      loader?.classList.add('hidden');
-      grid.innerHTML = '<div class="alerta alerta--warning">Sin alternativas disponibles en este momento.</div>';
-      grid?.classList.remove('hidden');
-      return;
-    }
-
-    // Máximo 3 (ya viene limitado del backend)
-    const alts = resAlts.data.slice(0, 3);
-
+    // Banner del producto original
     if (productoOriginal) {
-      productoOriginal.innerHTML = `${alts.length} alternativa${alts.length > 1 ? 's' : ''} verde${alts.length > 1 ? 's' : ''} para <strong>${original.nombre_producto}</strong>`;
+      productoOriginal.innerHTML = `
+        <div style="display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:var(--space-2)">
+            <span style="width:14px;height:14px;border-radius:50%;background:var(--color-semaforo-${colorOrig});display:inline-block;flex-shrink:0"></span>
+            <strong>${original.nombre_producto}</strong>
+          </div>
+          ${esVerde ? `
+            <span style="background:var(--color-success-bg);color:var(--color-success);border:1px solid var(--color-success);
+                         border-radius:var(--radius-full);padding:2px 12px;font-size:var(--text-sm);font-weight:600">
+              ✓ Ya es verde — comparamos precio
+            </span>` : ''}
+        </div>
+        <p class="text-muted" style="margin-top:var(--space-2);font-size:var(--text-sm)">
+          ${alts.length
+            ? `${alts.length} alternativa${alts.length > 1 ? 's' : ''} verde${alts.length > 1 ? 's' : ''} de la misma categoría`
+            : 'Sin alternativas verdes disponibles en esta categoría'}
+        </p>`;
     }
 
+    loader?.classList.add('hidden');
+
+    if (!alts.length) {
+      grid.innerHTML = `<div class="alerta alerta--warning">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        No encontramos alternativas verdes en esta categoría por el momento.
+      </div>`;
+      grid?.classList.remove('hidden');
+      // Mostrar solo botón regresar
+      document.getElementById('btn-regresar-solo')?.classList.remove('hidden');
+      document.getElementById('btn-regresar')?.closest('#acciones-comparar')
+        ?.classList.remove('hidden');
+      if (btnComparar) btnComparar.style.display = 'none';
+      acciones?.classList.remove('hidden');
+      return;
+    }
+
+    // Cards de alternativas (sin checkboxes)
     grid.innerHTML = alts.map(alt => {
       const imgSrc = getRutaImagen(alt);
-      const precio = alt.precio_min != null ? `$${alt.precio_min} – $${alt.precio_max}` : 'Precio no disponible';
+      const precio = alt.precio_min != null
+        ? `$${alt.precio_min}${alt.precio_max ? ` – $${alt.precio_max}` : ''}`
+        : 'Precio no disponible';
       return `
-        <div class="card card-alternativa" data-id="${alt.id_producto}">
-          <label style="display:flex;gap:var(--space-3);align-items:center;cursor:pointer">
-            <input type="checkbox" class="checkbox-alternativa" value="${alt.id_producto}" style="width:20px;height:20px;flex-shrink:0">
-            <img src="${imgSrc}" alt="${alt.nombre_producto}"
-                 style="width:48px;height:48px;object-fit:cover;border-radius:var(--radius-sm);flex-shrink:0"
-                 onerror="this.src='/assets/images/placeholder.svg'">
-            <div class="semaforo-dot" style="background:var(--color-semaforo-verde);width:14px;height:14px;border-radius:50%;flex-shrink:0"></div>
-            <div style="flex:1">
-              <h3 class="text-h3" style="margin-bottom:4px">${alt.nombre_producto}</h3>
-              <p class="text-muted" style="font-size:0.85rem">${precio}</p>
-            </div>
-            <a href="/buscador/detalle-producto/detalle-producto.html?id=${alt.id_producto}"
-               class="btn btn--secondary" style="flex-shrink:0" onclick="event.stopPropagation()">Ver</a>
-          </label>
+        <div class="card alt-card" style="display:flex;align-items:center;gap:var(--space-4);padding:var(--space-4)">
+          <img src="${imgSrc}" alt="${alt.nombre_producto}"
+               style="width:56px;height:56px;object-fit:cover;border-radius:var(--radius-md);flex-shrink:0"
+               onerror="this.src='/assets/images/placeholder.svg'">
+          <span style="width:12px;height:12px;border-radius:50%;background:var(--color-semaforo-verde);flex-shrink:0"></span>
+          <div style="flex:1;min-width:0">
+            <p style="margin:0 0 2px;font-weight:600;font-size:var(--text-base);
+                      white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${alt.nombre_producto}</p>
+            <p style="margin:0;color:var(--color-text-muted);font-size:var(--text-sm)">${precio}</p>
+          </div>
+          <a href="/buscador/detalle-producto/detalle-producto.html?id=${alt.id_producto}"
+             class="btn btn--secondary" style="flex-shrink:0;white-space:nowrap"
+             onclick="event.stopPropagation()">Ver detalle</a>
         </div>`;
     }).join('');
 
-    // Checkboxes — máximo 2 para comparar (+ el original = 3)
-    grid.querySelectorAll('.checkbox-alternativa').forEach(cb => {
-      cb.addEventListener('change', e => {
-        if (e.target.checked) seleccionadas.add(e.target.value);
-        else seleccionadas.delete(e.target.value);
-
-        if (btnComparar) {
-          const hay = seleccionadas.size > 0;
-          btnComparar.disabled = !hay;
-          btnComparar.style.opacity = hay ? '1' : '0.5';
-          btnComparar.textContent = `Comparar (${seleccionadas.size + 1} productos)`;
-        }
-
-        // Bloquear si ya seleccionó 2
-        grid.querySelectorAll('.checkbox-alternativa:not(:checked)').forEach(box => {
-          box.disabled = seleccionadas.size >= 2;
-        });
-      });
-    });
-
-    loader?.classList.add('hidden');
     grid?.classList.remove('hidden');
     acciones?.classList.remove('hidden');
+
+    if (btnComparar) {
+      btnComparar.innerHTML = `<i class="fa-solid fa-scale-balanced"></i> Comparar (${alts.length + 1} productos)`;
+      btnComparar.addEventListener('click', () => {
+        const ids = [idOriginal, ...alts.map(a => a.id_producto)];
+        window.location.href = `/buscador/comparacion/comparacion.html?${ids.map(id => `id=${id}`).join('&')}`;
+      });
+    }
 
   } catch (err) {
     mostrarError(`Error de conexión: ${err.message}`);
   }
 
-  document.getElementById('btn-regresar')?.addEventListener('click', () => window.history.back());
-  btnComparar?.addEventListener('click', () => {
-    if (!seleccionadas.size) return;
-    const ids = [idOriginal, ...Array.from(seleccionadas)];
-    window.location.href = `/buscador/comparacion/comparacion.html?${ids.map(id=>`id=${id}`).join('&')}`;
-  });
+  document.getElementById('btn-regresar')?.addEventListener('click', irAtras);
 
   function mostrarError(msg) {
     if (loader) loader.innerHTML = `<div class="alerta alerta--error">${msg}</div>`;
   }
 });
+
+function irAtras() {
+  const prev = document.referrer;
+  if (!prev || prev.includes('/auth/')) {
+    window.location.href = '/inicio/inicio.html';
+  } else {
+    window.history.back();
+  }
+}

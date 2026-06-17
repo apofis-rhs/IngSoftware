@@ -1,1 +1,163 @@
-/* filtrar resultados - estilos especificos */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#ececec;
+}
+
+.overlay{
+    display:flex;
+    justify-content:center;
+    padding:40px 20px 80px;
+}
+
+.filter-modal{
+    width:100%;
+    max-width:520px;
+    min-height:540px;
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:30px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.filter-modal h2{
+    font-size:1.8rem;
+    margin-bottom:24px;
+    color:#666;
+}
+
+.filter-group{
+    margin-bottom:22px;
+}
+
+.filter-group label{
+    display:block;
+    margin-bottom:10px;
+
+    color:#888;
+    font-size:16px;
+}
+
+.filter-options{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+}
+
+.filter-pill{
+    border:none;
+    padding:10px 24px;
+
+    border-radius:30px;
+
+    background:#e5e5e5;
+
+    cursor:pointer;
+}
+
+.filter-pill.active{
+    background:#f4a900;
+}
+
+.price-slider{
+    width:100%;
+    appearance:none;
+
+    height:6px;
+
+    border-radius:20px;
+
+    background:#a4a4a4;
+
+    margin-top:10px;
+}
+
+.price-slider::-webkit-slider-thumb{
+    appearance:none;
+
+    width:20px;
+    height:30px;
+
+    background:#888;
+
+    border-radius:5px;
+
+    cursor:pointer;
+}
+
+.price-values{
+    display:flex;
+    justify-content:space-between;
+
+    margin-top:10px;
+}
+
+.filter-actions{
+    display:flex;
+    gap:20px;
+
+    margin-top:30px;
+}
+
+.btn-apply,
+.btn-clear{
+    flex:1;
+
+    height:52px;
+
+    border:none;
+
+    border-radius:30px;
+
+    font-size:18px;
+    font-weight:700;
+
+    cursor:pointer;
+}
+
+.btn-apply{
+    background:#bcc617;
+    color:black;
+}
+
+.btn-clear{
+    background:#9d9d9d;
+    color:white;
+}
+
+.filter-back{
+    display:flex;
+    justify-content:center;
+
+    margin-top:22px;
+}
+
+.btn-back{
+    border:none;
+
+    padding:12px 30px;
+
+    border-radius:30px;
+
+    background:#bcc617;
+
+    font-weight:700;
+
+    cursor:pointer;
+}
+
+@media(max-width:768px){
+
+    .filter-actions{
+        flex-direction:column;
+    }
+
+}

@@ -1,5 +1,4 @@
-import { compararProductos } from '/assets/js/api.js';
-import { getRutaImagen }     from '/assets/js/imagenes.js';
+import { compararArticulos } from '/assets/js/api.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (!localStorage.getItem('token')) {
@@ -26,12 +25,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   const idOriginal = ids[0];
 
   if (ids.length < 2) {
-    mostrarError('Necesitas al menos 2 productos para comparar.');
+    mostrarError('Necesitas al menos 2 artículos para comparar.');
     return;
   }
 
   try {
-    const { ok, data } = await compararProductos(ids);
+    const { ok, data } = await compararArticulos(ids);
     if (!ok || !data?.length) throw new Error(data?.error || 'Sin datos');
     pintarComparacion(data, idOriginal);
   } catch (err) {
@@ -41,36 +40,30 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-regresar')?.addEventListener('click', irAtras);
 });
 
-function pintarComparacion(productos, idOriginal) {
-  const original     = productos.find(p => p.id_producto === idOriginal) || productos[0];
-  const alternativas = productos.filter(p => p.id_producto !== idOriginal);
+function pintarComparacion(articulos, idOriginal) {
+  const original     = articulos.find(a => a.id_articulo === idOriginal) || articulos[0];
+  const alternativas = articulos.filter(a => a.id_articulo !== idOriginal);
   const ordenados    = [original, ...alternativas];
-
-  const colorOrig = original.estado_evaluacion === 'insuficiente' ? 'gris' : (original.color_semaforo || 'gris');
 
   const subtitulo = document.getElementById('subtitulo-comparacion');
   if (subtitulo) {
-    subtitulo.textContent = `Comparando ${ordenados.length} producto${ordenados.length > 1 ? 's' : ''} de la misma subcategoría`;
+    subtitulo.textContent = `Comparando ${ordenados.length} artículo${ordenados.length > 1 ? 's' : ''} de la misma subcategoría`;
   }
 
-  // ── Cards de productos ───────────────────────────────
-  const gridProductos = document.getElementById('grid-productos');
-  gridProductos.style.gridTemplateColumns = `repeat(${ordenados.length}, 1fr)`;
-  gridProductos.innerHTML = ordenados.map((p, i) => {
-    const color    = p.estado_evaluacion === 'insuficiente' ? 'gris' : (p.color_semaforo || 'gris');
-    const img      = getRutaImagen(p);
-    const precioMax = p.precio_max != null ? `Hasta $${p.precio_max}` : '—';
-    const isOrig   = i === 0;
+  // ── Cards de artículos ───────────────────────────────
+  const gridArticulos = document.getElementById('grid-articulos');
+  gridArticulos.style.gridTemplateColumns = `repeat(${ordenados.length}, 1fr)`;
+  gridArticulos.innerHTML = ordenados.map((a, i) => {
+    const color  = a.estado_evaluacion === 'insuficiente' ? 'gris' : (a.color_semaforo || 'gris');
+    const precio = a.precio_estimado != null ? `$${a.precio_estimado}` : '—';
+    const isOrig = i === 0;
     return `
       <div class="cmp-card ${isOrig ? 'cmp-card--original' : 'cmp-card--alt'}">
-        <span class="cmp-badge ${isOrig ? '' : 'cmp-badge--alt'}">${isOrig ? 'Tu producto' : 'Alternativa'}</span>
-        <img src="${img}" alt="${p.nombre_producto}"
-             class="cmp-card__img"
-             onerror="this.src='/assets/images/placeholder.svg'">
-        <div class="cmp-dot" style="background:var(--color-semaforo-${color})"></div>
-        <h3 class="cmp-card__name">${p.nombre_producto}</h3>
-        <p class="cmp-card__price">${precioMax}</p>
-        <a href="/buscador/detalle-producto/detalle-producto.html?id=${p.id_producto}"
+        <span class="cmp-badge ${isOrig ? '' : 'cmp-badge--alt'}">${isOrig ? 'Tu artículo' : 'Alternativa'}</span>
+        <div class="cmp-dot" style="background:var(--color-semaforo-${color});margin-top:var(--space-4)"></div>
+        <h3 class="cmp-card__name">${a.nombre_articulo}</h3>
+        <p class="cmp-card__price">${precio}</p>
+        <a href="/recomendaciones/detalle-articulo/detalle-articulo.html?id=${a.id_articulo}"
            class="btn btn--secondary" style="margin-top:var(--space-2);font-size:var(--text-sm)">Ver detalle</a>
       </div>`;
   }).join('');
@@ -84,8 +77,7 @@ function pintarComparacion(productos, idOriginal) {
   }
 
   const cols     = ordenados.length;
-  const gridCols = `160px repeat(${cols}, 1fr)`;
-  tabla.style.setProperty('--cmp-cols', gridCols);
+  tabla.style.setProperty('--cmp-cols', `160px repeat(${cols}, 1fr)`);
 
   const ETQ_SEM = { verde:'🟢 Verde', amarillo:'🟡 Amarillo', rojo:'🔴 Rojo', gris:'⚪ Sin datos' };
 
@@ -98,18 +90,18 @@ function pintarComparacion(productos, idOriginal) {
   const header = `
     <div class="cmp-row cmp-row--header">
       <div class="cmp-label">Atributo</div>
-      ${ordenados.map((p, i) => `
+      ${ordenados.map((a, i) => `
         <div class="cmp-cell ${i === 0 ? 'cmp-cell--original' : ''}">
-          ${p.nombre_producto}
+          ${a.nombre_articulo}
         </div>`).join('')}
     </div>`;
 
-  // Precio máximo
-  const preciosMax = ordenados.map(p => p.precio_max != null ? parseFloat(p.precio_max) : null);
-  const minPrecio  = Math.min(...preciosMax.filter(n => n !== null));
-  const filaPrecio = fila('Precio máximo', 'fa-solid fa-tag',
-    ordenados.map((p, i) => {
-      const precio  = preciosMax[i];
+  // Precio estimado
+  const precios   = ordenados.map(a => a.precio_estimado != null ? parseFloat(a.precio_estimado) : null);
+  const minPrecio = Math.min(...precios.filter(n => n !== null));
+  const filaPrecio = fila('Precio estimado', 'fa-solid fa-tag',
+    ordenados.map((a, i) => {
+      const precio  = precios[i];
       const esMejor = precio !== null && precio === minPrecio;
       return `<div class="cmp-cell ${i === 0 ? 'cmp-cell--original' : ''} ${esMejor ? 'cmp-cell--best' : ''}">
         ${precio != null ? `$${precio}` : '—'}
@@ -120,45 +112,39 @@ function pintarComparacion(productos, idOriginal) {
 
   // Semáforo
   const filaSem = fila('Semáforo', 'fa-solid fa-traffic-light',
-    ordenados.map((p, i) => {
-      const c = p.estado_evaluacion === 'insuficiente' ? 'gris' : (p.color_semaforo || 'gris');
+    ordenados.map((a, i) => {
+      const c = a.estado_evaluacion === 'insuficiente' ? 'gris' : (a.color_semaforo || 'gris');
       return `<div class="cmp-cell ${i === 0 ? 'cmp-cell--original' : ''} ${c === 'verde' ? 'cmp-cell--best' : ''}">
         ${ETQ_SEM[c] || c}
       </div>`;
     }).join('')
   );
 
-  // Características
-  const filaCaract = fila('Características', 'fa-solid fa-list-check',
-    ordenados.map((p, i) => {
-      const caracts = p.caracteristicas || [];
-      const lista   = caracts.slice(0, 3).map(c => `<li>${c.descripcion}</li>`).join('');
-      const extra   = caracts.length > 3 ? `<li style="color:var(--color-text-muted)">+${caracts.length - 3} más</li>` : '';
+  // Descripción
+  const filaDesc = fila('Descripción', 'fa-solid fa-align-left',
+    ordenados.map((a, i) => {
+      const texto = a.descripcion?.trim() || '';
       return `<div class="cmp-cell ${i === 0 ? 'cmp-cell--original' : ''}">
-        ${caracts.length
-          ? `<ul class="cmp-vent-list">${lista}${extra}</ul>`
+        ${texto
+          ? `<p style="font-size:var(--text-sm);text-align:left;margin:0;line-height:1.5">${texto}</p>`
           : '<span style="color:var(--color-text-muted)">—</span>'}
       </div>`;
     }).join('')
   );
 
-  // Ventajas ecológicas
-  const maxVent   = Math.max(...ordenados.map(p => p.ventajas?.length || 0));
-  const filaVent  = fila('Ventajas ecológicas', 'fa-solid fa-leaf',
-    ordenados.map((p, i) => {
-      const vents   = p.ventajas || [];
-      const esMejor = vents.length > 0 && vents.length === maxVent;
-      const lista   = vents.slice(0, 3).map(v => `<li>${v.descripcion}</li>`).join('');
-      const extra   = vents.length > 3 ? `<li style="color:var(--color-text-muted)">+${vents.length - 3} más</li>` : '';
-      return `<div class="cmp-cell ${i === 0 ? 'cmp-cell--original' : ''} ${esMejor ? 'cmp-cell--best' : ''}">
-        ${vents.length
-          ? `<ul class="cmp-vent-list">${lista}${extra}</ul>`
+  // Razón de clasificación
+  const filaRazon = fila('Razón de clasificación', 'fa-solid fa-magnifying-glass-chart',
+    ordenados.map((a, i) => {
+      const texto = a.razon_clasificacion?.trim() || '';
+      return `<div class="cmp-cell ${i === 0 ? 'cmp-cell--original' : ''}">
+        ${texto
+          ? `<p style="font-size:var(--text-sm);text-align:left;margin:0;line-height:1.5">${texto}</p>`
           : '<span style="color:var(--color-text-muted)">—</span>'}
       </div>`;
     }).join('')
   );
 
-  tabla.innerHTML = header + filaPrecio + filaSem + filaCaract + filaVent;
+  tabla.innerHTML = header + filaPrecio + filaSem + filaDesc + filaRazon;
 
   document.getElementById('loader')?.classList.add('hidden');
   document.getElementById('contenido-comparacion')?.classList.remove('hidden');
