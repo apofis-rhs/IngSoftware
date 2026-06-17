@@ -182,7 +182,7 @@ def historial(request):
     usuario = _get_usuario(request)
     if not usuario or not hasattr(usuario, 'id_usuario') or usuario.id_usuario is None:
         return Response({'error': 'No autorizado'}, status=status.HTTP_401_UNAUTHORIZED)
-    consultas = Consulta.objects.filter(id_usuario=usuario).order_by('-fecha_consulta')
+    consultas = Consulta.objects.filter(id_usuario=usuario).select_related('id_producto').order_by('-fecha_consulta')
     return Response(ConsultaSerializer(consultas, many=True).data)
 
 

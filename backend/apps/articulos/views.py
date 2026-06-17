@@ -21,12 +21,20 @@ def _get_usuario(request):
 
 @api_view(['GET'])
 def buscar_articulos(request):
-    q = request.query_params.get('q', '').strip()
-    # q vacío → devuelve todos los artículos
+    q      = request.query_params.get('q', '').strip()
+    cat    = request.query_params.get('categoria', '').strip()
+    subcat = request.query_params.get('subcategoria', '').strip()
+    articulos = Articulo.objects.all()
     if q:
-        articulos = Articulo.objects.filter(nombre_articulo__icontains=q)
-    else:
-        articulos = Articulo.objects.all().order_by('nombre_articulo')
+        articulos = articulos.filter(nombre_articulo__icontains=q)
+    if subcat:
+        ids = [s.strip() for s in subcat.split(',') if s.strip().isdigit()]
+        if ids:
+            articulos = articulos.filter(id_subcategoria_id__in=ids)
+    elif cat:
+        articulos = articulos.filter(id_subcategoria__id_categoria_id=cat)
+    if not q and not cat and not subcat:
+        articulos = articulos.order_by('nombre_articulo')
     return Response(ArticuloListSerializer(articulos, many=True).data)
 
 
@@ -53,8 +61,24 @@ def alternativas_articulo(request, id_articulo):
         return Response(
             {'error': 'Artículo no encontrado'}, status=status.HTTP_404_NOT_FOUND
         )
-    alternativas = Alternativa.objects.filter(id_articulo=articulo)
-    return Response(AlternativaSerializer(alternativas, many=True).data)
+    # Verdes de la misma subcategoría, excluyendo el artículo original
+    alternativas = Articulo.objects.filter(
+        id_subcategoria_id=articulo.id_subcategoria_id,
+        color_semaforo='verde',
+    ).exclude(id_articulo=id_articulo).order_by('precio_estimado')
+    return Response(ArticuloListSerializer(alternativas, many=True).data)
+
+
+@api_view(['GET'])
+def comparar_articulos(request):
+    ids_str = request.query_params.get('ids', '')
+    ids = [int(i) for i in ids_str.split(',') if i.strip().isdigit()][:4]
+    if not ids:
+        return Response(
+            {'error': 'Parámetro ids requerido'}, status=status.HTTP_400_BAD_REQUEST
+        )
+    articulos = Articulo.objects.filter(id_articulo__in=ids)
+    return Response(ArticuloDetalleSerializer(articulos, many=True).data)
 
 
 @api_view(['GET'])

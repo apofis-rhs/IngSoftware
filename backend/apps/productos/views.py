@@ -178,14 +178,19 @@ def _guardar_clasificacion(id_producto, resultado, producto_obj):
 
 @api_view(['GET'])
 def buscar_productos(request):
-    q = request.query_params.get('q', '').strip()
-    cat = request.query_params.get('categoria', '').strip()
-    orden = request.query_params.get('orden', '').strip()  # precio_asc, precio_desc, nombre
+    q      = request.query_params.get('q', '').strip()
+    cat    = request.query_params.get('categoria', '').strip()
+    subcat = request.query_params.get('subcategoria', '').strip()
+    orden  = request.query_params.get('orden', '').strip()
 
     qs = Producto.objects.all()
     if q:
         qs = qs.filter(nombre_producto__icontains=q)
-    if cat:
+    if subcat:
+        ids = [s.strip() for s in subcat.split(',') if s.strip().isdigit()]
+        if ids:
+            qs = qs.filter(id_subcategoria_id__in=ids)
+    elif cat:
         qs = qs.filter(id_subcategoria__id_categoria_id=cat)
 
     if orden == 'precio_asc':
@@ -208,12 +213,14 @@ def listar_categorias(request):
 @api_view(['GET'])
 def comparar_productos(request):
     ids_str = request.query_params.get('ids', '')
-    ids = [int(i) for i in ids_str.split(',') if i.strip().isdigit()][:3]
+    ids = [int(i) for i in ids_str.split(',') if i.strip().isdigit()][:4]
     if not ids:
         return Response(
             {'error': 'Parámetro ids requerido'}, status=status.HTTP_400_BAD_REQUEST
         )
-    productos = Producto.objects.filter(id_producto__in=ids)
+    productos = Producto.objects.filter(id_producto__in=ids).select_related('id_subcategoria').prefetch_related(
+        'ventaja_set', 'desventaja_set', 'caracteristica_set'
+    )
     return Response(ProductoDetalleSerializer(productos, many=True).data)
 
 
@@ -236,7 +243,9 @@ def lista_productos(request):
 @api_view(['GET', 'PUT', 'DELETE'])
 def detalle_producto(request, id_producto):
     try:
-        producto = Producto.objects.get(id_producto=id_producto)
+        producto = Producto.objects.select_related('id_subcategoria').prefetch_related(
+            'ventaja_set', 'desventaja_set', 'caracteristica_set'
+        ).get(id_producto=id_producto)
     except Producto.DoesNotExist:
         return Response(
             {'error': 'Producto no encontrado'}, status=status.HTTP_404_NOT_FOUND
@@ -268,14 +277,14 @@ def detalle_producto(request, id_producto):
 @api_view(['GET'])
 def alternativas_producto(request, id_producto):
     try:
-        producto = Producto.objects.get(id_producto=id_producto)
+        producto = Producto.objects.select_related('id_subcategoria').get(id_producto=id_producto)
     except Producto.DoesNotExist:
         return Response({'error': 'Producto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
-    # Solo verdes, misma subcategoría, máximo 3
+    # Verdes de la misma subcategoría, ordenados por precio_min
     alternativas = Producto.objects.filter(
-        id_subcategoria=producto.id_subcategoria,
+        id_subcategoria_id=producto.id_subcategoria_id,
         color_semaforo='verde',
-    ).exclude(id_producto=id_producto).order_by('precio_min')[:3]
+    ).exclude(id_producto=id_producto).select_related('id_subcategoria').order_by('precio_min')
     return Response(ProductoListSerializer(alternativas, many=True).data)
 
 
