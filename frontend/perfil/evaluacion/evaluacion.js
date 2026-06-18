@@ -5,6 +5,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!estaLogueado()) { window.location.href = '/auth/login/login.html'; return; }
 
+  // ── BOTÓN REGRESAR INTELIGENTE ────────────────────────
+  // Captura la flecha de la barra superior
+  const btnAtrasHeader = document.getElementById('btn-atras-header') || document.querySelector('.btn-back');
+  if (btnAtrasHeader) {
+    btnAtrasHeader.addEventListener('click', irAtras);
+  }
+
+  // Captura el botón "Volver" en la pantalla de éxito para que también sea inteligente
+  // Asumiendo que le pusimos la clase '.btn-guardar-pill' en el HTML
+  const btnAtrasExito = document.querySelector('#success-view a.btn-guardar-pill') || document.querySelector('#success-view button.btn-guardar-pill');
+  if (btnAtrasExito) {
+     btnAtrasExito.addEventListener('click', irAtras);
+  }
+
   // Nav
   const hamburger = document.getElementById('hamburger');
   const navDrawer = document.getElementById('nav-drawer');
@@ -39,24 +53,81 @@ document.addEventListener('DOMContentLoaded', () => {
   let calificacion = 0;
   let errorTimer;
 
-  const emojis = { 0:'😶', 1:'😞', 2:'😕', 3:'🙂', 4:'😄', 5:'🤩' };
+  const emojis = { 0:'😶', 1:'😞', 2:'😕', 3:'😐', 4:'🙂', 5:'🤩' };
 
-  // ── Lógica estrellas ─────────────────────────────────────
+  // ── Lógica avanzada para estrellas (Soporta clics y arrastre táctil) ──
+
+  const guardarCalificacion = (valor) => {
+    calificacion = valor;
+    pintarEstrellas(calificacion);
+    actualizarEmoji(calificacion);
+    alertaError?.classList.add('hidden');
+  };
+
+  // Detecta qué estrella está tocando el usuario durante el movimiento táctil
+  const obtenerEstrellaDesdeTouch = (e) => {
+    const touch = e.touches[0];
+    const elemento = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (!elemento) return null;
+    return elemento.closest('.star');
+  };
+
   estrellas.forEach(star => {
-    star.addEventListener('mouseover', () => {
+    // Escritorio: Mouse hover
+    star.addEventListener('mouseenter', () => {
       const v = Number(star.dataset.value);
-      pintarEstrellas(v); actualizarEmoji(v);
+      pintarEstrellas(v);
+      actualizarEmoji(v);
     });
+
+    // Escritorio: Clic
     star.addEventListener('click', () => {
-      calificacion = Number(star.dataset.value);
-      pintarEstrellas(calificacion); actualizarEmoji(calificacion);
-      alertaError?.classList.add('hidden');
+      const v = Number(star.dataset.value);
+      guardarCalificacion(v);
     });
   });
 
+  // Salir con el ratón restablece al estado guardado
   document.getElementById('estrellas')?.addEventListener('mouseleave', () => {
-    pintarEstrellas(calificacion); actualizarEmoji(calificacion);
+    pintarEstrellas(calificacion);
+    actualizarEmoji(calificacion);
   });
+
+  // Móvil: Eventos Táctiles Globales en el contenedor
+  const contenedorEstrellas = document.getElementById('estrellas');
+  if (contenedorEstrellas) {
+    
+    // Al iniciar el toque
+    contenedorEstrellas.addEventListener('touchstart', (e) => {
+      const star = obtenerEstrellaDesdeTouch(e);
+      if (star) {
+        const v = Number(star.dataset.value);
+        pintarEstrellas(v);
+        actualizarEmoji(v);
+      }
+    }, { passive: true });
+
+    // Mientras mueve el dedo por encima de las estrellas
+    contenedorEstrellas.addEventListener('touchmove', (e) => {
+      e.preventDefault(); // Evita que la pantalla haga scroll mientras se arrastra
+      const star = obtenerEstrellaDesdeTouch(e);
+      if (star) {
+        const v = Number(star.dataset.value);
+        pintarEstrellas(v);
+        actualizarEmoji(v);
+      }
+    }, { passive: false });
+
+    // Al levantar el dedo de la pantalla, se fija la última calificación visualizada
+    contenedorEstrellas.addEventListener('touchend', () => {
+      const estrellaActiva = estrellas.reduce((max, s) => s.classList.contains('star--filled') ? Math.max(max, Number(s.dataset.value)) : max, 0);
+      if (estrellaActiva > 0) {
+        guardarCalificacion(estrellaActiva);
+      }
+    });
+  }
+
+  // ── Funciones Auxiliares ───────────────────────────────────────────
 
   function pintarEstrellas(val) {
     estrellas.forEach(s => s.classList.toggle('star--filled', Number(s.dataset.value) <= val));
@@ -66,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!emojiDisplay || emojiDisplay.textContent === emojis[val]) return;
     emojiDisplay.textContent = emojis[val];
     emojiDisplay.classList.remove('bounce');
-    void emojiDisplay.offsetWidth;
+    void emojiDisplay.offsetWidth; // Reflow para reiniciar la animación
     emojiDisplay.classList.add('bounce');
   }
 
@@ -106,7 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setLoading(true);
 
     try {
-      // Usa enviarEvaluacion de api.js
       const { ok, data } = await enviarEvaluacion(idProducto, calificacion, comentario);
 
       if (ok) {
@@ -123,3 +193,16 @@ document.addEventListener('DOMContentLoaded', () => {
     finally  { setLoading(false); }
   });
 });
+
+// ── FUNCIÓN MAESTRA PARA REGRESAR ───────────────────────────────
+function irAtras(e) {
+  if (e) e.preventDefault();
+  
+  const prev = document.referrer;
+  
+  if (!prev || prev.includes('/auth/')) {
+    window.location.href = '/inicio/inicio.html';
+  } else {
+    window.history.back();
+  }
+}

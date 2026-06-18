@@ -6,6 +6,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.location.href = '/auth/login/login.html'; return;
   }
 
+  // ── Botón Regresar Inteligente ────────────────────────
+  document.getElementById('btn-regresar')?.addEventListener('click', irAtras);
+
+  // Nav
   ['btn-cerrar-sesion','btn-cerrar-sesion-mobile'].forEach(id => {
     document.getElementById(id)?.addEventListener('click', e => {
       e.preventDefault();
@@ -37,8 +41,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch (err) {
     mostrarError(`Error: ${err.message}`);
   }
-
-  document.getElementById('btn-regresar')?.addEventListener('click', irAtras);
 });
 
 function pintarComparacion(productos, idOriginal) {
@@ -47,13 +49,12 @@ function pintarComparacion(productos, idOriginal) {
   const ordenados    = [original, ...alternativas];
 
   const colorOrig = original.estado_evaluacion === 'insuficiente' ? 'gris' : (original.color_semaforo || 'gris');
-
   const subtitulo = document.getElementById('subtitulo-comparacion');
   if (subtitulo) {
     subtitulo.textContent = `Comparando ${ordenados.length} producto${ordenados.length > 1 ? 's' : ''} de la misma subcategoría`;
   }
 
-  // ── Cards de productos ───────────────────────────────
+  // Cards de productos
   const gridProductos = document.getElementById('grid-productos');
   gridProductos.style.gridTemplateColumns = `repeat(${ordenados.length}, 1fr)`;
   gridProductos.innerHTML = ordenados.map((p, i) => {
@@ -64,18 +65,15 @@ function pintarComparacion(productos, idOriginal) {
     return `
       <div class="cmp-card ${isOrig ? 'cmp-card--original' : 'cmp-card--alt'}">
         <span class="cmp-badge ${isOrig ? '' : 'cmp-badge--alt'}">${isOrig ? 'Tu producto' : 'Alternativa'}</span>
-        <img src="${img}" alt="${p.nombre_producto}"
-             class="cmp-card__img"
-             onerror="this.src='/assets/images/placeholder.svg'">
+        <img src="${img}" alt="${p.nombre_producto}" class="cmp-card__img" onerror="this.src='/assets/images/placeholder.svg'">
         <div class="cmp-dot" style="background:var(--color-semaforo-${color})"></div>
         <h3 class="cmp-card__name">${p.nombre_producto}</h3>
         <p class="cmp-card__price">${precioMax}</p>
-        <a href="/buscador/detalle-producto/detalle-producto.html?id=${p.id_producto}"
-           class="btn btn--secondary" style="margin-top:var(--space-2);font-size:var(--text-sm)">Ver detalle</a>
+        <a href="/buscador/detalle-producto/detalle-producto.html?id=${p.id_producto}" class="btn btn--secondary" style="margin-top:var(--space-2);font-size:var(--text-sm)">Ver detalle</a>
       </div>`;
   }).join('');
 
-  // ── Tabla comparativa ────────────────────────────────
+  // Tabla comparativa
   const tabla = document.getElementById('tabla-comparacion');
   if (!tabla) {
     document.getElementById('loader')?.classList.add('hidden');
@@ -83,10 +81,8 @@ function pintarComparacion(productos, idOriginal) {
     return;
   }
 
-  const cols     = ordenados.length;
-  const gridCols = `160px repeat(${cols}, 1fr)`;
-  tabla.style.setProperty('--cmp-cols', gridCols);
-
+  const cols = ordenados.length;
+  tabla.style.setProperty('--cmp-cols', `160px repeat(${cols}, 1fr)`);
   const ETQ_SEM = { verde:'🟢 Verde', amarillo:'🟡 Amarillo', rojo:'🔴 Rojo', gris:'⚪ Sin datos' };
 
   const fila = (label, icon, celdas) => `
@@ -95,71 +91,22 @@ function pintarComparacion(productos, idOriginal) {
       ${celdas}
     </div>`;
 
-  const header = `
-    <div class="cmp-row cmp-row--header">
-      <div class="cmp-label">Atributo</div>
-      ${ordenados.map((p, i) => `
-        <div class="cmp-cell ${i === 0 ? 'cmp-cell--original' : ''}">
-          ${p.nombre_producto}
-        </div>`).join('')}
-    </div>`;
+  const header = `<div class="cmp-row cmp-row--header"><div class="cmp-label">Atributo</div>${ordenados.map((p, i) => `<div class="cmp-cell ${i === 0 ? 'cmp-cell--original' : ''}">${p.nombre_producto}</div>`).join('')}</div>`;
 
-  // Precio máximo
   const preciosMax = ordenados.map(p => p.precio_max != null ? parseFloat(p.precio_max) : null);
   const minPrecio  = Math.min(...preciosMax.filter(n => n !== null));
-  const filaPrecio = fila('Precio máximo', 'fa-solid fa-tag',
-    ordenados.map((p, i) => {
-      const precio  = preciosMax[i];
-      const esMejor = precio !== null && precio === minPrecio;
-      return `<div class="cmp-cell ${i === 0 ? 'cmp-cell--original' : ''} ${esMejor ? 'cmp-cell--best' : ''}">
-        ${precio != null ? `$${precio}` : '—'}
-        ${esMejor ? '<i class="fa-solid fa-circle-check" style="color:var(--color-success)"></i>' : ''}
-      </div>`;
-    }).join('')
-  );
+  const filaPrecio = fila('Precio máximo', 'fa-solid fa-tag', ordenados.map((p, i) => {
+    const precio = preciosMax[i];
+    const esMejor = precio !== null && precio === minPrecio;
+    return `<div class="cmp-cell ${i === 0 ? 'cmp-cell--original' : ''} ${esMejor ? 'cmp-cell--best' : ''}">${precio != null ? `$${precio}` : '—'} ${esMejor ? '<i class="fa-solid fa-circle-check" style="color:var(--color-success)"></i>' : ''}</div>`;
+  }).join(''));
 
-  // Semáforo
-  const filaSem = fila('Semáforo', 'fa-solid fa-traffic-light',
-    ordenados.map((p, i) => {
-      const c = p.estado_evaluacion === 'insuficiente' ? 'gris' : (p.color_semaforo || 'gris');
-      return `<div class="cmp-cell ${i === 0 ? 'cmp-cell--original' : ''} ${c === 'verde' ? 'cmp-cell--best' : ''}">
-        ${ETQ_SEM[c] || c}
-      </div>`;
-    }).join('')
-  );
+  const filaSem = fila('Semáforo', 'fa-solid fa-traffic-light', ordenados.map((p, i) => {
+    const c = p.estado_evaluacion === 'insuficiente' ? 'gris' : (p.color_semaforo || 'gris');
+    return `<div class="cmp-cell ${i === 0 ? 'cmp-cell--original' : ''} ${c === 'verde' ? 'cmp-cell--best' : ''}">${ETQ_SEM[c] || c}</div>`;
+  }).join(''));
 
-  // Características
-  const filaCaract = fila('Características', 'fa-solid fa-list-check',
-    ordenados.map((p, i) => {
-      const caracts = p.caracteristicas || [];
-      const lista   = caracts.slice(0, 3).map(c => `<li>${c.descripcion}</li>`).join('');
-      const extra   = caracts.length > 3 ? `<li style="color:var(--color-text-muted)">+${caracts.length - 3} más</li>` : '';
-      return `<div class="cmp-cell ${i === 0 ? 'cmp-cell--original' : ''}">
-        ${caracts.length
-          ? `<ul class="cmp-vent-list">${lista}${extra}</ul>`
-          : '<span style="color:var(--color-text-muted)">—</span>'}
-      </div>`;
-    }).join('')
-  );
-
-  // Ventajas ecológicas
-  const maxVent   = Math.max(...ordenados.map(p => p.ventajas?.length || 0));
-  const filaVent  = fila('Ventajas ecológicas', 'fa-solid fa-leaf',
-    ordenados.map((p, i) => {
-      const vents   = p.ventajas || [];
-      const esMejor = vents.length > 0 && vents.length === maxVent;
-      const lista   = vents.slice(0, 3).map(v => `<li>${v.descripcion}</li>`).join('');
-      const extra   = vents.length > 3 ? `<li style="color:var(--color-text-muted)">+${vents.length - 3} más</li>` : '';
-      return `<div class="cmp-cell ${i === 0 ? 'cmp-cell--original' : ''} ${esMejor ? 'cmp-cell--best' : ''}">
-        ${vents.length
-          ? `<ul class="cmp-vent-list">${lista}${extra}</ul>`
-          : '<span style="color:var(--color-text-muted)">—</span>'}
-      </div>`;
-    }).join('')
-  );
-
-  tabla.innerHTML = header + filaPrecio + filaSem + filaCaract + filaVent;
-
+  tabla.innerHTML = header + filaPrecio + filaSem;
   document.getElementById('loader')?.classList.add('hidden');
   document.getElementById('contenido-comparacion')?.classList.remove('hidden');
 }
@@ -169,7 +116,9 @@ function mostrarError(msg) {
   if (loader) loader.innerHTML = `<div class="alerta alerta--error">${msg}</div>`;
 }
 
-function irAtras() {
+// ── FUNCIÓN MAESTRA PARA REGRESAR ───────────────────────────────
+function irAtras(e) {
+  if (e) e.preventDefault();
   const prev = document.referrer;
   if (!prev || prev.includes('/auth/')) {
     window.location.href = '/inicio/inicio.html';

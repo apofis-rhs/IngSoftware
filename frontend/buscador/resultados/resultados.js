@@ -40,11 +40,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   const listaResultados  = document.getElementById('lista-resultados');
   const tituloResultados = document.getElementById('titulo-resultados');
   const filtrosContenedor = document.getElementById('filtros-activos');
+  const btnRegresar = document.getElementById('btn-regresar');
+
+  // Conectar botón regresar
+  if (btnRegresar) {
+    btnRegresar.addEventListener('click', irAtras);
+  }
 
   let qActual = qInicial;
   if (inputBusqueda) inputBusqueda.value = qActual;
 
-  // Cargar subcategorías y primera búsqueda en paralelo
   const [, subcatsRes] = await Promise.all([
     ejecutarBusqueda(),
     listarSubcategorias().catch(() => ({ ok: false, data: [] })),
@@ -53,17 +58,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (subcatsRes.ok) todasSubcats = subcatsRes.data;
   renderFiltros();
 
-  // ── Render zona de filtros ───────────────────────────
   function renderFiltros() {
     if (!filtrosContenedor) return;
-
-    const subcatsDeCategoria = todasSubcats.filter(
-      s => String(s.id_categoria) === String(catActual)
-    );
-
+    const subcatsDeCategoria = todasSubcats.filter(s => String(s.id_categoria) === String(catActual));
     let html = '';
 
-    // Chip de categoría con ×
     if (catNombre) {
       html += `
         <div class="filtros-fila">
@@ -76,14 +75,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>`;
     }
 
-    // Pills de subcategorías (toggle multi-select)
     if (subcatsDeCategoria.length) {
       const pills = subcatsDeCategoria.map(s => {
         const activa = subcatsSeleccionadas.has(String(s.id_subcategoria));
         return `
-          <button class="subcat-pill ${activa ? 'subcat-pill--active' : ''}"
-                  data-id="${s.id_subcategoria}"
-                  data-nombre="${s.nombre_subcategoria}">
+          <button class="subcat-pill ${activa ? 'subcat-pill--active' : ''}" data-id="${s.id_subcategoria}">
             ${s.nombre_subcategoria}
           </button>`;
       }).join('');
@@ -97,21 +93,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     filtrosContenedor.innerHTML = html;
 
-    // Acción: volver a categorías
     filtrosContenedor.querySelector('#btn-cambiar-cat')?.addEventListener('click', () => {
       window.location.href = '/buscador/inicio/inicio.html';
     });
 
-    // Toggle subcategoría
     filtrosContenedor.querySelectorAll('.subcat-pill').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = String(btn.dataset.id);
-        if (subcatsSeleccionadas.has(id)) {
-          subcatsSeleccionadas.delete(id);
-        } else {
-          subcatsSeleccionadas.add(id);
-        }
-        // Actualizar apariencia del pill sin re-renderizar todo
+        if (subcatsSeleccionadas.has(id)) subcatsSeleccionadas.delete(id);
+        else subcatsSeleccionadas.add(id);
+        
         btn.classList.toggle('subcat-pill--active', subcatsSeleccionadas.has(id));
         qActual = '';
         if (inputBusqueda) inputBusqueda.value = '';
@@ -121,22 +112,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // ── Búsqueda ──────────────────────────────────────────
   async function ejecutarBusqueda() {
     if (listaResultados) listaResultados.innerHTML = '<p class="text-muted text-center">Buscando...</p>';
     document.getElementById('btn-cargar-resultados')?.remove();
 
     try {
-      const opcs = subcatsSeleccionadas.size
-        ? { subcategorias: [...subcatsSeleccionadas] }
-        : { categoria: catActual };
-
+      const opcs = subcatsSeleccionadas.size ? { subcategorias: [...subcatsSeleccionadas] } : { categoria: catActual };
       const { ok, data } = await buscarProductosFiltrado(qActual, opcs);
 
       if (!ok || !data?.length) {
         if (tituloResultados) tituloResultados.textContent = 'Resultados (0)';
-        if (listaResultados) listaResultados.innerHTML =
-          `<div class="alerta alerta--warning">No encontramos resultados${qActual ? ` para "<strong>${qActual}</strong>"` : ''}.</div>`;
+        if (listaResultados) listaResultados.innerHTML = `<div class="alerta alerta--warning">No encontramos resultados.</div>`;
         return;
       }
 
@@ -149,30 +135,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // ── Render lista ──────────────────────────────────────
-  // ── Render lista ──────────────────────────────────────
   function renderResultados() {
     if (!listaResultados) return;
     const slice = todosResultados.slice(0, visibles);
 
     listaResultados.innerHTML = slice.map(p => {
-      // Si no tiene semáforo, por defecto es gris
-      const color  = p.estado_evaluacion === 'insuficiente' ? 'gris' : (p.color_semaforo || 'gris');
-      
-      // La función que ya tenías para traer la imagen
+      const color = p.estado_evaluacion === 'insuficiente' ? 'gris' : (p.color_semaforo || 'gris');
       const imgSrc = getRutaImagen(p);
-      
-      // Formateo del precio tal como lo tenías
       const precio = p.precio_min != null ? `$${p.precio_min} – $${p.precio_max}` : 'Precio no disponible';
 
-      // Aquí está la magia: Usamos las clases HTML que el CSS moderno necesita
       return `
         <div class="resultado-card-modern fade-in-up" data-id="${p.id_producto}">
-          
           <div class="resultado-card__imagen">
              <img src="${imgSrc}" alt="${p.nombre_producto}" onerror="this.src='/assets/img/placeholder-product.png'">
           </div>
-
           <div class="resultado-card__info">
             <h3 class="resultado-card__titulo">${p.nombre_producto}</h3>
             <div class="resultado-card__detalles">
@@ -182,7 +158,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <span class="resultado-card__precio">${precio}</span>
             </div>
           </div>
-          
           <div class="resultado-card__flecha">
             <i class="fa-solid fa-arrow-right"></i>
           </div>
@@ -200,7 +175,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const btn = document.createElement('button');
       btn.id = 'btn-cargar-resultados';
       btn.className = 'btn-cargar-mas';
-      btn.innerHTML = `<i class="fa-solid fa-chevron-down"></i> Cargar más (${todosResultados.length - visibles} restantes)`;
+      btn.innerHTML = `<i class="fa-solid fa-chevron-down"></i> Cargar más`;
       btn.addEventListener('click', () => { visibles += POR_PAGINA; renderResultados(); });
       listaResultados.after(btn);
     }
@@ -212,11 +187,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     visibles = POR_PAGINA;
     ejecutarBusqueda();
   });
-
-  document.getElementById('btn-regresar')?.addEventListener('click', irAtras);
 });
 
-function irAtras() {
+// ── FUNCIÓN MAESTRA ───────────────────────────────
+function irAtras(e) {
+  if (e) e.preventDefault();
   const prev = document.referrer;
   if (!prev || prev.includes('/auth/')) {
     window.location.href = '/inicio/inicio.html';

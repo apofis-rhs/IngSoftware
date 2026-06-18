@@ -6,6 +6,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (!estaLogueado()) { window.location.href = '/auth/login/login.html'; return; }
 
+  // ── BOTÓN REGRESAR INTELIGENTE ────────────────────────
+  const btnAtrasHeader = document.querySelector('.btn-back');
+  if (btnAtrasHeader) {
+    btnAtrasHeader.addEventListener('click', irAtras);
+  }
+
   // Nav
   const hamburger = document.getElementById('hamburger');
   const navDrawer = document.getElementById('nav-drawer');
@@ -42,9 +48,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ── Carga desde la BD ────────────────────────────────────
   try {
     const { ok, data } = await obtenerHistorial();
-    // El ConsultaSerializer devuelve:
-    // { id_consulta, fecha_consulta, id_producto_id, nombre_producto,
-    //   color_semaforo, imagen, id_subcategoria }
 
     if (!ok || !Array.isArray(data) || data.length === 0) {
       contenedor.innerHTML = `
@@ -71,7 +74,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       const badgeStyle = badgeColors[color]  || 'background:#F5F5F5;color:#666';
       const etiqueta   = color.charAt(0).toUpperCase() + color.slice(1);
 
-      // Usar id_producto_id (campo real del serializer)
       const id     = item.id_producto_id;
       const nombre = item.nombre_producto || 'Producto';
       const ruta   = `../../buscador/detalle-producto/detalle-producto.html`;
@@ -118,4 +120,15 @@ function calcularTiempoRelativo(fechaISO) {
   if (dias     === 1) return 'Ayer';
   if (dias     < 7)   return `Hace ${dias} días`;
   return new Date(fechaISO).toLocaleDateString('es-MX');
+}
+
+// ── FUNCIÓN MAESTRA PARA REGRESAR ───────────────────────────────
+function irAtras(e) {
+  if (e) e.preventDefault();
+  const prev = document.referrer;
+  if (!prev || prev.includes('/auth/')) {
+    window.location.href = '/inicio/inicio.html';
+  } else {
+    window.history.back();
+  }
 }

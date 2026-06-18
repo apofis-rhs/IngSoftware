@@ -251,8 +251,12 @@ function toast(msg) {
   } catch(_) {}
 }
 
-function irAtras() {
-  const prev = document.referrer;
+// ── FUNCIÓN MAESTRA PARA REGRESAR ───────────────────────────────
+function irAtras(e) {
+  if (e) e.preventDefault(); 
+  
+  const prev = document.referrer; 
+  
   if (!prev || prev.includes('/auth/')) {
     window.location.href = '/inicio/inicio.html';
   } else {

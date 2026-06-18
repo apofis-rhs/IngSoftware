@@ -5,9 +5,9 @@
 // En local apunta al backend de Django. En producción apunta a Railway.
 // Una vez que tengas la URL de Railway, reemplaza BACKEND_URL_RAILWAY por ella.
 const IS_LOCAL = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-const API_URL = IS_LOCAL
-  ? 'http://localhost:8000/api'
-  : 'https://BACKEND_URL_RAILWAY.railway.app/api';
+const API_URL = IS_LOCAL 
+  ? 'http://localhost:8000/api' 
+  : 'https://ingsoftware-production-d046.up.railway.app/api';
 
 function getToken() { return localStorage.getItem('token'); }
 function authHeaders() {

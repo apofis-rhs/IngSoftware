@@ -6,6 +6,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (!estaLogueado()) { window.location.href = '/auth/login/login.html'; return; }
 
+  // ── BOTÓN REGRESAR INTELIGENTE ────────────────────────
+  // Captura tanto la flecha superior como un botón inferior si lo hay
+  const btnAtras = document.querySelector('.btn-back') || document.getElementById('btn-regresar');
+  if (btnAtras) {
+    btnAtras.addEventListener('click', irAtras);
+  }
+
   // Nav
   const hamburger = document.getElementById('hamburger');
   const navDrawer  = document.getElementById('nav-drawer');
@@ -184,3 +191,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     setTimeout(() => t.remove(), 2800);
   }
 });
+
+// ── FUNCIÓN MAESTRA PARA REGRESAR ───────────────────────────────
+function irAtras(e) {
+  if (e) e.preventDefault(); // Evita que recargue la página si es una etiqueta <a>
+  
+  const prev = document.referrer;
+  
+  if (!prev || prev.includes('/auth/')) {
+    // Si viene directo del login o de una URL externa, lo mandamos al inicio
+    window.location.href = '/inicio/inicio.html';
+  } else {
+    // Regresa a la página exacta de donde vino (ej. el detalle del producto)
+    window.history.back();
+  }
+}

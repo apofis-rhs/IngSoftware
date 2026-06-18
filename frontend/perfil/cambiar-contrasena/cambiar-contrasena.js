@@ -5,6 +5,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!estaLogueado()) { window.location.href = '/auth/login/login.html'; return; }
 
+  // ── BOTÓN REGRESAR INTELIGENTE ────────────────────────
+  const btnAtras = document.querySelector('.btn-back');
+  if (btnAtras) {
+    // Le quitamos el href por si acaso lo tiene en el HTML
+    btnAtras.removeAttribute('href'); 
+    btnAtras.addEventListener('click', irAtras);
+  }
+
   // Nav
   const hamburger = document.getElementById('hamburger');
   const navDrawer = document.getElementById('nav-drawer');
@@ -118,7 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setLoading(true);
 
     try {
-      // Usa cambiarContrasena de api.js
       const { ok, data } = await cambiarContrasena(actual, nueva);
 
       if (ok) {
@@ -139,3 +146,16 @@ document.addEventListener('DOMContentLoaded', () => {
     finally  { setLoading(false); }
   }
 });
+
+// ── FUNCIÓN MAESTRA PARA REGRESAR ───────────────────────────────
+function irAtras(e) {
+  if (e) e.preventDefault();
+  
+  const prev = document.referrer;
+  
+  if (!prev || prev.includes('/auth/')) {
+    window.location.href = '/inicio/inicio.html';
+  } else {
+    window.history.back();
+  }
+}

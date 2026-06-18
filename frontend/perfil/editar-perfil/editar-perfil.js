@@ -5,6 +5,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (!estaLogueado()) { window.location.href = '/auth/login/login.html'; return; }
 
+  // ── BOTONES REGRESAR INTELIGENTES ────────────────────────
+  const btnAtrasForm = document.getElementById('btn-regresar');
+  const btnAtrasExito = document.getElementById('btn-regresar-exito');
+  
+  if (btnAtrasForm) btnAtrasForm.addEventListener('click', irAtras);
+  if (btnAtrasExito) btnAtrasExito.addEventListener('click', irAtras);
+
   // Nav
   const hamburger = document.getElementById('hamburger');
   const navDrawer = document.getElementById('nav-drawer');
@@ -13,6 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!hamburger?.contains(e.target) && !navDrawer?.contains(e.target))
       navDrawer?.classList.remove('open');
   });
+  
   ['btn-cerrar-sesion','btn-cerrar-sesion-mobile'].forEach(id => {
     document.getElementById(id)?.addEventListener('click', e => {
       e.preventDefault();
@@ -54,7 +62,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     btnGuardar.disabled = true;
 
     try {
-      // Usa editarPerfil de api.js
       const { ok, data } = await editarPerfil({
         nombre_completo: inputNombre.value.trim(),
         nombre_usuario:  inputUsuario.value.trim(),
@@ -80,3 +87,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 });
+
+// ── FUNCIÓN MAESTRA PARA REGRESAR ───────────────────────────────
+function irAtras(e) {
+  if (e) e.preventDefault();
+  
+  const prev = document.referrer;
+  
+  if (!prev || prev.includes('/auth/')) {
+    window.location.href = '/inicio/inicio.html';
+  } else {
+    window.history.back();
+  }
+}

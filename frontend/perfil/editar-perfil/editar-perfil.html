@@ -13,8 +13,6 @@
 </head>
 <body>
 
-
-  <!-- NAVBAR -->
   <nav class="navbar">
     <a class="navbar__logo" href="../../inicio/inicio.html">
       <img class="navbar__logo-img" src="../../assets/img/logo.png" alt="LUMIKA">
@@ -22,7 +20,7 @@
     </a>
     <div class="navbar__links hide-mobile">
       <a href="../../inicio/inicio.html"                 class="navbar__link"><i class="fa-solid fa-house"></i> Inicio</a>
-      <a href="../mi-perfil/mi-perfil.html"                         class="navbar__link navbar__link--active"><i class="fa-regular fa-user"></i> Perfil</a>
+      <a href="../mi-perfil/mi-perfil.html"              class="navbar__link navbar__link--active"><i class="fa-regular fa-user"></i> Perfil</a>
       <a href="../../buscador/inicio/inicio.html"        class="navbar__link"><i class="fa-solid fa-magnifying-glass"></i> Búsqueda</a>
       <a href="../../recomendaciones/inicio/inicio.html" class="navbar__link"><i class="fa-solid fa-plus"></i> Recomendaciones</a>
       <a href="../favoritos/favoritos.html"              class="navbar__link"><i class="fa-regular fa-star"></i> Mis Favoritos</a>
@@ -33,10 +31,9 @@
     </button>
   </nav>
 
-  <!-- DRAWER MÓVIL -->
   <div class="nav-drawer" id="nav-drawer">
     <a href="../../inicio/inicio.html"                 class="nav-drawer__link"><i class="fa-solid fa-house"></i> Inicio</a>
-    <a href="../mi-perfil/mi-perfil.html"                         class="nav-drawer__link"><i class="fa-regular fa-user"></i> Perfil</a>
+    <a href="../mi-perfil/mi-perfil.html"              class="nav-drawer__link"><i class="fa-regular fa-user"></i> Perfil</a>
     <a href="../../buscador/inicio/inicio.html"        class="nav-drawer__link"><i class="fa-solid fa-magnifying-glass"></i> Búsqueda</a>
     <a href="../../recomendaciones/inicio/inicio.html" class="nav-drawer__link"><i class="fa-solid fa-plus"></i> Recomendaciones</a>
     <a href="../favoritos/favoritos.html"              class="nav-drawer__link"><i class="fa-regular fa-star"></i> Mis Favoritos</a>
@@ -44,7 +41,6 @@
     <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</a>
   </div>
 
-  <!-- CONTENIDO -->
   <main class="page-wrapper">
     <div class="editar-container">
       
@@ -87,9 +83,9 @@
           <div id="mensaje" class="mensaje-contenedor"></div>
 
           <div class="editar-acciones">
-            <a href="../mi-perfil/mi-perfil.html" class="btn-regresar-outline">
+            <button id="btn-regresar" class="btn-regresar-outline">
               <i class="fa-solid fa-arrow-left"></i> Regresar
-            </a>
+            </button>
             <button id="btnGuardar" class="btn-guardar-pill">
               <i class="fa-regular fa-floppy-disk"></i> Guardar Cambios
             </button>
@@ -104,9 +100,9 @@
           </div>
           <h2 style="font-size: 24px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px;">¡Guardado Correctamente!</h2>
           <p style="font-size: 15px; color: #666; margin-bottom: 32px;">Tu información de perfil ha sido actualizada con éxito.</p>
-          <a href="../mi-perfil/mi-perfil.html" class="btn-guardar-pill" style="text-decoration: none;">
+          <button id="btn-regresar-exito" class="btn-guardar-pill">
              Volver a mi perfil
-          </a>
+          </button>
         </div>
 
       </div>
@@ -116,28 +112,5 @@
 
   <script type="module" src="./editar-perfil.js"></script>
 
-  <script>
-    const hamburger = document.getElementById('hamburger');
-    const navDrawer = document.getElementById('nav-drawer');
-    if (hamburger) {
-      hamburger.addEventListener('click', () => navDrawer.classList.toggle('open'));
-      document.addEventListener('click', (e) => {
-        if (!hamburger.contains(e.target) && !navDrawer.contains(e.target))
-          navDrawer.classList.remove('open');
-      });
-      window.addEventListener('resize', () => {
-        if (window.innerWidth >= 769) navDrawer.classList.remove('open');
-      });
-    }
-    ['btn-cerrar-sesion','btn-cerrar-sesion-mobile'].forEach(id => {
-      const btn = document.getElementById(id);
-      if (btn) btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        localStorage.removeItem('token');
-        localStorage.removeItem('usuario');
-        window.location.href = '../../auth/login/login.html';
-      });
-    });
-  </script>
 </body>
 </html>

@@ -19,7 +19,7 @@
 <body>
 
   <div class="page-header">
-    <a href="../mi-perfil/mi-perfil.html" class="btn-back"></a>
+    <a class="btn-back" id="btn-atras-header" aria-label="Volver"></a>
     <span class="page-header__title">Mis Favoritos</span>
   </div>
 
@@ -60,32 +60,6 @@
   </main>
 
   <script type="module" src="./favoritos.js"></script>
-
-  <script>
-    const hamburger = document.getElementById('hamburger');
-    const navDrawer = document.getElementById('nav-drawer');
-
-    if (hamburger) {
-      hamburger.addEventListener('click', () => {
-        navDrawer.classList.toggle('open');
-      });
-
-      document.addEventListener('click', (e) => {
-        if (
-          !hamburger.contains(e.target) &&
-          !navDrawer.contains(e.target)
-        ) {
-          navDrawer.classList.remove('open');
-        }
-      });
-
-      window.addEventListener('resize', () => {
-        if (window.innerWidth >= 769) {
-          navDrawer.classList.remove('open');
-        }
-      });
-    }
-  </script>
 
 </body>
 </html>

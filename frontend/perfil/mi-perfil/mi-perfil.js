@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (!estaLogueado()) { window.location.href = '/auth/login/login.html'; return; }
 
+  // ── BOTÓN REGRESAR INTELIGENTE ────────────────────────
+  document.getElementById('btn-regresar')?.addEventListener('click', irAtras);
+
   // Nav
   const hamburger = document.getElementById('hamburger');
   const navDrawer = document.getElementById('nav-drawer');
@@ -49,8 +52,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const textoEl     = document.getElementById('texto-eliminar');
   const loadingEl   = document.getElementById('loading-eliminar');
 
-  document.getElementById('btn-regresar')?.addEventListener('click', irAtras);
-
   btnAbrir?.addEventListener('click', e => { e.preventDefault(); modal?.classList.add('active'); });
   btnCancelar?.addEventListener('click', () => modal?.classList.remove('active'));
   modal?.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('active'); });
@@ -69,7 +70,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 });
 
-function irAtras() {
+// ── FUNCIÓN MAESTRA PARA REGRESAR ───────────────────────────────
+function irAtras(e) {
+  if (e) e.preventDefault();
   const prev = document.referrer;
   if (!prev || prev.includes('/auth/')) {
     window.location.href = '/inicio/inicio.html';
