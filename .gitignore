@@ -28,3 +28,15 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Archivos generados por collectstatic
+staticfiles/
+
+# Archivos de OneNote que genera Windows
+*.onetoc2
+
+# Firebase cache local
+.firebase/
+
+# Node (para Firebase CLI)
+node_modules/
