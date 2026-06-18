@@ -48,65 +48,49 @@ function pintarComparacion(productos, idOriginal) {
   const alternativas = productos.filter(p => p.id_producto !== idOriginal);
   const ordenados    = [original, ...alternativas];
 
-  const colorOrig = original.estado_evaluacion === 'insuficiente' ? 'gris' : (original.color_semaforo || 'gris');
   const subtitulo = document.getElementById('subtitulo-comparacion');
-  if (subtitulo) {
-    subtitulo.textContent = `Comparando ${ordenados.length} producto${ordenados.length > 1 ? 's' : ''} de la misma subcategoría`;
-  }
+  if (subtitulo) subtitulo.textContent = `Comparando ${ordenados.length} producto${ordenados.length > 1 ? 's' : ''}`;
 
-  // Cards de productos
+  // Cards superiores
   const gridProductos = document.getElementById('grid-productos');
   gridProductos.style.gridTemplateColumns = `repeat(${ordenados.length}, 1fr)`;
   gridProductos.innerHTML = ordenados.map((p, i) => {
-    const color    = p.estado_evaluacion === 'insuficiente' ? 'gris' : (p.color_semaforo || 'gris');
-    const img      = getRutaImagen(p);
-    const precioMax = p.precio_max != null ? `Hasta $${p.precio_max}` : '—';
-    const isOrig   = i === 0;
+    const color = p.estado_evaluacion === 'insuficiente' ? 'gris' : (p.color_semaforo || 'gris');
+    const isOrig = i === 0;
     return `
       <div class="cmp-card ${isOrig ? 'cmp-card--original' : 'cmp-card--alt'}">
         <span class="cmp-badge ${isOrig ? '' : 'cmp-badge--alt'}">${isOrig ? 'Tu producto' : 'Alternativa'}</span>
-        <img src="${img}" alt="${p.nombre_producto}" class="cmp-card__img" onerror="this.src='/assets/images/placeholder.svg'">
+        <img src="${getRutaImagen(p)}" alt="${p.nombre_producto}" class="cmp-card__img" onerror="this.src='/assets/images/placeholder.svg'">
         <div class="cmp-dot" style="background:var(--color-semaforo-${color})"></div>
         <h3 class="cmp-card__name">${p.nombre_producto}</h3>
-        <p class="cmp-card__price">${precioMax}</p>
+        <p class="cmp-card__price">${p.precio_max != null ? `Hasta $${p.precio_max}` : '—'}</p>
         <a href="/buscador/detalle-producto/detalle-producto.html?id=${p.id_producto}" class="btn btn--secondary" style="margin-top:var(--space-2);font-size:var(--text-sm)">Ver detalle</a>
       </div>`;
   }).join('');
 
-  // Tabla comparativa
+  // Tabla
   const tabla = document.getElementById('tabla-comparacion');
-  if (!tabla) {
-    document.getElementById('loader')?.classList.add('hidden');
-    document.getElementById('contenido-comparacion')?.classList.remove('hidden');
-    return;
-  }
-
   const cols = ordenados.length;
   tabla.style.setProperty('--cmp-cols', `160px repeat(${cols}, 1fr)`);
-  const ETQ_SEM = { verde:'🟢 Verde', amarillo:'🟡 Amarillo', rojo:'🔴 Rojo', gris:'⚪ Sin datos' };
 
-  const fila = (label, icon, celdas) => `
-    <div class="cmp-row">
-      <div class="cmp-label"><i class="${icon}"></i> ${label}</div>
-      ${celdas}
-    </div>`;
+  const fila = (label, icon, celdas) => `<div class="cmp-row"><div class="cmp-label"><i class="${icon}"></i> ${label}</div>${celdas}</div>`;
 
-  const header = `<div class="cmp-row cmp-row--header"><div class="cmp-label">Atributo</div>${ordenados.map((p, i) => `<div class="cmp-cell ${i === 0 ? 'cmp-cell--original' : ''}">${p.nombre_producto}</div>`).join('')}</div>`;
-
-  const preciosMax = ordenados.map(p => p.precio_max != null ? parseFloat(p.precio_max) : null);
-  const minPrecio  = Math.min(...preciosMax.filter(n => n !== null));
-  const filaPrecio = fila('Precio máximo', 'fa-solid fa-tag', ordenados.map((p, i) => {
-    const precio = preciosMax[i];
-    const esMejor = precio !== null && precio === minPrecio;
-    return `<div class="cmp-cell ${i === 0 ? 'cmp-cell--original' : ''} ${esMejor ? 'cmp-cell--best' : ''}">${precio != null ? `$${precio}` : '—'} ${esMejor ? '<i class="fa-solid fa-circle-check" style="color:var(--color-success)"></i>' : ''}</div>`;
+  // Filas
+  const header = `<div class="cmp-row cmp-row--header"><div class="cmp-label">Atributo</div>${ordenados.map((p, i) => `<div class="cmp-cell ${i===0?'cmp-cell--original':''}">${p.nombre_producto}</div>`).join('')}</div>`;
+  
+  const filaPrecio = fila('Precio', 'fa-solid fa-tag', ordenados.map((p, i) => `<div class="cmp-cell ${i===0?'cmp-cell--original':''}">${p.precio_max ? '$'+p.precio_max : '—'}</div>`).join(''));
+  
+  const filaCaract = fila('Características', 'fa-solid fa-list-check', ordenados.map((p, i) => {
+    const list = (p.caracteristicas || []).map(c => `<li>${c.descripcion}</li>`).join('');
+    return `<div class="cmp-cell ${i===0?'cmp-cell--original':''}"><ul class="cmp-vent-list">${list || '—'}</ul></div>`;
   }).join(''));
 
-  const filaSem = fila('Semáforo', 'fa-solid fa-traffic-light', ordenados.map((p, i) => {
-    const c = p.estado_evaluacion === 'insuficiente' ? 'gris' : (p.color_semaforo || 'gris');
-    return `<div class="cmp-cell ${i === 0 ? 'cmp-cell--original' : ''} ${c === 'verde' ? 'cmp-cell--best' : ''}">${ETQ_SEM[c] || c}</div>`;
+  const filaVent = fila('Ventajas ecológicas', 'fa-solid fa-leaf', ordenados.map((p, i) => {
+    const list = (p.ventajas || []).map(v => `<li>${v.descripcion}</li>`).join('');
+    return `<div class="cmp-cell ${i===0?'cmp-cell--original':''}"><ul class="cmp-vent-list">${list || '—'}</ul></div>`;
   }).join(''));
 
-  tabla.innerHTML = header + filaPrecio + filaSem;
+  tabla.innerHTML = header + filaPrecio + filaCaract + filaVent;
   document.getElementById('loader')?.classList.add('hidden');
   document.getElementById('contenido-comparacion')?.classList.remove('hidden');
 }
@@ -116,13 +100,9 @@ function mostrarError(msg) {
   if (loader) loader.innerHTML = `<div class="alerta alerta--error">${msg}</div>`;
 }
 
-// ── FUNCIÓN MAESTRA PARA REGRESAR ───────────────────────────────
 function irAtras(e) {
   if (e) e.preventDefault();
   const prev = document.referrer;
-  if (!prev || prev.includes('/auth/')) {
-    window.location.href = '/inicio/inicio.html';
-  } else {
-    window.history.back();
-  }
+  if (!prev || prev.includes('/auth/')) window.location.href = '/inicio/inicio.html';
+  else window.history.back();
 }
