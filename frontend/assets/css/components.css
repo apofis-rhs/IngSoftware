@@ -745,6 +745,7 @@
 /* ── BOTÓN REGRESAR ────────────────────────────────────── */
 /* El botón verde con ← Regresar que aparece en casi todas las pantallas */
 
+/* ── BOTÓN REGRESAR (CORRECCIÓN DEFINITIVA) ────────────────── */
 .btn-regresar {
   display: inline-flex;
   align-items: center;
@@ -766,9 +767,9 @@
   filter: brightness(0.92);
 }
 
+/* Esta línea elimina cualquier flecha que el CSS esté intentando inyectar */
 .btn-regresar::before {
-  content: '←';
-  font-size: var(--text-md);
+  content: none !important; 
 }
 
 
