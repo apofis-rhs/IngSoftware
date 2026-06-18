@@ -6,11 +6,13 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-lumika-dev-key-cambiar-en-produccion')
 
-DEBUG = True
+# Local: DEBUG=True (default). Railway: poner variable de entorno DEBUG=False
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+_allowed = os.getenv('ALLOWED_HOSTS', '')
+ALLOWED_HOSTS = [h.strip() for h in _allowed.split(',') if h.strip()] or ['localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -33,6 +35,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -46,7 +49,7 @@ ROOT_URLCONF = 'lumika.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR.parent / 'frontend'] if DEBUG else [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -86,21 +89,28 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# whitenoise sirve los archivos estáticos de Django Admin en producción
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+# En local también se sirven los archivos del frontend (en producción los sirve Firebase)
+if DEBUG:
+    STATICFILES_DIRS = [BASE_DIR.parent / 'frontend']
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Permite que el frontend (otro puerto) haga peticiones al backend
+# Permite que el frontend haga peticiones al backend
 CORS_ALLOW_ALL_ORIGINS = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [],
     'DEFAULT_PERMISSION_CLASSES': [],
 }
-
-
-
-STATICFILES_DIRS = [
-    BASE_DIR.parent / 'frontend',
-]
-
-
-TEMPLATES[0]['DIRS'] = [BASE_DIR.parent / 'frontend']
