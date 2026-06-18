@@ -370,17 +370,43 @@ def gestionar_articulos(request):
     return Response(ArticuloListSerializer(articulo).data, status=status.HTTP_201_CREATED)
 
 
-@api_view(['DELETE'])
-def eliminar_articulo(request, id_articulo):
-    """Elimina un artículo. Solo admin."""
+@api_view(['PUT', 'DELETE'])
+def editar_eliminar_articulo(request, id_articulo):
+    """PUT edita un artículo existente, DELETE lo elimina. Solo admin."""
     from apps.articulos.models import Articulo
+    from apps.articulos.serializers import ArticuloListSerializer
 
     usuario = _get_usuario(request)
     if not usuario or usuario.rol != 'admin':
         return Response({'error': 'No autorizado'}, status=status.HTTP_401_UNAUTHORIZED)
 
     try:
-        Articulo.objects.get(id_articulo=id_articulo).delete()
-        return Response({'mensaje': 'Artículo eliminado'})
+        articulo = Articulo.objects.get(id_articulo=id_articulo)
     except Articulo.DoesNotExist:
         return Response({'error': 'Artículo no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'DELETE':
+        articulo.delete()
+        return Response({'mensaje': 'Artículo eliminado'})
+
+    # PUT — actualizar campos enviados, dejando los no enviados intactos
+    nombre = request.data.get('nombre_articulo')
+    if nombre is not None:
+        nombre = nombre.strip()
+        if not nombre:
+            return Response({'error': 'nombre_articulo no puede estar vacío'}, status=status.HTTP_400_BAD_REQUEST)
+        articulo.nombre_articulo = nombre
+
+    if 'impacto_ambiental' in request.data:
+        articulo.impacto_ambiental = request.data.get('impacto_ambiental') or 'Sin información'
+    if 'id_subcategoria' in request.data:
+        articulo.id_subcategoria_id = request.data.get('id_subcategoria') or None
+    if 'precio_estimado' in request.data:
+        articulo.precio_estimado = request.data.get('precio_estimado') or None
+    if 'color_semaforo' in request.data:
+        color = request.data.get('color_semaforo') or None
+        articulo.color_semaforo = color
+        articulo.estado_evaluacion = 'completo' if color else 'insuficiente'
+
+    articulo.save()
+    return Response(ArticuloListSerializer(articulo).data)

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUMIKA — Editar registro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/assets/css/variables.css">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/admin/dashboard/dashboard.css">
+  <link rel="stylesheet" href="/admin/agregar-producto/agregar-producto.css">
+</head>
+<body style="background-color: #FAFAFA;">
+
+  <nav class="navbar admin-navbar-bg">
+    <a class="navbar__logo" href="/admin/dashboard/dashboard.html">
+      <img class="navbar__logo-img" src="/assets/img/logo.png" alt="LUMIKA">
+      <span class="navbar__logo-text">LUMIKA</span>
+      <span class="navbar__badge-admin">Admin</span>
+    </a>
+    <div class="navbar__links hide-mobile">
+      <a href="/admin/dashboard/dashboard.html" class="navbar__link"><i class="fa-solid fa-chart-pie"></i> Panel</a>
+      <a href="/admin/agregar-producto/agregar-producto.html" class="navbar__link"><i class="fa-solid fa-plus"></i> Agregar</a>
+      <a href="/admin/gestionar-productos/gestionar-productos.html" class="navbar__link navbar__link--active"><i class="fa-solid fa-boxes-stacked"></i> Gestionar</a>
+      <a href="#" id="btn-cerrar-sesion" class="navbar__link navbar__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
+    </div>
+    <button class="navbar__hamburger hide-desktop" id="hamburger" aria-label="Menú">
+      <span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="nav-drawer" id="nav-drawer">
+    <a href="/admin/dashboard/dashboard.html" class="nav-drawer__link"><i class="fa-solid fa-chart-pie"></i> Panel</a>
+    <a href="/admin/agregar-producto/agregar-producto.html" class="nav-drawer__link"><i class="fa-solid fa-plus"></i> Agregar</a>
+    <a href="/admin/gestionar-productos/gestionar-productos.html" class="nav-drawer__link nav-drawer__link--active"><i class="fa-solid fa-boxes-stacked"></i> Gestionar</a>
+    <div class="nav-drawer__divider"></div>
+    <a href="#" id="btn-cerrar-sesion-mobile" class="nav-drawer__link nav-drawer__link--danger"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+  </div>
+
+  <main class="page-wrapper">
+
+    <header class="admin-top-banner">
+      <div class="banner-content">
+        <span class="banner-greeting">Editando registro existente</span>
+        <h1 id="dynamic-title" class="banner-title">Editar producto</h1>
+      </div>
+    </header>
+
+    <div class="form-wrapper-clean">
+
+      <!-- Loader mientras se trae el registro original -->
+      <div id="loader-edicion" style="text-align:center; padding:var(--space-8); color:var(--color-text-muted)">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem; color: var(--color-primary)"></i>
+        <p style="margin-top:var(--space-2); font-weight: bold;">Cargando datos del registro...</p>
+      </div>
+
+      <div id="mensaje-error" class="alerta alerta--error hidden" style="margin-bottom:var(--space-4)"></div>
+
+      <!-- ═══════ FORM PRODUCTO (edición) ═══════ -->
+      <form id="form-producto" class="form-clean-layout hidden">
+
+        <div class="form-grid-2-col">
+          <div class="form-clean-group full-width">
+            <label class="form-clean-label">Nombre del producto *</label>
+            <input type="text" id="p-nombre" class="form-clean-input" placeholder="Ej. Shampoo Sólido Aguacate" required>
+          </div>
+
+          <div class="form-clean-group">
+            <label class="form-clean-label">Precio mínimo ($)</label>
+            <input type="number" id="p-precio-min" class="form-clean-input" placeholder="80" min="0" step="0.01">
+          </div>
+
+          <div class="form-clean-group">
+            <label class="form-clean-label">Precio máximo ($)</label>
+            <input type="number" id="p-precio-max" class="form-clean-input" placeholder="120" min="0" step="0.01">
+          </div>
+
+          <div class="form-clean-group full-width">
+            <label class="form-clean-label">Subcategoría *</label>
+            <select id="p-subcategoria" class="form-clean-input" required>
+              <option value="">Cargando subcategorías...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-2-col">
+          <div class="form-clean-group full-width">
+            <label class="form-clean-label">Semáforo Ambiental</label>
+            <select id="p-semaforo" class="form-clean-input">
+              <option value="">-- Sin clasificar --</option>
+              <option value="verde">🟢 Verde (Excelente opción)</option>
+              <option value="amarillo">🟡 Amarillo (Con precaución)</option>
+              <option value="rojo">🔴 Rojo (No recomendado)</option>
+            </select>
+          </div>
+          <div class="form-clean-group">
+            <label class="form-clean-label">Razón de clasificación</label>
+            <textarea id="p-razon" class="form-clean-input" rows="4" placeholder="Explica brevemente el motivo..."></textarea>
+          </div>
+          <div class="form-clean-group">
+            <label class="form-clean-label">Ingredientes</label>
+            <textarea id="p-ingredientes" class="form-clean-input" rows="4" placeholder="Lista los ingredientes principales..."></textarea>
+          </div>
+        </div>
+
+        <div class="action-container-clean">
+          <button type="submit" class="btn-olive-large" id="btn-submit-producto">
+            <i class="fa-solid fa-floppy-disk"></i> Guardar cambios
+          </button>
+          <a href="/admin/gestionar-productos/gestionar-productos.html" class="btn-regresar-oval">
+            <i class="fa-solid fa-arrow-left"></i> Cancelar
+          </a>
+        </div>
+      </form>
+
+      <!-- ═══════ FORM ARTÍCULO (edición) ═══════ -->
+      <form id="form-articulo" class="form-clean-layout hidden">
+        <div class="form-grid-2-col">
+          <div class="form-clean-group full-width">
+            <label class="form-clean-label">Nombre del artículo *</label>
+            <input type="text" id="a-nombre" class="form-clean-input" placeholder="Ej. Cepillo de bambú" required>
+          </div>
+
+          <div class="form-clean-group">
+            <label class="form-clean-label">Precio estimado ($)</label>
+            <input type="number" id="a-precio-estimado" class="form-clean-input" placeholder="50" min="0" step="0.01">
+          </div>
+
+          <div class="form-clean-group">
+            <label class="form-clean-label">Subcategoría</label>
+            <select id="a-subcategoria" class="form-clean-input">
+              <option value="">Cargando...</option>
+            </select>
+          </div>
+
+          <div class="form-clean-group full-width">
+            <label class="form-clean-label">Semáforo Ambiental</label>
+            <select id="a-semaforo" class="form-clean-input">
+              <option value="">-- Sin clasificar --</option>
+              <option value="verde">🟢 Verde (Excelente opción)</option>
+              <option value="amarillo">🟡 Amarillo (Con precaución)</option>
+              <option value="rojo">🔴 Rojo (No recomendado)</option>
+            </select>
+          </div>
+
+          <div class="form-clean-group full-width">
+            <label class="form-clean-label">Impacto ambiental *</label>
+            <textarea id="a-impacto" class="form-clean-input" rows="5" placeholder="Describe detalladamente el impacto positivo o negativo de este artículo..." required></textarea>
+          </div>
+        </div>
+
+        <div class="action-container-clean">
+          <button type="submit" class="btn-olive-large" id="btn-submit-articulo">
+            <i class="fa-solid fa-floppy-disk"></i> Guardar cambios
+          </button>
+          <a href="/admin/gestionar-productos/gestionar-productos.html" class="btn-regresar-oval">
+            <i class="fa-solid fa-arrow-left"></i> Cancelar
+          </a>
+        </div>
+      </form>
+
+    </div>
+  </main>
+
+  <div class="success-modal" id="success-modal">
+    <div class="success-modal__box">
+      <i class="fa-solid fa-circle-check"></i>
+      <p id="success-msg">¡Guardado correctamente!</p>
+    </div>
+  </div>
+
+  <script type="module" src="/admin/editar-producto/editar-producto.js"></script>
+</body>
+</html>

@@ -381,6 +381,17 @@ export async function eliminarArticulo(idArticulo) {
   return { ok: res.ok || res.status === 204 };
 }
 
+export async function editarArticulo(idArticulo, datos) {
+  // datos puede incluir: nombre_articulo, impacto_ambiental, id_subcategoria,
+  // precio_estimado, color_semaforo
+  const res = await fetch(`${API_URL}/productos/articulos-admin/${idArticulo}/`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify(datos)
+  });
+  return { ok: res.ok, data: await res.json() };
+}
+
 
 // ─────────────────────────────────────────
 // CATEGORÍAS

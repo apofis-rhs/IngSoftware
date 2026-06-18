@@ -8,9 +8,11 @@ if (!token || (usuario.rol !== 'admin' && !usuario.is_staff && !usuario.is_super
 
 let todosProductos = [];
 let todosArticulos = [];
-let tabActual      = 'productos';  
+let tabActual      = 'productos';
 let idAEliminar    = null;
 let tipoAEliminar  = null;
+let precioMinFiltro = null;
+let precioMaxFiltro = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -30,14 +32,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       navDrawer?.classList.remove('open');
   });
 
-  // Búsqueda
-  document.getElementById('input-buscar')?.addEventListener('input', e => {
-    const q = e.target.value.toLowerCase().trim();
-    if (tabActual === 'productos') {
-      renderLista(q ? todosProductos.filter(p => p.nombre_producto.toLowerCase().includes(q)) : todosProductos, 'productos');
-    } else {
-      renderLista(q ? todosArticulos.filter(a => a.nombre_articulo.toLowerCase().includes(q)) : todosArticulos, 'articulos');
-    }
+  // Búsqueda por texto
+  document.getElementById('input-buscar')?.addEventListener('input', aplicarFiltros);
+
+  // Filtro de rango de precio
+  document.getElementById('input-precio-min')?.addEventListener('input', e => {
+    precioMinFiltro = e.target.value === '' ? null : parseFloat(e.target.value);
+    aplicarFiltros();
+  });
+  document.getElementById('input-precio-max')?.addEventListener('input', e => {
+    precioMaxFiltro = e.target.value === '' ? null : parseFloat(e.target.value);
+    aplicarFiltros();
+  });
+  document.getElementById('btn-limpiar-filtros')?.addEventListener('click', () => {
+    document.getElementById('input-buscar').value = '';
+    document.getElementById('input-precio-min').value = '';
+    document.getElementById('input-precio-max').value = '';
+    precioMinFiltro = null;
+    precioMaxFiltro = null;
+    aplicarFiltros();
   });
 
   // Modal
@@ -59,7 +72,7 @@ async function cargarTodo() {
     const [resP, resA] = await Promise.all([listarProductos(), listarArticulosAdmin()]);
     todosProductos = (resP.ok && Array.isArray(resP.data)) ? resP.data : [];
     todosArticulos = (resA.ok && Array.isArray(resA.data)) ? resA.data : [];
-    renderLista(todosProductos, 'productos');
+    aplicarFiltros();
   } catch (err) {
     console.error('Error cargando:', err);
     if (listaEl) listaEl.innerHTML = '<p style="color:#999;text-align:center;padding:30px">Error de conexión al servidor.</p>';
@@ -71,7 +84,6 @@ async function cargarTodo() {
 
 window.cambiarTab = function(tab) {
   tabActual = tab;
-  document.getElementById('input-buscar').value = '';
 
   document.getElementById('tab-productos')?.classList.toggle('active', tab === 'productos');
   document.getElementById('tab-articulos')?.classList.toggle('active', tab === 'articulos');
@@ -79,12 +91,44 @@ window.cambiarTab = function(tab) {
   const tipoEl = document.getElementById('tipo-actual');
   if (tipoEl) tipoEl.textContent = tab === 'productos' ? 'Productos' : 'Artículos';
 
-  if (tab === 'productos') {
-    renderLista(todosProductos, 'productos');
-  } else {
-    renderLista(todosArticulos, 'articulos');
-  }
+  aplicarFiltros();
 };
+
+/* ── FILTRO COMBINADO: texto + rango de precio ── */
+function aplicarFiltros() {
+  const q = (document.getElementById('input-buscar')?.value || '').toLowerCase().trim();
+
+  if (tabActual === 'productos') {
+    let lista = todosProductos;
+    if (q) lista = lista.filter(p => p.nombre_producto.toLowerCase().includes(q));
+    lista = filtrarPorPrecio(lista, p => [p.precio_min, p.precio_max]);
+    renderLista(lista, 'productos');
+  } else {
+    let lista = todosArticulos;
+    if (q) lista = lista.filter(a => a.nombre_articulo.toLowerCase().includes(q));
+    lista = filtrarPorPrecio(lista, a => [a.precio_estimado, a.precio_estimado]);
+    renderLista(lista, 'articulos');
+  }
+}
+
+// getRango(item) devuelve [precioBajo, precioAlto] del registro.
+// Un registro sin precio (null/undefined) se incluye siempre, para no
+// ocultar productos/artículos que aún no tienen precio capturado.
+function filtrarPorPrecio(lista, getRango) {
+  if (precioMinFiltro === null && precioMaxFiltro === null) return lista;
+
+  return lista.filter(item => {
+    const [bajo, alto] = getRango(item);
+    if (bajo == null && alto == null) return true;
+
+    const min = bajo != null ? parseFloat(bajo) : parseFloat(alto);
+    const max = alto != null ? parseFloat(alto) : parseFloat(bajo);
+
+    if (precioMinFiltro !== null && max < precioMinFiltro) return false;
+    if (precioMaxFiltro !== null && min > precioMaxFiltro) return false;
+    return true;
+  });
+}
 
 /* ── RENDER ACTUALIZADO PARA DISEÑO DE TARJETAS ── */
 function renderLista(lista, tipo) {
@@ -113,8 +157,8 @@ function renderLista(lista, tipo) {
     const color  = esProducto ? item.color_semaforo : null;
     const dot    = color ? `background:${dotColors[color] || '#ccc'}` : 'background:var(--color-success)';
     const editHref = esProducto
-      ? `/admin/agregar-producto/agregar-producto.html?tipo=producto&edit=true&id=${id}`
-      : `/admin/agregar-producto/agregar-producto.html?tipo=articulo&edit=true&id=${id}`;
+      ? `/admin/editar-producto/editar-producto.html?tipo=producto&id=${id}`
+      : `/admin/editar-producto/editar-producto.html?tipo=articulo&id=${id}`;
 
     // El animation-delay hace el efecto escalonado al cargar
     return `
@@ -163,11 +207,10 @@ async function confirmarEliminar() {
     if (ok) {
       if (tipoAEliminar === 'productos') {
         todosProductos = todosProductos.filter(p => p.id_producto !== idAEliminar);
-        renderLista(todosProductos, 'productos');
       } else {
         todosArticulos = todosArticulos.filter(a => a.id_articulo !== idAEliminar);
-        renderLista(todosArticulos, 'articulos');
       }
+      aplicarFiltros();
       mostrarToast('Eliminado correctamente.');
     } else {
       mostrarToast('No se pudo eliminar.', 'error');

@@ -58,6 +58,18 @@
         <i class="fa-solid fa-magnifying-glass search-icon"></i>
         <input type="text" class="admin-search-input" id="input-buscar" placeholder="Busca por nombre o etiqueta...">
       </div>
+
+      <div class="price-filter-container" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span style="font-size:var(--text-sm); color:var(--color-text-muted); font-weight:bold;">
+          <i class="fa-solid fa-tag"></i> Precio:
+        </span>
+        <input type="number" id="input-precio-min" class="admin-search-input" placeholder="Mín. $" min="0" step="0.01" style="width:110px;">
+        <span style="color:var(--color-text-muted);">—</span>
+        <input type="number" id="input-precio-max" class="admin-search-input" placeholder="Máx. $" min="0" step="0.01" style="width:110px;">
+        <button id="btn-limpiar-filtros" class="btn btn--secondary" type="button" style="border-radius:20px; padding:6px 14px; font-size:var(--text-sm);" title="Limpiar todos los filtros">
+          <i class="fa-solid fa-filter-circle-xmark"></i> Limpiar
+        </button>
+      </div>
     </div>
 
     <div style="text-align: center; margin-bottom: var(--space-4);">
