@@ -250,14 +250,25 @@ def detalle_producto(request, id_producto):
         return Response(
             {'error': 'Producto no encontrado'}, status=status.HTTP_404_NOT_FOUND
         )
+    except Exception as e:
+        return Response(
+            {'error': f'Error al obtener producto: {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
     if request.method == 'GET':
         usuario = _get_usuario(request)
         # Guardar consulta solo si es usuario real (no admin proxy ni anónimo)
         if usuario and hasattr(usuario, 'id_usuario') and usuario.id_usuario is not None:
-            from apps.usuarios.models import Consulta
-            Consulta.objects.create(id_usuario=usuario, id_producto=producto)
-        return Response(ProductoDetalleSerializer(producto).data)
+            try:
+                from apps.usuarios.models import Consulta
+                Consulta.objects.create(id_usuario=usuario, id_producto=producto)
+            except Exception:
+                pass  # No bloquear la respuesta si el historial falla
+        try:
+            data = ProductoDetalleSerializer(producto).data
+        except Exception as e:
+            return Response({'error': f'Error al serializar producto: {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(data)
 
     usuario = _get_usuario(request)
     if not usuario or usuario.rol != 'admin':

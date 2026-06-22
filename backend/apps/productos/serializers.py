@@ -54,16 +54,19 @@ class ProductoDetalleSerializer(serializers.ModelSerializer):
         return CaracteristicaSerializer(obj.caracteristica_set.all(), many=True).data
 
     def get_criterios(self, obj):
-        with connection.cursor() as cursor:
-            cursor.execute(
-                "SELECT c.id_criterio, c.nombre_criterio, c.descripcion, pc.resultado "
-                "FROM criterio c "
-                "JOIN producto_criterio pc ON c.id_criterio = pc.id_criterio "
-                "WHERE pc.id_producto = %s",
-                [obj.id_producto],
-            )
-            cols = [d[0] for d in cursor.description]
-            return [dict(zip(cols, row)) for row in cursor.fetchall()]
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "SELECT c.id_criterio, c.nombre_criterio, c.descripcion, pc.resultado "
+                    "FROM criterio c "
+                    "JOIN producto_criterio pc ON c.id_criterio = pc.id_criterio "
+                    "WHERE pc.id_producto = %s",
+                    [obj.id_producto],
+                )
+                cols = [d[0] for d in cursor.description]
+                return [dict(zip(cols, row)) for row in cursor.fetchall()]
+        except Exception:
+            return []
 
     class Meta:
         model = Producto

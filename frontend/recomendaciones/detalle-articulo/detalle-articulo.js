@@ -6,27 +6,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.location.href = '/auth/login/login.html'; return;
   }
 
-  // ── Nav ───────────────────────────────────────────────
+  // ── DECLARACIÓN GLOBAL DE NAV (Fuera de try) ──────────
+  const hamburger = document.getElementById('hamburger');
+  const navDrawer = document.getElementById('nav-drawer');
+
+  // ── Nav Eventos ───────────────────────────────────────
   try {
-    const hamburger = document.getElementById('hamburger');
-    const navDrawer  = document.getElementById('nav-drawer');
     hamburger?.addEventListener('click', () => navDrawer?.classList.toggle('open'));
     document.addEventListener('click', e => {
       if (!hamburger?.contains(e.target) && !navDrawer?.contains(e.target))
         navDrawer?.classList.remove('open');
     });
-    ['btn-cerrar-sesion','btn-cerrar-sesion-mobile'].forEach(id => {
-      document.getElementById(id)?.addEventListener('click', e => {
-        e.preventDefault();
-        localStorage.removeItem('token'); localStorage.removeItem('usuario');
-        window.location.href = '/auth/login/login.html';
-      });
-    });
+    // ... tus botones de cerrar sesión ...
   } catch(navErr) { console.warn('Nav error:', navErr); }
 
   // ── CIERRE AUTOMÁTICO DEL MENÚ MÓVIL ────────────────────────
-  
-  // 1. Cierra el menú inmediatamente al hacer clic en cualquier enlace dentro de él
+  // Ahora navDrawer ya está definido y vive aquí sin errores
   const enlacesMenu = navDrawer?.querySelectorAll('a');
   enlacesMenu?.forEach(enlace => {
     enlace.addEventListener('click', () => {
@@ -34,10 +29,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // 2. Failsafe: Si el navegador restaura la página desde el caché (bfcache), fuerza el cierre
   window.addEventListener('pageshow', () => {
     navDrawer?.classList.remove('open');
   });
+
+  // ... el resto de tu código ...
 
   // ── ID del artículo ───────────────────────────────────
   const id = new URLSearchParams(window.location.search).get('id');
@@ -280,10 +276,3 @@ function irAtras(e) {
   }
 }
 
-// ── FORZAR ACTUALIZACIÓN AL USAR EL BOTÓN ATRÁS ───────────────
-window.addEventListener('pageshow', (event) => {
-  // event.persisted indica si la página se cargó desde la memoria caché del navegador
-  if (event.persisted) {
-    window.location.reload();
-  }
-});

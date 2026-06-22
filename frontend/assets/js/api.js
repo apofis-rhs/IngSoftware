@@ -183,10 +183,18 @@ export async function buscarProductos(texto) {
 // ─────────────────────────────────────────
 
 export async function obtenerProducto(idProducto) {
-  const res = await fetch(`${API_URL}/productos/${idProducto}/?_t=${Date.now()}`, {
-    headers: authHeaders()
-  });
-  return { ok: res.ok, data: await res.json() };
+  const ctrl = new AbortController();
+  const timeout = setTimeout(() => ctrl.abort(), 12000);
+  try {
+    const res = await fetch(`${API_URL}/productos/${idProducto}/?_t=${Date.now()}`, {
+      headers: authHeaders(),
+      signal: ctrl.signal,
+    });
+    const data = await res.json();
+    return { ok: res.ok, data };
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 // Regresa lista de productos con color_semaforo = 'verde' de la misma subcategoría
@@ -233,10 +241,18 @@ export async function buscarArticulosFiltrado(texto = '', opciones = {}) {
 }
 
 export async function obtenerArticulo(idArticulo) {
-  const res = await fetch(`${API_URL}/articulos/${idArticulo}/?_t=${Date.now()}`, {
-    headers: authHeaders()
-  });
-  return { ok: res.ok, data: await res.json() };
+  const ctrl = new AbortController();
+  const timeout = setTimeout(() => ctrl.abort(), 12000);
+  try {
+    const res = await fetch(`${API_URL}/articulos/${idArticulo}/?_t=${Date.now()}`, {
+      headers: authHeaders(),
+      signal: ctrl.signal,
+    });
+    const data = await res.json();
+    return { ok: res.ok, data };
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 export async function obtenerAlternativasArticulo(idArticulo) {

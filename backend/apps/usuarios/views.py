@@ -183,12 +183,24 @@ def historial(request):
     if not usuario or not hasattr(usuario, 'id_usuario') or usuario.id_usuario is None:
         return Response({'error': 'No autorizado'}, status=status.HTTP_401_UNAUTHORIZED)
     
-    # 1. Traer historial de PRODUCTOS (usando tu serializer existente)
-    consultas_prod = Consulta.objects.filter(id_usuario=usuario).select_related('id_producto')
+    # 1. Traer historial de PRODUCTOS — solo la consulta más reciente por producto
+    consultas_prod = (
+        Consulta.objects
+        .filter(id_usuario=usuario)
+        .order_by('id_producto', '-fecha_consulta')
+        .distinct('id_producto')
+        .select_related('id_producto')
+    )
     data_productos = ConsultaSerializer(consultas_prod, many=True).data
-    
-    # 2. Traer historial de ARTÍCULOS
-    consultas_art = ConsultaArticulo.objects.filter(id_usuario=usuario).select_related('id_articulo')
+
+    # 2. Traer historial de ARTÍCULOS — solo la consulta más reciente por artículo
+    consultas_art = (
+        ConsultaArticulo.objects
+        .filter(id_usuario=usuario)
+        .order_by('id_articulo', '-fecha_consulta')
+        .distinct('id_articulo')
+        .select_related('id_articulo')
+    )
     
     data_articulos = []
     for c in consultas_art:

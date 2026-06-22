@@ -25,21 +25,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   } catch(navErr) { console.warn('Nav error:', navErr); }
 
-  // ── CIERRE AUTOMÁTICO DEL MENÚ MÓVIL ────────────────────────
-  
-  // 1. Cierra el menú inmediatamente al hacer clic en cualquier enlace dentro de él
-  const enlacesMenu = navDrawer?.querySelectorAll('a');
-  enlacesMenu?.forEach(enlace => {
-    enlace.addEventListener('click', () => {
-      navDrawer?.classList.remove('open');
-    });
-  });
-
-  // 2. Failsafe: Si el navegador restaura la página desde el caché (bfcache), fuerza el cierre
-  window.addEventListener('pageshow', () => {
-    navDrawer?.classList.remove('open');
-  });
-
   // ── ID del producto ───────────────────────────────────
   const id = new URLSearchParams(window.location.search).get('id');
   if (!id) { mostrarError('No se especificó ID de producto'); return; }
@@ -278,15 +263,3 @@ function irAtras(e) {
     window.history.back();
   }
 }
-
-// ── FORZAR ACTUALIZACIÓN ULTRA-ROBUSTA AL REGRESAR EN EL HISTORIAL ──
-window.addEventListener('pageshow', (event) => {
-  const regresoHistorial = event.persisted || 
-    (typeof window.performance !== 'undefined' && window.performance.navigation.type === 2) ||
-    (performance.getEntriesByType("navigation")[0]?.type === "back_forward");
-
-  if (regresoHistorial) {
-    // Esto obliga al navegador a reescribir la URL y matar el Bfcache
-    window.location.href = window.location.href;
-  }
-});

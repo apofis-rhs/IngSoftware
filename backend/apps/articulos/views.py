@@ -48,9 +48,16 @@ def detalle_articulo(request, id_articulo):
         )
     usuario = _get_usuario(request)
     if usuario:
-        from apps.usuarios.models import ConsultaArticulo
-        ConsultaArticulo.objects.create(id_usuario=usuario, id_articulo=articulo)
-    return Response(ArticuloDetalleSerializer(articulo).data)
+        try:
+            from apps.usuarios.models import ConsultaArticulo
+            ConsultaArticulo.objects.create(id_usuario=usuario, id_articulo=articulo)
+        except Exception:
+            pass  # No bloquear la respuesta si el historial falla
+    try:
+        data = ArticuloDetalleSerializer(articulo).data
+    except Exception as e:
+        return Response({'error': f'Error al serializar artículo: {e}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response(data)
 
 
 @api_view(['GET'])
