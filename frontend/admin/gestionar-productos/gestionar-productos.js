@@ -1,4 +1,5 @@
-import { listarProductos, eliminarProducto, listarArticulosAdmin, eliminarArticulo } from '/assets/js/api.js';
+import { listarProductos, eliminarProducto, listarArticulosAdmin, eliminarArticulo, listarSubcategorias } from '/assets/js/api.js';
+import { getRutaImagen } from '/assets/js/imagenes.js';
 
 const token   = localStorage.getItem('token');
 const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
@@ -13,6 +14,8 @@ let idAEliminar    = null;
 let tipoAEliminar  = null;
 let precioMinFiltro = null;
 let precioMaxFiltro = null;
+let categoriaFiltro  = '';        // id_categoria seleccionado, '' = todas
+let mapaSubcategoria = {};        // { id_subcategoria: { id_categoria, nombre_categoria } }
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -44,12 +47,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     precioMaxFiltro = e.target.value === '' ? null : parseFloat(e.target.value);
     aplicarFiltros();
   });
+  document.getElementById('select-categoria')?.addEventListener('change', e => {
+    categoriaFiltro = e.target.value;
+    aplicarFiltros();
+  });
   document.getElementById('btn-limpiar-filtros')?.addEventListener('click', () => {
     document.getElementById('input-buscar').value = '';
     document.getElementById('input-precio-min').value = '';
     document.getElementById('input-precio-max').value = '';
+    document.getElementById('select-categoria').value = '';
     precioMinFiltro = null;
     precioMaxFiltro = null;
+    categoriaFiltro = '';
     aplicarFiltros();
   });
 
@@ -69,9 +78,17 @@ async function cargarTodo() {
   const listaEl = document.getElementById('lista-items');
 
   try {
-    const [resP, resA] = await Promise.all([listarProductos(), listarArticulosAdmin()]);
+    const [resP, resA, resS] = await Promise.all([
+      listarProductos(), listarArticulosAdmin(), listarSubcategorias()
+    ]);
     todosProductos = (resP.ok && Array.isArray(resP.data)) ? resP.data : [];
     todosArticulos = (resA.ok && Array.isArray(resA.data)) ? resA.data : [];
+
+    if (resS.ok && Array.isArray(resS.data)) {
+      construirMapaCategorias(resS.data);
+      poblarSelectCategorias(resS.data);
+    }
+
     aplicarFiltros();
   } catch (err) {
     console.error('Error cargando:', err);
@@ -80,6 +97,34 @@ async function cargarTodo() {
     loader?.classList.add('hidden');
     listaEl?.classList.remove('hidden');
   }
+}
+
+function construirMapaCategorias(subcategorias) {
+  mapaSubcategoria = {};
+  subcategorias.forEach(s => {
+    mapaSubcategoria[s.id_subcategoria] = {
+      id_categoria:     s.id_categoria,
+      nombre_categoria: s.nombre_categoria,
+    };
+  });
+}
+
+function poblarSelectCategorias(subcategorias) {
+  const select = document.getElementById('select-categoria');
+  if (!select) return;
+
+  // Categorías únicas, preservando el orden en que aparecen
+  const vistas = new Set();
+  const categorias = [];
+  subcategorias.forEach(s => {
+    if (!vistas.has(s.id_categoria)) {
+      vistas.add(s.id_categoria);
+      categorias.push({ id: s.id_categoria, nombre: s.nombre_categoria });
+    }
+  });
+
+  select.innerHTML = '<option value="">Todas las categorías</option>' +
+    categorias.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
 }
 
 window.cambiarTab = function(tab) {
@@ -94,21 +139,38 @@ window.cambiarTab = function(tab) {
   aplicarFiltros();
 };
 
-/* ── FILTRO COMBINADO: texto + rango de precio ── */
+/* ── FILTRO COMBINADO: texto + categoría + rango de precio ── */
 function aplicarFiltros() {
   const q = (document.getElementById('input-buscar')?.value || '').toLowerCase().trim();
 
   if (tabActual === 'productos') {
     let lista = todosProductos;
     if (q) lista = lista.filter(p => p.nombre_producto.toLowerCase().includes(q));
+    lista = filtrarPorCategoria(lista, p => p.id_subcategoria);
     lista = filtrarPorPrecio(lista, p => [p.precio_min, p.precio_max]);
     renderLista(lista, 'productos');
   } else {
     let lista = todosArticulos;
     if (q) lista = lista.filter(a => a.nombre_articulo.toLowerCase().includes(q));
+    lista = filtrarPorCategoria(lista, a => a.id_subcategoria);
     lista = filtrarPorPrecio(lista, a => [a.precio_estimado, a.precio_estimado]);
     renderLista(lista, 'articulos');
   }
+}
+
+// getIdSubcategoria(item) devuelve el id_subcategoria del registro.
+// Un registro sin subcategoría asignada se incluye siempre, para no
+// ocultar productos/artículos incompletos por accidente.
+function filtrarPorCategoria(lista, getIdSubcategoria) {
+  if (!categoriaFiltro) return lista;
+
+  return lista.filter(item => {
+    const idSub = getIdSubcategoria(item);
+    if (idSub == null) return true;
+    const info = mapaSubcategoria[idSub];
+    if (!info) return true;
+    return String(info.id_categoria) === String(categoriaFiltro);
+  });
 }
 
 // getRango(item) devuelve [precioBajo, precioAlto] del registro.
@@ -154,17 +216,25 @@ function renderLista(lista, tipo) {
     const esProducto = tipo === 'productos';
     const id     = esProducto ? item.id_producto   : item.id_articulo;
     const nombre = esProducto ? item.nombre_producto : item.nombre_articulo;
-    const color  = esProducto ? item.color_semaforo : null;
+    const color  = esProducto ? item.color_semaforo : item.color_semaforo;
     const dot    = color ? `background:${dotColors[color] || '#ccc'}` : 'background:var(--color-success)';
     const editHref = esProducto
       ? `/admin/editar-producto/editar-producto.html?tipo=producto&id=${id}`
       : `/admin/editar-producto/editar-producto.html?tipo=articulo&id=${id}`;
 
+    // Solo Producto tiene campo imagen; Articulo no, así que cae al ícono.
+    const tieneImagen = esProducto && !!item.imagen;
+    const puntoSemaforo = `<span class="status-indicator" style="${dot}" title="Semáforo: ${color || 'sin clasificar'}"></span>`;
+    const miniatura = tieneImagen
+      ? `<img src="${getRutaImagen(item)}" alt="${nombre}" class="product-item-card__thumb"
+              onerror="this.remove()">${puntoSemaforo}`
+      : puntoSemaforo;
+
     // El animation-delay hace el efecto escalonado al cargar
     return `
       <div class="product-item-card" style="animation-delay: ${i * 0.05}s">
         <div class="product-item-card__info">
-          <span class="status-indicator" style="${dot}"></span>
+          ${miniatura}
           <span class="product-item-card__name">${nombre}</span>
         </div>
         <div class="product-item-card__actions">
