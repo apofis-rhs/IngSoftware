@@ -25,6 +25,21 @@ document.addEventListener('DOMContentLoaded', async () => {
       navDrawer?.classList.remove('open');
   });
 
+  // ── CIERRE AUTOMÁTICO DEL MENÚ MÓVIL ────────────────────────
+  
+  // 1. Cierra el menú inmediatamente al hacer clic en cualquier enlace dentro de él
+  const enlacesMenu = navDrawer?.querySelectorAll('a');
+  enlacesMenu?.forEach(enlace => {
+    enlace.addEventListener('click', () => {
+      navDrawer?.classList.remove('open');
+    });
+  });
+
+  // 2. Failsafe: Si el navegador restaura la página desde el caché (bfcache), fuerza el cierre
+  window.addEventListener('pageshow', () => {
+    navDrawer?.classList.remove('open');
+  });
+
   const params     = new URLSearchParams(window.location.search);
   const ids        = params.getAll('id').map(Number).filter(Boolean);
   const idOriginal = ids[0];
@@ -76,7 +91,7 @@ function pintarComparacion(productos, idOriginal) {
   const fila = (label, icon, celdas) => `<div class="cmp-row"><div class="cmp-label"><i class="${icon}"></i> ${label}</div>${celdas}</div>`;
 
   // Filas
-  const header = `<div class="cmp-row cmp-row--header"><div class="cmp-label">Atributo</div>${ordenados.map((p, i) => `<div class="cmp-cell ${i===0?'cmp-cell--original':''}">${p.nombre_producto}</div>`).join('')}</div>`;
+  const header = `<div class="cmp-row cmp-row--header"><div class="cmp-label">Nombre</div>${ordenados.map((p, i) => `<div class="cmp-cell ${i===0?'cmp-cell--original':''}">${p.nombre_producto}</div>`).join('')}</div>`;
   
   const filaPrecio = fila('Precio', 'fa-solid fa-tag', ordenados.map((p, i) => `<div class="cmp-cell ${i===0?'cmp-cell--original':''}">${p.precio_max ? '$'+p.precio_max : '—'}</div>`).join(''));
   

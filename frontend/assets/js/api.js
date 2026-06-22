@@ -120,7 +120,7 @@ export async function obtenerHistorial() {
 // ─────────────────────────────────────────
 
 export async function obtenerFavoritos() {
-  const res = await fetch(`${API_URL}/usuarios/favoritos/`, {
+  const res = await fetch(`${API_URL}/usuarios/favoritos/?_t=${Date.now()}`, {
     headers: authHeaders()
   });
   return { ok: res.ok, data: await res.json() };
@@ -143,23 +143,8 @@ export async function obtenerFavoritosArticulo() {
   return { ok: res.ok, data: Array.isArray(data) ? data.filter(f => f.es_articulo) : [] };
 }
 
-export async function agregarFavoritoArticulo(idArticulo) {
-  const res = await fetch(`${API_URL}/usuarios/favoritos/`, {
-    method: 'POST',
-    headers: authHeaders(),
-    body: JSON.stringify({ id_articulo: idArticulo })
-  });
-  return { ok: res.ok, data: await res.json() };
-}
 
-export async function eliminarFavoritoArticulo(idArticulo) {
-  const res = await fetch(`${API_URL}/usuarios/favoritos/`, {
-    method: 'DELETE',
-    headers: authHeaders(),
-    body: JSON.stringify({ id_articulo: idArticulo })
-  });
-  return { ok: res.ok };
-}
+
 
 // Manda: { id_producto }
 // Regresa: { mensaje: 'Favorito eliminado' }
@@ -198,7 +183,7 @@ export async function buscarProductos(texto) {
 // ─────────────────────────────────────────
 
 export async function obtenerProducto(idProducto) {
-  const res = await fetch(`${API_URL}/productos/${idProducto}/`, {
+  const res = await fetch(`${API_URL}/productos/${idProducto}/?_t=${Date.now()}`, {
     headers: authHeaders()
   });
   return { ok: res.ok, data: await res.json() };
@@ -206,7 +191,7 @@ export async function obtenerProducto(idProducto) {
 
 // Regresa lista de productos con color_semaforo = 'verde' de la misma subcategoría
 export async function obtenerAlternativasProducto(idProducto) {
-  const res = await fetch(`${API_URL}/productos/${idProducto}/alternativas/`, {
+  const res = await fetch(`${API_URL}/productos/${idProducto}/alternativas/?_t=${Date.now()}`, {
     headers: authHeaders()
   });
   return { ok: res.ok, data: await res.json() };
@@ -215,7 +200,7 @@ export async function obtenerAlternativasProducto(idProducto) {
 // ids = array de números, máximo 3, ej: [1, 2, 3]
 // Regresa lista de ProductoDetalle para cada id
 export async function compararProductos(ids) {
-  const res = await fetch(`${API_URL}/productos/comparar/?ids=${ids.join(',')}`, {
+  const res = await fetch(`${API_URL}/productos/comparar/?ids=${ids.join(',')}&_t=${Date.now()}`, {
     headers: authHeaders()
   });
   return { ok: res.ok, data: await res.json() };
@@ -248,21 +233,21 @@ export async function buscarArticulosFiltrado(texto = '', opciones = {}) {
 }
 
 export async function obtenerArticulo(idArticulo) {
-  const res = await fetch(`${API_URL}/articulos/${idArticulo}/`, {
+  const res = await fetch(`${API_URL}/articulos/${idArticulo}/?_t=${Date.now()}`, {
     headers: authHeaders()
   });
   return { ok: res.ok, data: await res.json() };
 }
 
 export async function obtenerAlternativasArticulo(idArticulo) {
-  const res = await fetch(`${API_URL}/articulos/${idArticulo}/alternativas/`, {
+  const res = await fetch(`${API_URL}/articulos/${idArticulo}/alternativas/?_t=${Date.now()}`, {
     headers: authHeaders()
   });
   return { ok: res.ok, data: await res.json() };
 }
 
 export async function compararArticulos(ids) {
-  const res = await fetch(`${API_URL}/articulos/comparar/?ids=${ids.join(',')}`, {
+  const res = await fetch(`${API_URL}/articulos/comparar/?ids=${ids.join(',')}&_t=${Date.now()}`, {
     headers: authHeaders()
   });
   return { ok: res.ok, data: await res.json() };
@@ -430,4 +415,23 @@ export async function obtenerRecomendaciones() {
     headers: authHeaders()
   });
   return { ok: res.ok, data: await res.json() };
+}
+
+export async function agregarFavoritoArticulo(idArticulo) {
+  const res = await fetch(`${API_URL}/usuarios/favoritos/`, {
+    method: 'POST',
+    headers: authHeaders(), // Usamos la función que ya tenías para incluir el token
+    body: JSON.stringify({ id_articulo: idArticulo })
+  });
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, data };
+}
+
+export async function eliminarFavoritoArticulo(idArticulo) {
+  const res = await fetch(`${API_URL}/usuarios/favoritos/`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+    body: JSON.stringify({ id_articulo: idArticulo }) // Enviamos el ID en el cuerpo
+  });
+  return { ok: res.ok };
 }

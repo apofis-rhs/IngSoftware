@@ -52,10 +52,36 @@ document.addEventListener('DOMContentLoaded', async () => {
   const hamburger = document.getElementById('hamburger');
   const navDrawer  = document.getElementById('nav-drawer');
   hamburger?.addEventListener('click', () => navDrawer?.classList.toggle('open'));
-  document.addEventListener('click', e => {
-    if (!hamburger?.contains(e.target) && !navDrawer?.contains(e.target))
+  
+  // ── CIERRE AUTOMÁTICO DEL MENÚ MÓVIL ────────────────────────
+  
+  // 1. Cierra el menú inmediatamente al hacer clic en cualquier enlace dentro de él
+  const enlacesMenu = navDrawer?.querySelectorAll('a');
+  enlacesMenu?.forEach(enlace => {
+    enlace.addEventListener('click', () => {
       navDrawer?.classList.remove('open');
+    });
   });
+
+  // 2. Failsafe: Si el navegador restaura la página desde el caché (bfcache), fuerza el cierre
+  window.addEventListener('pageshow', () => {
+    navDrawer?.classList.remove('open');
+  });
+  // Cerrar cajón de navegación o resultados de búsqueda al dar clic fuera
+  document.addEventListener('click', e => {
+    // Para el menú hamburguesa
+    if (!hamburger?.contains(e.target) && !navDrawer?.contains(e.target)) {
+      navDrawer?.classList.remove('open');
+    }
+    // Para el buscador
+    const resultadosVivos = document.getElementById('resultados-vivos');
+    const inputBusqueda = document.getElementById('input-busqueda');
+    if (resultadosVivos && !resultadosVivos.contains(e.target) && e.target !== inputBusqueda) {
+      resultadosVivos.innerHTML = '';
+      if(inputBusqueda) inputBusqueda.value = '';
+    }
+  });
+
   ['btn-cerrar-sesion','btn-cerrar-sesion-mobile'].forEach(id => {
     document.getElementById(id)?.addEventListener('click', e => {
       e.preventDefault();
@@ -178,18 +204,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     const texto = inputBusqueda.value.trim();
     if (!texto) { resultadosVivos.innerHTML = ''; return; }
     if (texto.length < 2) return;
+    
     debounceTimer = setTimeout(async () => {
       const opciones = catActiva ? { categoria: catActiva.id_categoria } : {};
       const { ok, data } = await buscarProductosFiltrado(texto, opciones);
+      
       if (!ok || !data.length) {
         resultadosVivos.innerHTML = `<p class="sug-vacio">Sin resultados para "${texto}"</p>`;
         return;
       }
+      
       resultadosVivos.innerHTML = data.slice(0, 8).map(p => `
         <div class="sugerencia-item" data-id="${p.id_producto}">
-          <img src="${getRutaImagen(p)}" style="width:36px;height:36px;object-fit:cover;border-radius:4px">
+          <img src="${getRutaImagen(p)}" alt="${p.nombre_producto}" style="width:36px;height:36px;object-fit:cover;border-radius:4px" onerror="this.src='/assets/images/placeholder.svg'">
           <span>${p.nombre_producto}</span>
         </div>`).join('');
+        
       resultadosVivos.querySelectorAll('.sugerencia-item').forEach(el => {
         el.addEventListener('click', () => window.location.href = `/buscador/detalle-producto/detalle-producto.html?id=${el.dataset.id}`);
       });

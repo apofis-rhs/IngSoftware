@@ -182,8 +182,33 @@ def historial(request):
     usuario = _get_usuario(request)
     if not usuario or not hasattr(usuario, 'id_usuario') or usuario.id_usuario is None:
         return Response({'error': 'No autorizado'}, status=status.HTTP_401_UNAUTHORIZED)
-    consultas = Consulta.objects.filter(id_usuario=usuario).select_related('id_producto').order_by('-fecha_consulta')
-    return Response(ConsultaSerializer(consultas, many=True).data)
+    
+    # 1. Traer historial de PRODUCTOS (usando tu serializer existente)
+    consultas_prod = Consulta.objects.filter(id_usuario=usuario).select_related('id_producto')
+    data_productos = ConsultaSerializer(consultas_prod, many=True).data
+    
+    # 2. Traer historial de ARTÍCULOS
+    consultas_art = ConsultaArticulo.objects.filter(id_usuario=usuario).select_related('id_articulo')
+    
+    data_articulos = []
+    for c in consultas_art:
+        data_articulos.append({
+            'fecha_consulta': c.fecha_consulta.isoformat(),
+            'id_articulo_id': c.id_articulo.id_articulo,
+            'nombre_articulo': c.id_articulo.nombre_articulo,
+            # Forzamos el nombre de la variable para que tu JS lo entienda a la perfección
+            'color_semaforo_art': getattr(c.id_articulo, 'color_semaforo', 'gris'),
+            'imagen': getattr(c.id_articulo, 'imagen', None)
+        })
+        
+    # 3. Unificar ambas listas
+    historial_completo = list(data_productos) + data_articulos
+    
+    # 4. Ordenar todo junto por fecha descendente (del más nuevo al más viejo)
+    historial_completo.sort(key=lambda x: x['fecha_consulta'], reverse=True)
+    
+    return Response(historial_completo)
+
 
 
 @api_view(['GET', 'POST', 'DELETE'])
@@ -204,16 +229,18 @@ def favoritos(request):
 
     if request.method == 'POST':
         if id_producto:
+            # Usamos _id para evitar que Django busque un objeto
             fav, created = Favorito.objects.get_or_create(
                 id_usuario_id=usuario.id_usuario,
                 id_producto_id=id_producto,
-                id_articulo=None,
+                defaults={'id_articulo_id': None}
             )
         else:
+            # Usamos _id para evitar que Django busque un objeto
             fav, created = Favorito.objects.get_or_create(
                 id_usuario_id=usuario.id_usuario,
                 id_articulo_id=id_articulo,
-                id_producto=None,
+                defaults={'id_producto_id': None}
             )
         code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
         return Response(FavoritoSerializer(fav).data, status=code)

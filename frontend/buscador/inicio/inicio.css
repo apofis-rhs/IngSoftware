@@ -178,3 +178,133 @@ button.subcat-card {
   margin: 0;
   line-height: 1.2;
 }
+
+/* ── Search Dropdown (Resultados Vivos) ───────────────────────── */
+.mod-search-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.sugerencias-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  background-color: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  /* Only show when not empty */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Buscador - Resultados Vivos Mejorados ───────────────────────── */
+.mod-search-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.sugerencias-dropdown {
+  position: absolute;
+  top: calc(100% + 12px); /* Más separado de la barra */
+  left: 0;
+  width: 100%;
+  background-color: var(--color-bg-white);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 16px; /* Bordes más redondeados y modernos */
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12); /* Sombra elegante */
+  max-height: 380px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0; /* Espaciado interno arriba y abajo */
+}
+
+.sugerencias-dropdown:empty {
+  display: none;
+}
+
+.sugerencia-item {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Más aire entre imagen y texto */
+  padding: 12px 24px; /* Cajas mucho más amplias */
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.2s ease;
+}
+
+.sugerencia-item:last-child {
+  border-bottom: none;
+}
+
+.sugerencia-item:hover {
+  background-color: #f9fbfc; /* Fondo sutil al pasar el mouse */
+}
+
+.sug-img {
+  width: 48px; /* Imagen más grande */
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  background-color: #f4f4f4; /* Fondo gris si no hay imagen */
+  flex-shrink: 0;
+}
+
+.sug-text {
+  font-size: 1.05rem; /* Letra un poco más grande */
+  font-weight: 600; /* Letra más gordita */
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sug-vacio {
+  padding: 24px;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* ── Buscador Glassmorphism (Igual que en Resultados) ─────────────── */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 2px solid #ffffff;
+  border-radius: 50px;
+  padding: 0 24px;
+  min-height: 56px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  width: 100%;
+}
+
+.search-bar:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(255, 212, 96, 0.25), 0 10px 25px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
+}
+
+.search-bar input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1.1rem;
+  color: var(--color-text-primary);
+  width: 100%;
+}

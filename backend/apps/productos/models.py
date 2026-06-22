@@ -55,7 +55,11 @@ class Ventaja(models.Model):
     id_ventaja = models.AutoField(primary_key=True)
     descripcion = models.CharField(max_length=500)
     id_producto = models.ForeignKey(
-        Producto, on_delete=models.DO_NOTHING, db_column='id_producto'
+        Producto, on_delete=models.DO_NOTHING, db_column='id_producto', null=True, blank=True
+    )
+    
+    id_articulo = models.ForeignKey(
+        'articulos.Articulo', on_delete=models.DO_NOTHING, db_column='id_articulo', null=True, blank=True
     )
 
     class Meta:
@@ -67,7 +71,11 @@ class Desventaja(models.Model):
     id_desventaja = models.AutoField(primary_key=True)
     descripcion = models.CharField(max_length=500)
     id_producto = models.ForeignKey(
-        Producto, on_delete=models.DO_NOTHING, db_column='id_producto'
+        Producto, on_delete=models.DO_NOTHING, db_column='id_producto', null=True, blank=True
+    )
+    
+    id_articulo = models.ForeignKey(
+        'articulos.Articulo', on_delete=models.DO_NOTHING, db_column='id_articulo', null=True, blank=True
     )
 
     class Meta:
@@ -79,7 +87,11 @@ class Caracteristica(models.Model):
     id_caracteristica = models.AutoField(primary_key=True)
     descripcion = models.CharField(max_length=500)
     id_producto = models.ForeignKey(
-        Producto, on_delete=models.DO_NOTHING, db_column='id_producto'
+        Producto, on_delete=models.DO_NOTHING, db_column='id_producto', null=True, blank=True
+    )
+    
+    id_articulo = models.ForeignKey(
+        'articulos.Articulo', on_delete=models.DO_NOTHING, db_column='id_articulo', null=True, blank=True
     )
 
     class Meta:

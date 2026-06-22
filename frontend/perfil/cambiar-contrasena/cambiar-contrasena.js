@@ -29,6 +29,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // ── CIERRE AUTOMÁTICO DEL MENÚ MÓVIL ────────────────────────
+  
+  // 1. Cierra el menú inmediatamente al hacer clic en cualquier enlace dentro de él
+  const enlacesMenu = navDrawer?.querySelectorAll('a');
+  enlacesMenu?.forEach(enlace => {
+    enlace.addEventListener('click', () => {
+      navDrawer?.classList.remove('open');
+    });
+  });
+
+  // 2. Failsafe: Si el navegador restaura la página desde el caché (bfcache), fuerza el cierre
+  window.addEventListener('pageshow', () => {
+    navDrawer?.classList.remove('open');
+  });
+
   const card        = document.getElementById('card');
   const formView    = document.getElementById('form-view');
   const succView    = document.getElementById('success-view');

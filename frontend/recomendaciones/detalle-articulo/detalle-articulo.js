@@ -1,4 +1,4 @@
-import { obtenerArticulo, obtenerFavoritos, agregarFavorito, eliminarFavorito } from '/assets/js/api.js';
+import { obtenerArticulo, obtenerFavoritos, agregarFavoritoArticulo, eliminarFavoritoArticulo } from '/assets/js/api.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -23,6 +23,21 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     });
   } catch(navErr) { console.warn('Nav error:', navErr); }
+
+  // ── CIERRE AUTOMÁTICO DEL MENÚ MÓVIL ────────────────────────
+  
+  // 1. Cierra el menú inmediatamente al hacer clic en cualquier enlace dentro de él
+  const enlacesMenu = navDrawer?.querySelectorAll('a');
+  enlacesMenu?.forEach(enlace => {
+    enlace.addEventListener('click', () => {
+      navDrawer?.classList.remove('open');
+    });
+  });
+
+  // 2. Failsafe: Si el navegador restaura la página desde el caché (bfcache), fuerza el cierre
+  window.addEventListener('pageshow', () => {
+    navDrawer?.classList.remove('open');
+  });
 
   // ── ID del artículo ───────────────────────────────────
   const id = new URLSearchParams(window.location.search).get('id');
@@ -68,9 +83,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     setText('estado-evaluacion', ETIQUETAS[color] || '');
   } catch(e) { console.warn('semaforo error:', e); }
 
-  // Nombre y precio
+  // Nombre y precio (CORREGIDO: Artículos usan precio_estimado)
   setText('nombre-articulo', data.nombre_articulo || '');
-  setText('precio', data.precio_min != null ? `$${data.precio_min} – $${data.precio_max}` : 'Precio no disponible');
+  setText('precio', data.precio_estimado != null ? `Aprox. $${data.precio_estimado} MXN` : 'Precio no disponible');
 
   // Razón de la clasificación
   setText('explicacion-semaforo', data.razon_clasificacion || data.explicacion_semaforo || 'Sin descripción disponible.');
@@ -92,19 +107,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   } catch(e) { console.warn('caracteristicas error:', e); }
 
-  // Componentes (opcional si la tabla artículo lo provee)
+  // Ingredientes/Componentes (Normalmente vacío en artículos, lo ocultamos si no hay datos)
   try {
     const listaIng = document.getElementById('lista-ingredientes');
     const cardIng = document.getElementById('card-ingredientes');
     if (listaIng && cardIng) {
-      if (data.ingredientes?.trim() || data.componentes?.trim()) {
-        const txt = data.ingredientes || data.componentes;
-        listaIng.innerHTML = `<p style="font-size:1rem;line-height:1.5;color:var(--color-text-secondary)">${txt}</p>`;
+      if (data.componentes?.trim()) {
+        listaIng.innerHTML = `<p style="font-size:1rem;line-height:1.5;color:var(--color-text-secondary)">${data.componentes}</p>`;
       } else {
         cardIng.classList.add('hidden');
       }
     }
-  } catch(e) { console.warn('ingredientes/componentes error:', e); }
+  } catch(e) { console.warn('componentes error:', e); }
 
   // Ventajas Ecológicas
   try {
@@ -157,7 +171,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   } catch(e) { console.warn('desventajas error:', e); }
 
-  // Descripción general del artículo
+  // Descripción general del artículo (CORREGIDO)
   try {
     const cardDesc = document.getElementById('card-descripcion-articulo');
     const textoDesc = document.getElementById('texto-descripcion-articulo');
@@ -193,24 +207,32 @@ async function setupFavorito(id, preloadedFavs) {
   try {
     const { ok, data } = preloadedFavs || await obtenerFavoritos();
     if (ok && Array.isArray(data)) {
-      esFav = data.some(f => String(f.id_articulo ?? f.id_producto) === String(id));
+      // Validamos usando solo el ID del artículo
+      esFav = data.some(f => String(f.id_articulo_id || f.id_articulo) === String(id));
       actualizarFav(btn, esFav);
     }
   } catch (_) {}
 
   btn.addEventListener('click', async () => {
     try {
-      if (esFav) { await eliminarFavorito(id); esFav = false; }
-      else       { await agregarFavorito(id);  esFav = true;  }
+      if (esFav) { 
+        await eliminarFavoritoArticulo(id); 
+        esFav = false; 
+      } else { 
+        await agregarFavoritoArticulo(id);  
+        esFav = true;  
+      }
       actualizarFav(btn, esFav);
       toast(esFav ? '⭐ Agregado a favoritos' : 'Eliminado de favoritos');
-    } catch (err) { console.error('favorito click error:', err); }
+    } catch (err) { 
+      console.error('favorito click error:', err); 
+    }
   });
 }
 
 function actualizarFav(btn, activo) {
   if (!btn) return;
-  btn.innerHTML = `<i class="${activo ? 'fa-solid' : 'fa-regular'} fa-star"></i> ${activo ? 'Guardado' : 'Guardar'}`;
+  btn.innerHTML = `<i class="${activo ? 'fa-solid' : 'fa-regular'} fa-star"></i>`;
   btn.style.background  = activo ? 'var(--color-primary)' : '';
   btn.style.borderColor = activo ? 'var(--color-primary-dark)' : '';
 }
@@ -247,7 +269,9 @@ function toast(msg) {
   } catch(_) {}
 }
 
-function irAtras() {
+// ── FUNCIÓN MAESTRA PARA REGRESAR ───────────────────────────────
+function irAtras(e) {
+  if (e) e.preventDefault();
   const prev = document.referrer;
   if (!prev || prev.includes('/auth/')) {
     window.location.href = '/recomendaciones/inicio/inicio.html';
@@ -255,3 +279,11 @@ function irAtras() {
     window.history.back();
   }
 }
+
+// ── FORZAR ACTUALIZACIÓN AL USAR EL BOTÓN ATRÁS ───────────────
+window.addEventListener('pageshow', (event) => {
+  // event.persisted indica si la página se cargó desde la memoria caché del navegador
+  if (event.persisted) {
+    window.location.reload();
+  }
+});

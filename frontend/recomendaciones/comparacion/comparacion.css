@@ -117,17 +117,117 @@
   color: var(--color-success);
 }
 
+/* ============================================================
+   RESPONSIVE: MODO FEED (TARJETAS APILADAS) PARA MÓVILES
+   ============================================================ */
+/* ============================================================
+   RESPONSIVE: MODO FEED CON ETIQUETAS FLOTANTES INFALIBLES
+   ============================================================ */
+
 @media (max-width: 768px) {
-  .cmp-grid { grid-template-columns: repeat(2, 1fr) !important; }
-  .cmp-row  { grid-template-columns: 110px repeat(auto-fit, minmax(80px, 1fr)); }
-  .cmp-label { min-width: 90px; font-size: var(--text-xs); }
-  .cmp-cell  { font-size: var(--text-sm); }
+  .cmp-grid { 
+    grid-template-columns: repeat(2, 1fr) !important; 
+  }
+
+  .cmp-row--header {
+    display: none !important;
+  }
+
+  .cmp-row { 
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--space-3);
+    padding: var(--space-4) 0;
+    border-bottom: 2px dashed var(--color-border);
+  }
+
+  /* Atributo como cabecera divisoria */
+  .cmp-label { 
+    width: 100% !important;
+    max-width: 100% !important;
+    text-align: center;
+    font-size: 1rem !important;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    background: rgba(0, 0, 0, 0.05);
+    padding: 10px !important;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-1);
+    box-sizing: border-box;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Caja contenedora base para los textos */
+  .cmp-cell { 
+    width: 100% !important;
+    max-width: 100% !important;
+    text-align: left !important; 
+    font-size: 0.95rem !important;
+    line-height: 1.6;
+    padding: 16px !important;
+    border-radius: var(--radius-lg);
+    box-sizing: border-box;
+    display: flex !important;
+    flex-direction: column !important;
+    
+    /* Diseño de tarjeta individual */
+    background: var(--color-bg-white) !important;
+    border: 1px solid var(--color-border) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02) !important;
+  }
+
+  /* Tarjeta destacada para TU ARTÍCULO */
+  .cmp-cell--original { 
+    background: rgba(255, 212, 96, 0.06) !important; 
+    border: 2px solid var(--color-primary) !important; 
+  }
+
+  /* ── INYECCIÓN AUTOMÁTICA DE BADGES/PILLS ── */
+  .cmp-cell::before {
+    display: inline-block !important;
+    width: max-content;
+    font-size: 0.7rem !important;
+    font-weight: 900 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 4px 10px !important;
+    border-radius: 6px !important;
+    margin-bottom: 12px !important;
+    line-height: 1 !important;
+  }
+
+  /* Regla para el artículo original */
+  .cmp-cell--original::before {
+    content: "Tu artículo" !important;
+    background: var(--color-primary) !important;
+    color: var(--color-text-primary) !important;
+  }
+
+  /* Regla para cualquier alternativa */
+  .cmp-cell:not(.cmp-cell--original)::before {
+    content: "Alternativa" !important;
+    background: var(--color-semaforo-verde) !important;
+    color: #ffffff !important;
+  }
 }
 
+/* Ajustes finos para pantallas muy pequeñas */
 @media (max-width: 480px) {
-  .cmp-grid { grid-template-columns: 1fr 1fr !important; }
-  .cmp-card { padding: var(--space-4) var(--space-3); }
-  .cmp-dot  { width: 22px; height: 22px; }
-  .cmp-row  { grid-template-columns: 90px repeat(auto-fit, minmax(70px, 1fr)); gap: var(--space-2); }
-  .cmp-label { font-size: 11px; min-width: 80px; }
+  .cmp-grid { 
+    gap: var(--space-2) !important; 
+  }
+  .cmp-card { 
+    padding: var(--space-3) var(--space-2) !important; 
+  }
+  .cmp-dot { 
+    width: 24px !important; height: 24px !important; 
+  }
+  .cmp-card__name {
+    font-size: 0.9rem !important;
+  }
+  .cmp-cell { 
+    font-size: 0.9rem !important; 
+    padding: 14px 12px !important;
+  }
 }

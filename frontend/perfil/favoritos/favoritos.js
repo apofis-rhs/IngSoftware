@@ -29,6 +29,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
+  // ── CIERRE AUTOMÁTICO DEL MENÚ MÓVIL ────────────────────────
+  
+  // 1. Cierra el menú inmediatamente al hacer clic en cualquier enlace dentro de él
+  const enlacesMenu = navDrawer?.querySelectorAll('a');
+  enlacesMenu?.forEach(enlace => {
+    enlace.addEventListener('click', () => {
+      navDrawer?.classList.remove('open');
+    });
+  });
+
+  // 2. Failsafe: Si el navegador restaura la página desde el caché (bfcache), fuerza el cierre
+  window.addEventListener('pageshow', () => {
+    navDrawer?.classList.remove('open');
+  });
+
   // Partículas
   const colors = ['#FFD460','#BAC423','#FF8C99','#FFAC00'];
   for (let i = 0; i < 15; i++) {
@@ -53,12 +68,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   let favProductos = [];
   let favArticulos = [];
 
-  // ── Cargar todo desde BD (un solo GET) ───────────────
+ // ── Cargar todo desde BD (un solo GET) ───────────────
   try {
+    // Aquí solo llamamos a la función que vive en api.js
     const { ok, data } = await obtenerFavoritos();
+    
     if (ok && Array.isArray(data)) {
-      favProductos = data.filter(f => !f.es_articulo);
-      favArticulos = data.filter(f =>  f.es_articulo);
+      // Si trae id_producto, es un producto. Si trae id_articulo, es un artículo.
+      favProductos = data.filter(f => f.id_producto != null || f.id_producto_id != null);
+      favArticulos = data.filter(f => f.id_articulo != null || f.id_articulo_id != null);
     }
   } catch (err) { console.error('Error cargando favoritos:', err); }
 
@@ -206,3 +224,13 @@ function irAtras(e) {
     window.history.back();
   }
 }
+
+window.addEventListener('pageshow', (event) => {
+  const regresoHistorial = event.persisted || 
+    (typeof window.performance !== 'undefined' && window.performance.navigation.type === 2) ||
+    (performance.getEntriesByType("navigation")[0]?.type === "back_forward");
+
+  if (regresoHistorial) {
+    window.location.reload();
+  }
+});

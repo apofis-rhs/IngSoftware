@@ -40,6 +40,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       navDrawer?.classList.remove('open');
   });
 
+  
+
   // Cargar subcategorías
   await cargarSubcategorias();
 

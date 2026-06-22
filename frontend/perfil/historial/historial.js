@@ -27,6 +27,22 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.location.href = '/auth/login/login.html';
     });
   });
+  
+
+  // ── CIERRE AUTOMÁTICO DEL MENÚ MÓVIL ────────────────────────
+  
+  // 1. Cierra el menú inmediatamente al hacer clic en cualquier enlace dentro de él
+  const enlacesMenu = navDrawer?.querySelectorAll('a');
+  enlacesMenu?.forEach(enlace => {
+    enlace.addEventListener('click', () => {
+      navDrawer?.classList.remove('open');
+    });
+  });
+
+  // 2. Failsafe: Si el navegador restaura la página desde el caché (bfcache), fuerza el cierre
+  window.addEventListener('pageshow', () => {
+    navDrawer?.classList.remove('open');
+  });
 
   // Partículas decorativas
   const colors = ['#FFD460', '#BAC423', '#FF8C99', '#FFAC00'];
@@ -49,6 +65,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     const { ok, data } = await obtenerHistorial();
 
+    console.log("Datos que manda Django al Historial:", data);
+
     if (!ok || !Array.isArray(data) || data.length === 0) {
       contenedor.innerHTML = `
         <div class="historial-vacio">
@@ -69,27 +87,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     data.forEach((item, index) => {
-      const color      = item.color_semaforo || 'gris';
+      // 1. Detectamos si el registro es un producto o un artículo
+      const esProducto = item.id_producto_id != null || item.id_producto != null;
+
+      // 2. Asignamos las variables dinámicamente según el tipo
+      const id     = esProducto ? (item.id_producto_id || item.id_producto) : (item.id_articulo_id || item.id_articulo);
+      const nombre = esProducto ? (item.nombre_producto || 'Producto') : (item.nombre_articulo || 'Artículo');
+      const color  = esProducto ? (item.color_semaforo || 'gris') : (item.color_semaforo_art || 'gris');
+      
+      // Rutas dinámicas
+      const ruta   = esProducto 
+        ? '../../buscador/detalle-producto/detalle-producto.html' 
+        : '../../recomendaciones/detalle-articulo/detalle-articulo.html';
+
+      // Imágenes dinámicas (usando tu función para productos, y una imagen por defecto/directa para artículos)
+      const imgSrc = esProducto 
+        ? getRutaImagen({ imagen: item.imagen, id_subcategoria: item.id_subcategoria }, '../../')
+        : (item.imagen ? `../../${item.imagen}` : '../../assets/images/placeholder.svg');
+
+      // 3. Estilos visuales del Timeline
       const nodeColor  = dotColors[color]    || '#9E9E9E';
       const badgeStyle = badgeColors[color]  || 'background:#F5F5F5;color:#666';
       const etiqueta   = color.charAt(0).toUpperCase() + color.slice(1);
-
-      const id     = item.id_producto_id;
-      const nombre = item.nombre_producto || 'Producto';
-      const ruta   = `../../buscador/detalle-producto/detalle-producto.html`;
-      const imgSrc = getRutaImagen(
-        { imagen: item.imagen, id_subcategoria: item.id_subcategoria },
-        '../../'
-      );
       const textoFecha = calcularTiempoRelativo(item.fecha_consulta);
 
+      // --- LÓGICA NUEVA: IMAGEN VS CÍRCULO CSS ---
+      let htmlImagen = '';
+      if (esProducto) {
+          const imgSrc = getRutaImagen({ imagen: item.imagen, id_subcategoria: item.id_subcategoria }, '../../');
+          htmlImagen = `<img src="${imgSrc}" alt="${nombre}" onerror="this.src='../../assets/images/placeholder.svg'">`;
+      } else {
+          // Crea el círculo exactamente igual que en la vista de Favoritos
+          htmlImagen = `<div style="width:40px;height:40px;border-radius:50%;background:${nodeColor};box-shadow:0 0 0 6px ${nodeColor}25; margin:auto;"></div>`;
+      }
+
+      // 4. Inyección del HTML (Nota el flexbox condicional en timeline-img-wrap)
       contenedor.innerHTML += `
         <div class="timeline-item" style="animation-delay:${index * 0.15}s">
           <div class="timeline-node" style="background:${nodeColor}"></div>
           <a href="${ruta}?id=${id}" class="timeline-card">
-            <div class="timeline-img-wrap">
-              <img src="${imgSrc}" alt="${nombre}"
-                   onerror="this.src='../../assets/images/placeholder.svg'">
+            <div class="timeline-img-wrap" style="${!esProducto ? 'display:flex; align-items:center; justify-content:center;' : ''}">
+              ${htmlImagen}
             </div>
             <div class="timeline-info">
               <div class="timeline-date">${textoFecha}</div>
