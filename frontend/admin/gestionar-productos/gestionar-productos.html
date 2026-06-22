@@ -61,6 +61,13 @@
 
       <div class="price-filter-container" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
         <span style="font-size:var(--text-sm); color:var(--color-text-muted); font-weight:bold;">
+          <i class="fa-solid fa-tags"></i> Categoría:
+        </span>
+        <select id="select-categoria" class="admin-search-input" style="width:auto; min-width:160px; cursor:pointer;">
+          <option value="">Todas las categorías</option>
+        </select>
+
+        <span style="font-size:var(--text-sm); color:var(--color-text-muted); font-weight:bold; margin-left:8px;">
           <i class="fa-solid fa-tag"></i> Precio:
         </span>
         <input type="number" id="input-precio-min" class="admin-search-input" placeholder="Mín. $" min="0" step="0.01" style="width:110px;">
